@@ -1,6 +1,6 @@
 {
-    "PF2EMONSTERMAKER.title": "Make Your Monster:",
-    "PF2EMONSTERMAKER.nameLevelRoadmap": "Name + Level + Roadmap",
+    "PF2EMONSTERMAKER.title": "Adjust Monster:",
+    "PF2EMONSTERMAKER.nameLevelRoadmap": "Name + Level",
     "PF2EMONSTERMAKER.roadmap": "Roadmap",
     "PF2EMONSTERMAKER.strike": "Strike",
     "PF2EMONSTERMAKER.namePlaceholder": "Placeholder",
@@ -57,5 +57,8 @@
     "PF2EMONSTERMAKER.moderate": "Moderate",
     "PF2EMONSTERMAKER.low": "Low",
     "PF2EMONSTERMAKER.terrible": "Terrible",
-    "PF2EMONSTERMAKER.none": "None"
+    "PF2EMONSTERMAKER.none": "None",
+
+    "PF2EMONSTERMAKER.minimum": "Minimum",
+    "PF2EMONSTERMAKER.maximum": "Maximum"
 }

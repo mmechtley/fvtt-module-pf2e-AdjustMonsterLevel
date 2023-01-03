@@ -16,8 +16,8 @@ Hooks.on("renderActorSheet", async function (sheet, html) {
     if(!actor.canUserModify(game["user"], "update")) {
         return;
     }
-    let element = html.find(".window-header .window-title");
-    let button = $(`<a class="popout" style><i class="fas fa-book"></i>Monster Maker</a>`);
+    let element = html.find(".adjustment-select");
+    let button = $(`<a class="adjustment trait" style>Adjust Level</a>`);
     button.on("click", () => {
         new MonsterMaker(actor).render(true)
     })

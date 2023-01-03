@@ -15,3 +15,22 @@
     font-size: 16px;
 }
 
+#monsterMakerForm .adjustment-group {
+    margin-bottom: 1em;
+}
+
+#adjustments-content.adjustments-collapsed {
+    display: none;
+}
+
+#adjustments-content.adjustments-expanded {
+    display: block;
+}
+
+#adjustments-toggle.adjustments-collapsed::before {
+    content: "⏵ ";
+}
+
+#adjustments-toggle.adjustments-expanded::before {
+    content: "⏷ ";
+}

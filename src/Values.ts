@@ -1,4 +1,4 @@
-import {Options, Statistics} from "./Keys";
+import {Dice, Options, ResistOptions, Statistics} from "./Keys";
 
 const aliases = {
     abilityScores: {
@@ -791,7 +791,165 @@ const aliases = {
             [Options.low]: "36"
         }
     },
-    strikeDamage: {
+    strikeDamage:{
+        "-1": {
+            [Options.extreme]: "4",
+            [Options.high]: "3",
+            [Options.moderate]: "3",
+            [Options.low]: "2"
+        },
+        "0": {
+            [Options.extreme]: "6",
+            [Options.high]: "5",
+            [Options.moderate]: "4",
+            [Options.low]: "3"
+        },
+        "1": {
+            [Options.extreme]: "8",
+            [Options.high]: "6",
+            [Options.moderate]: "5",
+            [Options.low]: "4"
+        },
+        "2": {
+            [Options.extreme]: "11",
+            [Options.high]: "9",
+            [Options.moderate]: "8",
+            [Options.low]: "6"
+        },
+        "3": {
+            [Options.extreme]: "15",
+            [Options.high]: "12",
+            [Options.moderate]: "10",
+            [Options.low]: "8"
+        },
+        "4": {
+            [Options.extreme]: "18",
+            [Options.high]: "14",
+            [Options.moderate]: "12",
+            [Options.low]: "9"
+        },
+        "5": {
+            [Options.extreme]: "20",
+            [Options.high]: "16",
+            [Options.moderate]: "13",
+            [Options.low]: "11"
+        },
+        "6": {
+            [Options.extreme]: "23",
+            [Options.high]: "18",
+            [Options.moderate]: "15",
+            [Options.low]: "12"
+        },
+        "7": {
+            [Options.extreme]: "25",
+            [Options.high]: "20",
+            [Options.moderate]: "17",
+            [Options.low]: "13"
+        },
+        "8": {
+            [Options.extreme]: "28",
+            [Options.high]: "22",
+            [Options.moderate]: "18",
+            [Options.low]: "15"
+        },
+        "9": {
+            [Options.extreme]: "30",
+            [Options.high]: "24",
+            [Options.moderate]: "20",
+            [Options.low]: "16"
+        },
+        "10": {
+            [Options.extreme]: "33",
+            [Options.high]: "26",
+            [Options.moderate]: "22",
+            [Options.low]: "17"
+        },
+        "11": {
+            [Options.extreme]: "35",
+            [Options.high]: "28",
+            [Options.moderate]: "23",
+            [Options.low]: "19"
+        },
+        "12": {
+            [Options.extreme]: "38",
+            [Options.high]: "30",
+            [Options.moderate]: "25",
+            [Options.low]: "20"
+        },
+        "13": {
+            [Options.extreme]: "40",
+            [Options.high]: "32",
+            [Options.moderate]: "27",
+            [Options.low]: "21"
+        },
+        "14": {
+            [Options.extreme]: "43",
+            [Options.high]: "34",
+            [Options.moderate]: "28",
+            [Options.low]: "23"
+        },
+        "15": {
+            [Options.extreme]: "45",
+            [Options.high]: "36",
+            [Options.moderate]: "30",
+            [Options.low]: "24"
+        },
+        "16": {
+            [Options.extreme]: "48",
+            [Options.high]: "37",
+            [Options.moderate]: "31",
+            [Options.low]: "25"
+        },
+        "17": {
+            [Options.extreme]: "50",
+            [Options.high]: "38",
+            [Options.moderate]: "32",
+            [Options.low]: "26"
+        },
+        "18": {
+            [Options.extreme]: "53",
+            [Options.high]: "40",
+            [Options.moderate]: "33",
+            [Options.low]: "27"
+        },
+        "19": {
+            [Options.extreme]: "55",
+            [Options.high]: "42",
+            [Options.moderate]: "35",
+            [Options.low]: "28"
+        },
+        "20": {
+            [Options.extreme]: "58",
+            [Options.high]: "44",
+            [Options.moderate]: "37",
+            [Options.low]: "29"
+        },
+        "21": {
+            [Options.extreme]: "60",
+            [Options.high]: "46",
+            [Options.moderate]: "38",
+            [Options.low]: "31"
+        },
+        "22": {
+            [Options.extreme]: "63",
+            [Options.high]: "48",
+            [Options.moderate]: "40",
+            [Options.low]: "32"
+        },
+        "23": {
+            [Options.extreme]: "65",
+            [Options.high]: "50",
+            [Options.moderate]: "42",
+            [Options.low]: "33"
+        },
+        "24": {
+            [Options.extreme]: "68",
+            [Options.high]: "52",
+            [Options.moderate]: "44",
+            [Options.low]: "35"
+        }
+    },
+    strikeDamageRoll: {
         "-1": {
             [Options.extreme]: "1d6+1",
             [Options.high]: "1d4+1",
@@ -1239,6 +1397,112 @@ const aliases = {
             [Options.low]: "36"
         }
     },
+    resistWeak: {
+        "-1": {
+            [ResistOptions.minimum]: "1",
+            [ResistOptions.maximum]: "1",
+        },
+        "0": {
+            [ResistOptions.minimum]: "1",
+            [ResistOptions.maximum]: "3",
+        },
+        "1": {
+            [ResistOptions.minimum]: "2",
+            [ResistOptions.maximum]: "3",
+        },
+        "2": {
+            [ResistOptions.minimum]: "2",
+            [ResistOptions.maximum]: "5",
+        },
+        "3": {
+            [ResistOptions.minimum]: "3",
+            [ResistOptions.maximum]: "6",
+        },
+        "4": {
+            [ResistOptions.minimum]: "4",
+            [ResistOptions.maximum]: "7",
+        },
+        "5": {
+            [ResistOptions.minimum]: "4",
+            [ResistOptions.maximum]: "8",
+        },
+        "6": {
+            [ResistOptions.minimum]: "5",
+            [ResistOptions.maximum]: "9",
+        },
+        "7": {
+            [ResistOptions.minimum]: "5",
+            [ResistOptions.maximum]: "10",
+        },
+        "8": {
+            [ResistOptions.minimum]: "6",
+            [ResistOptions.maximum]: "11",
+        },
+        "9": {
+            [ResistOptions.minimum]: "6",
+            [ResistOptions.maximum]: "12",
+        },
+        "10": {
+            [ResistOptions.minimum]: "7",
+            [ResistOptions.maximum]: "13",
+        },
+        "11": {
+            [ResistOptions.minimum]: "7",
+            [ResistOptions.maximum]: "14",
+        },
+        "12": {
+            [ResistOptions.minimum]: "8",
+            [ResistOptions.maximum]: "15",
+        },
+        "13": {
+            [ResistOptions.minimum]: "8",
+            [ResistOptions.maximum]: "16",
+        },
+        "14": {
+            [ResistOptions.minimum]: "9",
+            [ResistOptions.maximum]: "17",
+        },
+        "15": {
+            [ResistOptions.minimum]: "9",
+            [ResistOptions.maximum]: "18",
+        },
+        "16": {
+            [ResistOptions.minimum]: "9",
+            [ResistOptions.maximum]: "19",
+        },
+        "17": {
+            [ResistOptions.minimum]: "10",
+            [ResistOptions.maximum]: "19",
+        },
+        "18": {
+            [ResistOptions.minimum]: "10",
+            [ResistOptions.maximum]: "20",
+        },
+        "19": {
+            [ResistOptions.minimum]: "11",
+            [ResistOptions.maximum]: "21",
+        },
+        "20": {
+            [ResistOptions.minimum]: "11",
+            [ResistOptions.maximum]: "22",
+        },
+        "21": {
+            [ResistOptions.minimum]: "12",
+            [ResistOptions.maximum]: "23",
+        },
+        "22": {
+            [ResistOptions.minimum]: "12",
+            [ResistOptions.maximum]: "24",
+        },
+        "23": {
+            [ResistOptions.minimum]: "13",
+            [ResistOptions.maximum]: "25",
+        },
+        "24": {
+            [ResistOptions.minimum]: "13",
+            [ResistOptions.maximum]: "26",
+        }
+    }
 }
 
 export const statisticValues = {
@@ -1254,6 +1518,8 @@ export const statisticValues = {
     [Statistics.per]: aliases.perceptionSaves,
 
     [Statistics.ac]: aliases.armorClass,
+
+    [Statistics.resistWeak]: aliases.resistWeak,
 
     [Statistics.fort]: aliases.perceptionSaves,
     [Statistics.ref]: aliases.perceptionSaves,
@@ -1279,4 +1545,12 @@ export const statisticValues = {
     [Statistics.stealth]: aliases.skills,
     [Statistics.survival]: aliases.skills,
     [Statistics.thievery]: aliases.skills,
+}
+
+export const diceValues = {
+    [Dice.d4]: 2.5,
+    [Dice.d6]: 3.5,
+    [Dice.d8]: 4.5,
+    [Dice.d10]: 5.5,
+    [Dice.d12]: 6.5
 }

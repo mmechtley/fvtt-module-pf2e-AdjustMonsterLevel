@@ -1,11 +1,15 @@
 <form>
     <h1>{{localize "PF2EMONSTERMAKER.title"}}</h1>
+    <p>This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery
+        Guide. Stats below the minimum or above the maximum (e.g. less than Terrible or greater than Extreme for saves)
+        will be ignored and not adjusted. Stats that fall between two tiers (e.g. 50% between Moderate and High) will
+        remain between those tiers. Preview items that will be adjusted below.</p>
     <h2>{{localize "PF2EMONSTERMAKER.nameLevelRoadmap"}}</h2>
     <div class="form-group setting">
         <label for="monsterMakerName" class="monsterMakerFormText">
             {{localize "PF2EMONSTERMAKER.name"}}
         </label>
-        <input id="monsterMakerName" name="PF2EMONSTERMAKER.name" class="monsterMakerFormText">
+        <input id="monsterMakerName" name="PF2EMONSTERMAKER.name" class="monsterMakerFormText" value="">
     </div>
     <div class="form-group setting">
         <label for="monsterMakerLevel" class="monsterMakerFormText">
@@ -13,78 +17,62 @@
         </label>
         <select name="PF2EMONSTERMAKER.level" id="monsterMakerLevel" class="monsterMakerFormTextSmall">
             {{#each Levels}}
-                <option value={{this}}>{{this}}</option>
+                <option value="{{this}}" >{{this}}</option>
             {{/each}}
         </select>
     </div>
-    <div class="form-group setting">
-        <label for="monsterMakerRoadmap" class="monsterMakerFormText">
-            {{localize "PF2EMONSTERMAKER.roadmap"}}
-        </label>
-        <select id="monsterMakerRoadmap" class="monsterMakerFormTextSmall" onchange=setRoadmap(this)>
-            <option value="Default" selected>Default</option>
-            {{#each RoadMaps}}
-                <option value="{{@key}}">{{localize @key}}</option>
-            {{/each}}
-        </select>
-    </div>
-    {{#each CreatureStatistics}}
-        <h3>{{localize this.name}}</h3>
-        {{#each this.statisticEntries}}
-            <div class="form-group setting">
-                <label for="{{concat 'monsterMaker' this.name}}" class="monsterMakerFormText">
-                    {{localize this.name}}
-                </label>
-                <select id="{{concat 'monsterMaker' this.name}}" name="{{this.name}}" class="monsterMakerFormTextSmall">
-                    {{#if this.availableOptions}}
-                        {{#each this.availableOptions}}
-                            <option value="{{this}}">
-                                {{localize this}}
-                            </option>
-                        {{/each}}
-                    {{/if}}
-                    {{#unless this.availableOptions}}
-                        {{#each ../this.availableOptions}}
-                            <option value="{{this}}">
-                                {{localize this}}
-                            </option>
-                        {{/each}}
-                    {{/unless}}
-                </select>
-            </div>
-        {{/each}}
-
-    {{/each}}
     <div class="buttons">
         <button type="submit" id="monsterMakerFormSubmit">Submit</button>
+    </div>
+    <h2><a onclick="expandCollapseAdjustments()" id="adjustments-toggle" class="adjustments-collapsed">Statistics to be Scaled</a></h2>
+    <div id="adjustments-content" class="adjustments-collapsed">
+    {{#each ToModify}}
+        <h3>{{this.displayName}}</h3>
+        <div class="adjustment-group">
+        {{#each this.adjustments}}
+            <div class="form-group setting">
+                {{#if (not this.displayName)}}
+                    <span class="monsterMakerFormText">{{localize this.statistic}}</span>
+                {{else}}
+                    <span class="monsterMakerFormText">{{this.displayName}}</span>
+                {{/if}}
+                <span class="monsterMakerFormText">{{this.displayValue}}</span>
+            </div>
+        {{/each}}
+        </div>
+    {{/each}}
     </div>
 
 </form>
 <script>
-    monsterCreatureStatistics = {{{json CreatureStatistics}}}
-    monsterCreatureRoadmaps = {{{json RoadMaps}}}
-    function setDefaults() {
-        for (const category of monsterCreatureStatistics) {
-            for (const statistic of category.statisticEntries) {
-                let element = document.getElementById("monsterMaker" + statistic.name)
-                if (element) {
-                    element.value = category.defaultValue;
-                }
-            }
+    current = {{{json Current}}}
+
+    function expandCollapseAdjustments() {
+        let toggle = document.getElementById("adjustments-toggle")
+        let content = document.getElementById("adjustments-content")
+        let expanded = content.classList.contains('adjustments-expanded')
+        if( expanded ) {
+            toggle.classList.remove('adjustments-expanded')
+            toggle.classList.add('adjustments-collapsed')
+            content.classList.remove('adjustments-expanded')
+            content.classList.add('adjustments-collapsed')
         }
+        else {
+            toggle.classList.remove('adjustments-collapsed')
+            toggle.classList.add('adjustments-expanded')
+            content.classList.remove('adjustments-collapsed')
+            content.classList.add('adjustments-expanded')
+        }
+
     }
-    function setRoadmap(selectedRoadmap) {
-        let roadmapValue = selectedRoadmap.value;
-        setDefaults();
-        if(monsterCreatureRoadmaps[roadmapValue]) {
-            let roadmap = monsterCreatureRoadmaps[roadmapValue]
-            for (const [key, value] of Object.entries(roadmap)) {
-                let select = document.getElementById("monsterMaker" + key)
-                if(select) {
-                    select.value = value
-                }
-            }
-        }
+
+    function setDefaults() {
+        let nameElem = document.getElementById("monsterMakerName")
+        if(nameElem && 'PF2EMONSTERMAKER.name' in current )
+            nameElem.value = current['PF2EMONSTERMAKER.name']
+        let levelElem = document.getElementById("monsterMakerLevel")
+        if(levelElem && 'PF2EMONSTERMAKER.level' in current)
+            levelElem.value = current['PF2EMONSTERMAKER.level']
     }
     setDefaults();
 </script>

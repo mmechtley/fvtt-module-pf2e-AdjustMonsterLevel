@@ -18,6 +18,8 @@ export enum Statistics {
 
     ac = 'PF2EMONSTERMAKER.ac',
 
+    resistWeak = 'PF2EMONSTERMAKER.resistWeak',
+
     // Saves
     fort = 'PF2EMONSTERMAKER.fort',
     ref = 'PF2EMONSTERMAKER.ref',
@@ -47,32 +49,44 @@ export enum Statistics {
     thievery = 'PF2EMONSTERMAKER.thievery',
 }
 
+export enum Dice {
+    d4= 'd4',
+    d6= 'd6',
+    d8= 'd8',
+    d10= 'd10',
+    d12= 'd12',
+}
+
 export const Skills: Statistics[] = [Statistics.acrobatics, Statistics.arcana, Statistics.athletics, Statistics.crafting,
     Statistics.deception, Statistics.diplomacy, Statistics.intimidation, Statistics.medicine, Statistics.nature,
     Statistics.occultism, Statistics.performance, Statistics.religion, Statistics.society, Statistics.stealth,
     Statistics.survival, Statistics.thievery]
 
-export const actorFields = {
-    // Ability Scores
+export const defenseFields ={
+    [Statistics.hp]: 'system.attributes.hp.max',
+    [Statistics.ac]: 'system.attributes.ac.value',
+}
+
+export const abilityFields = {
     [Statistics.str]: 'system.abilities.str.mod',
     [Statistics.dex]: 'system.abilities.dex.mod',
     [Statistics.con]: 'system.abilities.con.mod',
     [Statistics.int]: 'system.abilities.int.mod',
     [Statistics.wis]: 'system.abilities.wis.mod',
     [Statistics.cha]: 'system.abilities.cha.mod',
+}
 
-    [Statistics.hp]: 'system.attributes.hp.max',
-
+export const savesFields = {
     [Statistics.per]: 'system.attributes.perception.value',
-
-    [Statistics.ac]: 'system.attributes.ac.value',
-
-    // Saves
     [Statistics.fort]: 'system.saves.fortitude.value',
     [Statistics.ref]: 'system.saves.reflex.value',
     [Statistics.wil]: 'system.saves.will.value',
 }
 
+export const meleeFields = {
+    [Statistics.strikeBonus]: 'system.bonus.value',
+    [Statistics.strikeDamage]: ''
+}
 
 export enum Options {
     extreme = 'PF2EMONSTERMAKER.extreme',
@@ -83,180 +97,7 @@ export enum Options {
     none = 'PF2EMONSTERMAKER.none',
 }
 
-export const RoadMaps = {
-    "PF2EMONSTERMAKER.brute": {
-        [Statistics.per]: Options.low, [Statistics.str]: Options.extreme, [Statistics.con]: Options.high,
-        [Statistics.dex]: Options.low, [Statistics.int]: Options.low, [Statistics.wis]: Options.low,
-        [Statistics.cha]: Options.low, [Statistics.ac]: Options.low, [Statistics.fort]: Options.high,
-        [Statistics.ref]: Options.low, [Statistics.wil]: Options.low, [Statistics.hp]: Options.high,
-        [Statistics.strikeBonus]: Options.moderate, [Statistics.strikeDamage]: Options.extreme
-    },
-    "PF2EMONSTERMAKER.magicalStriker": {
-        [Statistics.strikeBonus]: Options.high, [Statistics.strikeDamage]: Options.high,
-        [Statistics.spellcasting]: Options.high
-    },
-    "PF2EMONSTERMAKER.skirmisher": {[Statistics.dex]: Options.high, [Statistics.fort]: Options.low, [Statistics.ref]: Options.high},
-    "PF2EMONSTERMAKER.sniper": {
-        [Statistics.per]: Options.high, [Statistics.dex]: Options.high, [Statistics.fort]: Options.low,
-        [Statistics.ref]: Options.high, [Statistics.hp]: Options.low, [Statistics.strikeBonus]: Options.high,
-        [Statistics.strikeDamage]: Options.high
-    },
-    "PF2EMONSTERMAKER.soldier": {
-        [Statistics.str]: Options.high, [Statistics.ac]: Options.high, [Statistics.fort]: Options.high,
-        [Statistics.strikeBonus]: Options.high, [Statistics.strikeDamage]: Options.high
-    },
-    "PF2EMONSTERMAKER.spellcaster": {
-        [Statistics.int]: Options.high,
-        [Statistics.wis]: Options.high,
-        [Statistics.cha]: Options.high,
-        [Statistics.fort]: Options.low,
-        [Statistics.wil]: Options.high,
-        [Statistics.hp]: Options.low,
-        [Statistics.strikeBonus]: Options.low,
-        [Statistics.strikeDamage]: Options.low,
-        [Statistics.spellcasting]: Options.high
-    }
+export enum ResistOptions {
+    minimum = 'PF2EMONSTERMAKER.minimum',
+    maximum = 'PF2EMONSTERMAKER.maximum',
 }
-
-export class CreatureStatistic {
-    name: string;
-    availableOptions?: Options[];
-}
-
-export class CreatureStatisticCategory {
-    name: string;
-    availableOptions: Options[];
-    defaultValue: Options;
-    statisticEntries: CreatureStatistic[];
-}
-
-export const DefaultCreatureStatistics: CreatureStatisticCategory[] = [
-    {
-        name: 'PF2EMONSTERMAKER.abilityScores',
-        availableOptions: [Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme],
-        defaultValue: Options.moderate,
-        statisticEntries: [
-            {
-                name: Statistics.str,
-            },
-            {
-                name: Statistics.dex,
-            },
-            {
-                name: Statistics.con,
-            },
-            {
-                name: Statistics.int,
-            },
-            {
-                name: Statistics.wis,
-            },
-            {
-                name: Statistics.cha,
-            }
-        ]
-    },
-    {
-        name: "Defence + Perception",
-        availableOptions: [Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme],
-        defaultValue: Options.moderate,
-        statisticEntries: [
-            {
-                name: Statistics.hp,
-                availableOptions: [Options.low, Options.moderate, Options.high]
-            },
-            {
-                name: Statistics.per,
-            },
-            {
-                name: Statistics.ac,
-                availableOptions: [Options.low, Options.moderate, Options.high, Options.extreme],
-            },
-            {
-                name: Statistics.fort,
-            },
-            {
-                name: Statistics.ref,
-            },
-            {
-                name: Statistics.wil,
-            }
-        ]
-    },
-    {
-        name: 'PF2EMONSTERMAKER.strikes',
-        availableOptions: [Options.low, Options.moderate, Options.high, Options.extreme],
-        defaultValue: Options.moderate,
-        statisticEntries: [
-            {
-                name: Statistics.strikeBonus,
-            },
-            {
-                name: Statistics.strikeDamage,
-            }]
-    },
-    {
-        name: Statistics.spellcasting,
-        defaultValue: Options.none,
-        availableOptions: [Options.none, Options.moderate, Options.high, Options.extreme],
-        statisticEntries: [
-            {
-                name: Statistics.spellcasting,
-            },
-        ]
-    },
-    {
-        name: 'PF2EMONSTERMAKER.skills',
-        defaultValue: Options.none,
-        availableOptions: [Options.none, Options.low, Options.moderate, Options.high, Options.extreme],
-        statisticEntries: [
-            {
-                name: Statistics.acrobatics,
-            },
-            {
-                name: Statistics.arcana,
-            },
-            {
-                name: Statistics.athletics,
-            },
-            {
-                name: Statistics.crafting,
-            },
-            {
-                name: Statistics.deception,
-            },
-            {
-                name: Statistics.diplomacy,
-            },
-            {
-                name: Statistics.intimidation,
-            },
-            {
-                name: Statistics.medicine,
-            },
-            {
-                name: Statistics.nature,
-            },
-            {
-                name: Statistics.occultism,
-            },
-            {
-                name: Statistics.performance,
-            },
-            {
-                name: Statistics.religion,
-            },
-            {
-                name: Statistics.society,
-            },
-            {
-                name: Statistics.stealth,
-            },
-            {
-                name: Statistics.survival,
-            },
-            {
-                name: Statistics.thievery,
-            }]
-    },
-]
