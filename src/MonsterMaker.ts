@@ -230,8 +230,8 @@ export class MonsterMaker extends FormApplication {
         const values = statisticValues[stat][this.level]
         let current = MonsterMaker.getChildField( this.actor, fieldPath )
 
-        let normalized = MonsterMaker.getNormalizedValue(current, values)
-        if( normalized.value > 0 ) {
+        let normalized = MonsterMaker.getNormalizedValue( current, values, 1 )
+        if( normalized.value > -9999 ) {
             let data : Adjustment = {
                 targetDocument: this.actor,
                 targetAttribute: fieldPath,
@@ -248,7 +248,7 @@ export class MonsterMaker extends FormApplication {
         const values = statisticValues[Statistics.resistWeak][this.level]
         let current = item.value
 
-        let normalized = MonsterMaker.getNormalizedValue( current, values )
+        let normalized = MonsterMaker.getNormalizedValue( current, values, 1 )
         let data : Adjustment = {
             targetDocument: this.actor,
             targetAttribute: targetAttribute,
@@ -299,8 +299,8 @@ export class MonsterMaker extends FormApplication {
             return null
         }
 
-        let normalized = MonsterMaker.getNormalizedValue( current, values )
-        if( normalized.value > 0 ) {
+        let normalized = MonsterMaker.getNormalizedValue( current, values, 1 )
+        if( normalized.value > -9999 ) {
             let data: Adjustment = {
                 targetDocument: item,
                 targetAttribute: targetAttribute,
@@ -314,48 +314,50 @@ export class MonsterMaker extends FormApplication {
         return null
     }
 
-    static getNormalizedValue(current : any, values : any ){
-        const options = [ResistOptions.minimum, ResistOptions.maximum, Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme]
+    static getNormalizedValue( current: any, values: Iterable<Record<string,string>>, skipIfBelow: number=-9999 ) {
+        // ordered from lowest to highest
+        let options = [ResistOptions.minimum, ResistOptions.maximum, Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme]
 
-        let interval = 1
-        for( let i=0; i<options.length-1; i++ )
-        {
-            // Skip initial or terminal options that this stat type does not have
-            if( !( options[i] in values ) || !( options[i+1] in values ) )
-                continue
+        // remove ones that aren't in values
+        options = options.filter( v => v in values )
 
+        // Certain values should be considered 'special' and not scaled, such as Mindless creatures with negative
+        // int modifiers, or monsters with 0 in a stat indicating it's basically a dump stat. If we encounter
+        // such a value, skip it
+        if( skipIfBelow === -9999 ) {
+            skipIfBelow = parseInt( values[options[0]] )
+        }
+
+        if( current < skipIfBelow ) {
+            return { value:-9999, display:"" }
+        }
+
+        for( let i=0; i<options.length-1; i++ ) {
             const intervalFloor = parseInt( values[options[i]] )
             const intervalCeil = parseInt( values[options[i+1]] )
 
-            // Certain values should be considered 'special' and not scaled, such as Mindless creatures with negative
-            // int modifiers, or monsters with 0 in a stat indicating it's basically a dump stat. If we encounter
-            // such a value, skip it
-            // todo: this needs to be configurable by the caller
-            if( current < intervalFloor && interval == 1 )
-                return { value:0, display:"" }
-
-            if( current >= intervalFloor && current < intervalCeil )
-            {
+            if( (current >= intervalFloor && current < intervalCeil)
+                || (i == 0 && current < intervalFloor)
+                ||(i == options.length-1 && current >= intervalCeil)) {
                 let frac = (current - intervalFloor) / (intervalCeil - intervalFloor)
-                frac = Math.round(frac * 10) / 10
+                frac = Math.round( frac * 10 ) / 10
+                let display = game['i18n'].localize( options[i] )
+                if( frac != 0 && frac != 1 ) {
+                    if(frac > 0)
+                        display += '+'
+                    display += frac.toFixed( 1 )
+                }
+                if( frac < 0 || frac > 1 ) {
+                    display += ' ⚠️'
+                }
                 return {
-                    value: frac + interval,
-                    display: game['i18n'].localize( options[i] ) + (frac > 0 ? `+${frac}` : "")
+                    value: frac + i + 1,
+                    display: display
                 }
             }
-
-            if( current == intervalCeil )
-            {
-                return {
-                    value: interval + 1,
-                    display: game['i18n'].localize( options[i+1] )
-                }
-            }
-
-            interval++
         }
 
-        return {value: 0, display: ""}
+        return {value: -9999, display: ""}
     }
 
     static getChildField( obj: any, fieldPath: string ) {
