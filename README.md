@@ -1,4 +1,4 @@
-# fvtt-module-pf2e-MonsterMaker
+# fvtt-module-pf2e-AdjustMonsterLevel
 A Foundry VTT module designed for Pathfinder 2E System, that allows you to create combat NPCs from scratch, using values from the Pathfinder 2e Building Creatures Guide: https://2e.aonprd.com/Rules.aspx?ID=995
 
 To use the Monster Maker, you have to create a blank NPC. Using a non-blank sheet is possible, but DCs and other special abilities will not scale. 

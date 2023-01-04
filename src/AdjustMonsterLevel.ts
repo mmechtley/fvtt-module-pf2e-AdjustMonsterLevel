@@ -1,4 +1,14 @@
-import {abilityFields, defenseFields, Levels, Options, ResistOptions, savesFields, Skills, Statistics} from "./Keys";
+import {
+    abilityFields,
+    defenseFields,
+    Dice,
+    Levels,
+    Options,
+    ResistOptions,
+    savesFields,
+    Skills,
+    Statistics
+} from "./Keys";
 import {diceValues, statisticValues} from "./Values";
 import {BaseActor,} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs";
 
@@ -18,9 +28,10 @@ export class Adjustment {
     public statistic : Statistics
     public displayName? : string
     public displayValue: string
+    public metaData? : any
 }
 
-export class MonsterMaker extends FormApplication {
+export class AdjustMonsterLevel extends FormApplication {
     actor = <BaseActor>this.object
     level = "-1"
 
@@ -32,8 +43,8 @@ export class MonsterMaker extends FormApplication {
         return mergeObject( super.defaultOptions, {
             classes: ["form"],
             popOut: true,
-            template: `modules/pf2e-monster-maker/forms/monsterMakerForm.html`,
-            id: "monsterMakerForm",
+            template: `modules/pf2e-adjust-monster-level/forms/adjustMonsterLevelForm.html`,
+            id: "adjustMonsterLevelForm",
             title: "Adjust Level Form",
             height: 833,
             width: 400
@@ -41,7 +52,8 @@ export class MonsterMaker extends FormApplication {
     }
 
     protected async _updateObject(event: Event, formData?: object) {
-        if(formData) {
+        if( formData ) {
+            let previousLevel = (this.actor as any).system.details.level.value
             this.level = formData[Statistics.level]
 
             let batchedDocuments : any[] = []
@@ -54,7 +66,7 @@ export class MonsterMaker extends FormApplication {
 
             for( const category of this.DataToModify ){
                 for( const adjustment of category.adjustments ) {
-                    let values = statisticValues[adjustment.statistic][this.level]
+
                     // pf2e system documents (actor, item, etc)
                     if( typeof adjustment.targetDocument.update === 'function' ) {
                         let batch = batchedDocuments.find( b => b.targetDocument == adjustment.targetDocument )
@@ -63,35 +75,19 @@ export class MonsterMaker extends FormApplication {
                             batchedDocuments.push( batch )
                         }
 
-                        // todo: strike damage needs to be scaled as an ensemble, i have disabled the adjustments in getData
-
-                        let replacementValue : any
+                        // If something has an array index it requires special treatment
                         let match = adjustment.targetAttribute.match( this.indexPattern )
                         if( match ) {
-                            let index = adjustment.targetAttribute.indexOf( match[1] )
-                            let objAttr = adjustment.targetAttribute.substring( index + match[1].length + 1 )
-                            // todo: this doesn't assign to the array correctly, it replaces with an object with children .0 .1 etc.
-                            // todo: how do you update array elements using actor.update?
-                            adjustment.targetAttribute = adjustment.targetAttribute.substring( 0, index + match[1].length )
-                            console.log(adjustment.targetAttribute)
-                            let targetObject = MonsterMaker.getChildField( adjustment.targetDocument, adjustment.targetAttribute )
-                            console.log(targetObject)
-                            let copied = JSON.parse( JSON.stringify(
-                                targetObject
-                            ) )
-                            mergeObject( copied, { [objAttr]: MonsterMaker.getNumericValue( adjustment.normalizedValue, values ) } )
-                            console.log( copied )
-                            replacementValue = copied
+                            // todo: the pattern here needs to change so disabling special handling for array-like things for now
+                            // this.mergeIndexedAdjustment( batch, adjustment, match[1] )
+                        }
+                        // Strike damage must be handled as an ensemble and requires special logic
+                        else if( adjustment.statistic == Statistics.strikeDamage ) {
+                            this.mergeStrikeDamage( batch, adjustment, this.level > previousLevel )
                         }
                         else {
-                            replacementValue = MonsterMaker.getNumericValue( adjustment.normalizedValue, values )
+                            this.mergeSimpleAdjustment( batch, adjustment )
                         }
-
-                        let data = {
-                            [adjustment.targetAttribute]: replacementValue
-                        }
-                        batch.data = mergeObject( batch.data, data )
-
                     }
                 }
             }
@@ -105,22 +101,102 @@ export class MonsterMaker extends FormApplication {
         }
     }
 
-    static getNumericValue( slider : any, values : any ) {
-        const options = [ResistOptions.minimum, ResistOptions.maximum, Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme]
+    mergeStrikeDamage( batch:any, adjustment: Adjustment, levelIncreased: boolean ) {
+        // todo: handle things where we don't want to change the die size
+        let values = statisticValues[adjustment.statistic][this.level]
+        let totalDamage = AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values )
 
-        let interval = 1
+        let partial = {}
+
+        let rolls = AdjustMonsterLevel.getChildField( adjustment.targetDocument, adjustment.targetAttribute )
+
+        for( let [id, roll] of Object.entries( rolls ) ) {
+            let oldRoll: string = (roll as any).damage
+            let rollMeta = adjustment.metaData[id]
+            let rollDamage = rollMeta.totalFraction * totalDamage
+            let newRoll = ''
+            if( rollMeta.flatFraction > 0 ) {
+                let flatDamage = Math.round( rollDamage * rollMeta.flatFraction )
+                newRoll += `+${flatDamage}`
+                rollDamage -= flatDamage
+            }
+            newRoll = AdjustMonsterLevel.getClosestDieRoll( rollDamage, rollMeta.dieSize as Dice, levelIncreased ) + newRoll
+
+            partial[`${adjustment.targetAttribute}.${id}.damage`] = newRoll
+            console.log(`${oldRoll} -> ${newRoll}`)
+        }
+        batch.data = mergeObject( batch.data, partial )
+    }
+
+    mergeSimpleAdjustment( batch: any, adjustment: Adjustment ) {
+        let values = statisticValues[adjustment.statistic][this.level]
+        let partial = {
+            [adjustment.targetAttribute]: AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values )
+        }
+        batch.data = mergeObject( batch.data, partial )
+    }
+
+    mergeIndexedAdjustment( batch: any, adjustment: Adjustment, indexStr: string ) {
+        let values = statisticValues[adjustment.statistic][this.level]
+        let indexStart = adjustment.targetAttribute.indexOf( indexStr )
+        let objAttr = adjustment.targetAttribute.substring( indexStart + indexStr.length + 1 )
+        // todo: this doesn't assign to the array correctly, it replaces with an object with children .0 .1 etc.
+        // todo: how do you update array elements using actor.update?
+        adjustment.targetAttribute = adjustment.targetAttribute.substring( 0, indexStart + indexStr.length )
+        console.log(adjustment.targetAttribute)
+        let targetObject = AdjustMonsterLevel.getChildField( adjustment.targetDocument, adjustment.targetAttribute )
+        console.log(targetObject)
+        let copied = JSON.parse( JSON.stringify(
+            targetObject
+        ) )
+        mergeObject( copied, { [objAttr]: AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values ) } )
+        let partial = {
+            [adjustment.targetAttribute]: copied
+        }
+        batch.data = mergeObject( batch.data, partial )
+    }
+
+    static getClosestDieRoll( damage: number, startingDie: Dice, increasing: boolean ) {
+        // todo: this should prolly also prefer fewer dice so that like 10d4 isn't picked
+        let dice = [Dice.d4, Dice.d6, Dice.d8, Dice.d10, Dice.d12]
+        const startingDieIndex = dice.indexOf( startingDie )
+        if( increasing && startingDieIndex > 0 ){
+            dice.splice(0, startingDieIndex )
+        }
+        else if ( !increasing && startingDieIndex < dice.length-1 ){
+            dice.splice(dice.indexOf( startingDie ) + 1)
+        }
+        let bestNumDice = Math.round( damage / diceValues[startingDie] )
+        let bestDie = startingDie
+        let bestDistance = Math.abs( bestNumDice * diceValues[startingDie] - damage )
+        for( const die of dice ) {
+            const dieDamage = diceValues[die]
+            let numDice = Math.round(damage / dieDamage )
+            let distance = Math.abs(numDice * dieDamage - damage )
+            if( distance < bestDistance ) {
+                bestNumDice = numDice
+                bestDie = die as Dice
+                bestDistance = distance
+            }
+        }
+        return `${bestNumDice}${bestDie}`
+    }
+
+    static getNumericValue( normalized : any, values : any ) {
+        let options = [ResistOptions.minimum, ResistOptions.maximum, Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme]
+
+        // remove ones that aren't in values
+        options = options.filter( v => v in values )
+
         for( let i=0; i<options.length-1; i++ )
         {
-            // Skip initial or terminal options that this stat type does not have
-            if( !( options[i] in values ) || !( options[i+1] in values ) )
+            if( normalized < i+1 && i != 0 )
                 continue
 
-            if( slider < interval || slider > interval+1 ) {
-                interval++
+            if( normalized > i+2 && i != options.length-1 )
                 continue
-            }
 
-            const frac = slider - interval
+            const frac = normalized - ( i+1 )
 
             let intervalFloor = parseInt( values[options[i]] )
             let intervalCeil = parseInt( values[options[i+1]] )
@@ -150,32 +226,34 @@ export class MonsterMaker extends FormApplication {
         this.pushActorCategory( "Perception and Saves", savesFields )
 
         let anyActor = this.actor as any
-        if( anyActor.system.traits.dv.length > 0 ) {
-            let category = new AdjustmentCategory( "Weaknesses" )
-            for( let i=0; i<anyActor.system.traits.dv.length; i++ ) {
-                const resist = anyActor.system.traits.dv[i]
-                let data = this.getResistWeakAdjustment( resist, `system.traits.dv.${i}.value` )
-                category.adjustments.push( data )
-            }
-            this.DataToModify.push( category )
-        }
-
-        if( anyActor.system.traits.dr.length > 0 ) {
-            let category = new AdjustmentCategory( "Resistances" )
-            for( let i=0; i<anyActor.system.traits.dr.length; i++ ) {
-                const resist = anyActor.system.traits.dr[i]
-                let data = this.getResistWeakAdjustment( resist, `system.traits.dr.${i}.value` )
-                category.adjustments.push( data )
-            }
-            this.DataToModify.push( category )
-        }
+        // todo: the attribute pattern here does not work because it masks normal object attributes with numeric names,
+        //  e.g. the damage roll on the clockwork soldier's halberd strike. Need an unambiguous way to identify these
+        // if( anyActor.system.traits.dv.length > 0 ) {
+        //     let category = new AdjustmentCategory( "Weaknesses" )
+        //     for( let i=0; i<anyActor.system.traits.dv.length; i++ ) {
+        //         const resist = anyActor.system.traits.dv[i]
+        //         let data = this.getResistWeakAdjustment( resist, `system.traits.dv.${i}.value` )
+        //         category.adjustments.push( data )
+        //     }
+        //     this.DataToModify.push( category )
+        // }
+        //
+        // if( anyActor.system.traits.dr.length > 0 ) {
+        //     let category = new AdjustmentCategory( "Resistances" )
+        //     for( let i=0; i<anyActor.system.traits.dr.length; i++ ) {
+        //         const resist = anyActor.system.traits.dr[i]
+        //         let data = this.getResistWeakAdjustment( resist, `system.traits.dr.${i}.value` )
+        //         category.adjustments.push( data )
+        //     }
+        //     this.DataToModify.push( category )
+        // }
 
         let skills = new AdjustmentCategory( "Skills" )
         this.DataToModify.push( skills )
         for (const [id, item] of this.actor.items.entries()) {
             // skills
             if( item.type == 'lore' && item.name != null ){
-                let stat = ('PF2EMONSTERMAKER.' + item.name.toLowerCase()) as Statistics
+                let stat = ('PF2EADJUSTMONSTERLEVEL.' + item.name.toLowerCase()) as Statistics
                 let data = this.getItemAdjustment( stat, item, 'system.mod.value' )
                 if( data )
                     skills.adjustments.push( data )
@@ -183,10 +261,13 @@ export class MonsterMaker extends FormApplication {
             // spellcasting
             else if( item.type == 'spellcastingEntry' && item.name != null ) {
                 let data = this.getItemAdjustment( Statistics.spellcasting, item, 'system.spelldc.value' )
-                // todo: also spelldc.dc
                 if( data ) {
+                    // duplicate and use for spell dc as well, since the relative proficiency is always the same
+                    let dcData = JSON.parse( JSON.stringify( data ) ) as Adjustment
+                    dcData.targetAttribute = 'system.spelldc.dc'
                     let category = new AdjustmentCategory( item.name )
                     category.adjustments.push( data )
+                    category.adjustments.push( dcData )
                     this.DataToModify.push( category )
                 }
             }
@@ -228,9 +309,9 @@ export class MonsterMaker extends FormApplication {
 
     getActorFieldAdjustment( stat: Statistics, fieldPath: string ) {
         const values = statisticValues[stat][this.level]
-        let current = MonsterMaker.getChildField( this.actor, fieldPath )
+        let current = AdjustMonsterLevel.getChildField( this.actor, fieldPath )
 
-        let normalized = MonsterMaker.getNormalizedValue( current, values, 1 )
+        let normalized = AdjustMonsterLevel.getNormalizedValue( current, values, 1 )
         if( normalized.value > -9999 ) {
             let data : Adjustment = {
                 targetDocument: this.actor,
@@ -248,7 +329,7 @@ export class MonsterMaker extends FormApplication {
         const values = statisticValues[Statistics.resistWeak][this.level]
         let current = item.value
 
-        let normalized = MonsterMaker.getNormalizedValue( current, values, 1 )
+        let normalized = AdjustMonsterLevel.getNormalizedValue( current, values, 1 )
         let data : Adjustment = {
             targetDocument: this.actor,
             targetAttribute: targetAttribute,
@@ -262,51 +343,49 @@ export class MonsterMaker extends FormApplication {
 
     getItemAdjustment( stat: Statistics, item: any, targetAttribute: string ) {
         const values = statisticValues[stat][this.level]
+        let metaData: any = null
         let current = 0
         // simple fields
         if( item.type == 'lore' // skills
             || item.type == "spellcastingEntry"  // spellcasting
             || ( item.type == "melee" && stat == Statistics.strikeBonus ) // strike attack bonus
             ) {
-            current = MonsterMaker.getChildField( item, targetAttribute )
+            current = AdjustMonsterLevel.getChildField( item, targetAttribute )
         }
         // strike damage needs to be considered as a whole with all rolls contributing
-        else if( item.type == "melee" && stat == Statistics.strikeDamage && false ) {
+        else if( item.type == "melee" && stat == Statistics.strikeDamage ) {
             // sum up all the damage
             let total = 0
+            metaData = {}
             for( let [id, roll] of Object.entries( item.system.damageRolls ) ) {
-                let damage : string = (roll as any).damage
-                const plus = damage.indexOf( '+' )
-                if( plus >= 0 ) {
-                    let flat = damage.substring( plus+1 )
-                    total += parseInt( flat )
-                    damage = damage.substring( 0, plus )
-                }
-                damage = damage.trim()
-                const d = damage.indexOf( 'd' )
-                if( d >= 0 ) {
-                    let nDice = damage.substring( 0, d )
-                    let dieSize = damage.substring( d )
-                    total += parseInt( nDice ) * diceValues[dieSize]
+                let rollValues = AdjustMonsterLevel.getDamageRollValues( (roll as any).damage )
+                total += rollValues.total
+                metaData[id] = {
+                    totalFraction: rollValues.total,
+                    flatFraction: rollValues.flatFraction,
+                    dieSize: rollValues.dieSize
                 }
             }
-            // todo: what to do about damage that is very low for the leve? ratfolk grenadier hand crossbow
+            // todo: what to do about damage that is very low for the level? ratfolk grenadier hand crossbow
             // todo: what to do about damage intended to scale like a spell? ratfolk grenadier bombs
-            current = Math.ceil( total ) // odd numbers of dice results in a half damage that should be rounded up to match the gmg numbers
-
+            current = Math.ceil( total ) // odd numbers of dice results in a half that should be rounded up to match the gmg numbers
+            for( const [id, rollData] of Object.entries( metaData ) ) {
+                (rollData as any).totalFraction = (rollData as any).totalFraction / current
+            }
         }
         else {
             return null
         }
 
-        let normalized = MonsterMaker.getNormalizedValue( current, values, 1 )
+        let normalized = AdjustMonsterLevel.getNormalizedValue( current, values, 1 )
         if( normalized.value > -9999 ) {
             let data: Adjustment = {
                 targetDocument: item,
                 targetAttribute: targetAttribute,
                 statistic: stat,
                 normalizedValue: normalized.value,
-                displayValue: normalized.display
+                displayValue: normalized.display,
+                metaData: metaData
             }
             return data
         }
@@ -338,7 +417,7 @@ export class MonsterMaker extends FormApplication {
 
             if( (current >= intervalFloor && current < intervalCeil)
                 || (i == 0 && current < intervalFloor)
-                ||(i == options.length-1 && current >= intervalCeil)) {
+                || (i == options.length-2 && current >= intervalCeil)) {
                 let frac = (current - intervalFloor) / (intervalCeil - intervalFloor)
                 frac = Math.round( frac * 10 ) / 10
                 let display = game['i18n'].localize( options[i] )
@@ -358,6 +437,30 @@ export class MonsterMaker extends FormApplication {
         }
 
         return {value: -9999, display: ""}
+    }
+
+    static getDamageRollValues( damage: string ) {
+        let total = 0
+        let flat = 0
+        const plus = damage.indexOf( '+' )
+        if( plus >= 0 ) {
+            flat = parseInt( damage.substring( plus+1 ) )
+            total += flat
+            damage = damage.substring( 0, plus )
+        }
+        damage = damage.trim()
+        const d = damage.indexOf( 'd' )
+        let dieSize = ''
+        if( d >= 0 ) {
+            let nDice = damage.substring( 0, d )
+            dieSize = damage.substring( d )
+            total += parseInt( nDice ) * diceValues[dieSize]
+        }
+        return {
+            total: total,
+            dieSize: dieSize,
+            flatFraction: flat / total
+        }
     }
 
     static getChildField( obj: any, fieldPath: string ) {

@@ -2,51 +2,52 @@ export const Levels: String[] = ['-1', '0', '1', '2', '3', '4', '5', '6', '7', '
     '15', '16', '17', '18', '19', '20', '21', '22', '23', '24']
 
 export enum Statistics {
-    name = 'PF2EMONSTERMAKER.name',
-    level = 'PF2EMONSTERMAKER.level',
+    name = 'PF2EADJUSTMONSTERLEVEL.name',
+    level = 'PF2EADJUSTMONSTERLEVEL.level',
     // Ability Scores
-    str = 'PF2EMONSTERMAKER.str',
-    dex = 'PF2EMONSTERMAKER.dex',
-    con = 'PF2EMONSTERMAKER.con',
-    int = 'PF2EMONSTERMAKER.int',
-    wis = 'PF2EMONSTERMAKER.wis',
-    cha = 'PF2EMONSTERMAKER.cha',
+    str = 'PF2EADJUSTMONSTERLEVEL.str',
+    dex = 'PF2EADJUSTMONSTERLEVEL.dex',
+    con = 'PF2EADJUSTMONSTERLEVEL.con',
+    int = 'PF2EADJUSTMONSTERLEVEL.int',
+    wis = 'PF2EADJUSTMONSTERLEVEL.wis',
+    cha = 'PF2EADJUSTMONSTERLEVEL.cha',
 
-    hp = 'PF2EMONSTERMAKER.hp',
+    hp = 'PF2EADJUSTMONSTERLEVEL.hp',
 
-    per = 'PF2EMONSTERMAKER.per',
+    per = 'PF2EADJUSTMONSTERLEVEL.per',
 
-    ac = 'PF2EMONSTERMAKER.ac',
+    ac = 'PF2EADJUSTMONSTERLEVEL.ac',
 
-    resistWeak = 'PF2EMONSTERMAKER.resistWeak',
+    resistWeak = 'PF2EADJUSTMONSTERLEVEL.resistWeak',
 
     // Saves
-    fort = 'PF2EMONSTERMAKER.fort',
-    ref = 'PF2EMONSTERMAKER.ref',
-    wil = 'PF2EMONSTERMAKER.wil',
+    fort = 'PF2EADJUSTMONSTERLEVEL.fort',
+    ref = 'PF2EADJUSTMONSTERLEVEL.ref',
+    wil = 'PF2EADJUSTMONSTERLEVEL.wil',
 
     // Strikes
-    strikeBonus = 'PF2EMONSTERMAKER.strikeBonus',
-    strikeDamage = 'PF2EMONSTERMAKER.strikeDamage',
-    spellcasting = 'PF2EMONSTERMAKER.spellcasting',
+    strikeBonus = 'PF2EADJUSTMONSTERLEVEL.strikeBonus',
+    strikeDamage = 'PF2EADJUSTMONSTERLEVEL.strikeDamage',
+    spellcasting = 'PF2EADJUSTMONSTERLEVEL.spellcasting',
+    spellDC = 'PF2EADJUSTMONSTERLEVEL.spellDC',
 
     // Skills
-    acrobatics = 'PF2EMONSTERMAKER.acrobatics',
-    arcana = 'PF2EMONSTERMAKER.arcana',
-    athletics = 'PF2EMONSTERMAKER.athletics',
-    crafting = 'PF2EMONSTERMAKER.crafting',
-    deception = 'PF2EMONSTERMAKER.deception',
-    diplomacy = 'PF2EMONSTERMAKER.diplomacy',
-    intimidation = 'PF2EMONSTERMAKER.intimidation',
-    medicine = 'PF2EMONSTERMAKER.medicine',
-    nature = 'PF2EMONSTERMAKER.nature',
-    occultism = 'PF2EMONSTERMAKER.occultism',
-    performance = 'PF2EMONSTERMAKER.performance',
-    religion = 'PF2EMONSTERMAKER.religion',
-    society = 'PF2EMONSTERMAKER.society',
-    stealth = 'PF2EMONSTERMAKER.stealth',
-    survival = 'PF2EMONSTERMAKER.survival',
-    thievery = 'PF2EMONSTERMAKER.thievery',
+    acrobatics = 'PF2EADJUSTMONSTERLEVEL.acrobatics',
+    arcana = 'PF2EADJUSTMONSTERLEVEL.arcana',
+    athletics = 'PF2EADJUSTMONSTERLEVEL.athletics',
+    crafting = 'PF2EADJUSTMONSTERLEVEL.crafting',
+    deception = 'PF2EADJUSTMONSTERLEVEL.deception',
+    diplomacy = 'PF2EADJUSTMONSTERLEVEL.diplomacy',
+    intimidation = 'PF2EADJUSTMONSTERLEVEL.intimidation',
+    medicine = 'PF2EADJUSTMONSTERLEVEL.medicine',
+    nature = 'PF2EADJUSTMONSTERLEVEL.nature',
+    occultism = 'PF2EADJUSTMONSTERLEVEL.occultism',
+    performance = 'PF2EADJUSTMONSTERLEVEL.performance',
+    religion = 'PF2EADJUSTMONSTERLEVEL.religion',
+    society = 'PF2EADJUSTMONSTERLEVEL.society',
+    stealth = 'PF2EADJUSTMONSTERLEVEL.stealth',
+    survival = 'PF2EADJUSTMONSTERLEVEL.survival',
+    thievery = 'PF2EADJUSTMONSTERLEVEL.thievery',
 }
 
 export enum Dice {
@@ -83,21 +84,16 @@ export const savesFields = {
     [Statistics.wil]: 'system.saves.will.value',
 }
 
-export const meleeFields = {
-    [Statistics.strikeBonus]: 'system.bonus.value',
-    [Statistics.strikeDamage]: ''
-}
-
 export enum Options {
-    extreme = 'PF2EMONSTERMAKER.extreme',
-    high = 'PF2EMONSTERMAKER.high',
-    moderate = 'PF2EMONSTERMAKER.moderate',
-    low = 'PF2EMONSTERMAKER.low',
-    terrible = 'PF2EMONSTERMAKER.terrible',
-    none = 'PF2EMONSTERMAKER.none',
+    extreme = 'PF2EADJUSTMONSTERLEVEL.extreme',
+    high = 'PF2EADJUSTMONSTERLEVEL.high',
+    moderate = 'PF2EADJUSTMONSTERLEVEL.moderate',
+    low = 'PF2EADJUSTMONSTERLEVEL.low',
+    terrible = 'PF2EADJUSTMONSTERLEVEL.terrible',
+    none = 'PF2EADJUSTMONSTERLEVEL.none',
 }
 
 export enum ResistOptions {
-    minimum = 'PF2EMONSTERMAKER.minimum',
-    maximum = 'PF2EMONSTERMAKER.maximum',
+    minimum = 'PF2EADJUSTMONSTERLEVEL.minimum',
+    maximum = 'PF2EADJUSTMONSTERLEVEL.maximum',
 }

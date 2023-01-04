@@ -1,28 +1,28 @@
 <form>
-    <h1>{{localize "PF2EMONSTERMAKER.title"}}</h1>
+    <h1>{{localize "PF2EADJUSTMONSTERLEVEL.title"}}</h1>
     <p>This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery
         Guide. Stats that fall between two tiers (e.g. between Moderate and High) will be interpolated. Stats below the
         minimum or above the maximum from the GMG table will be extrapolated (marked by ⚠️), except ability scores 0 or
         below. Preview items that will be adjusted with the foldout below.</p>
-    <h2>{{localize "PF2EMONSTERMAKER.nameLevelRoadmap"}}</h2>
+    <h2>{{localize "PF2EADJUSTMONSTERLEVEL.nameLevelRoadmap"}}</h2>
     <div class="form-group setting">
-        <label for="monsterMakerName" class="monsterMakerFormText">
-            {{localize "PF2EMONSTERMAKER.name"}}
+        <label for="adjustMonsterLevelName" class="adjustMonsterLevelFormText">
+            {{localize "PF2EADJUSTMONSTERLEVEL.name"}}
         </label>
-        <input id="monsterMakerName" name="PF2EMONSTERMAKER.name" class="monsterMakerFormText" value="">
+        <input id="adjustMonsterLevelName" name="PF2EADJUSTMONSTERLEVEL.name" class="adjustMonsterLevelFormText" value="">
     </div>
     <div class="form-group setting">
-        <label for="monsterMakerLevel" class="monsterMakerFormText">
-            {{localize "PF2EMONSTERMAKER.level"}}
+        <label for="adjustMonsterLevelLevel" class="adjustMonsterLevelFormText">
+            {{localize "PF2EADJUSTMONSTERLEVEL.level"}}
         </label>
-        <select name="PF2EMONSTERMAKER.level" id="monsterMakerLevel" class="monsterMakerFormTextSmall">
+        <select name="PF2EADJUSTMONSTERLEVEL.level" id="adjustMonsterLevelLevel" class="adjustMonsterLevelFormTextSmall">
             {{#each Levels}}
                 <option value="{{this}}" >{{this}}</option>
             {{/each}}
         </select>
     </div>
     <div class="buttons">
-        <button type="submit" id="monsterMakerFormSubmit">Submit</button>
+        <button type="submit" id="adjustMonsterLevelFormSubmit">Submit</button>
     </div>
     <h2><a onclick="expandCollapseAdjustments()" id="adjustments-toggle" class="adjustments-collapsed">Statistics to be Scaled</a></h2>
     <div id="adjustments-content" class="adjustments-collapsed">
@@ -32,11 +32,11 @@
         {{#each this.adjustments}}
             <div class="form-group setting">
                 {{#if (not this.displayName)}}
-                    <span class="monsterMakerFormText">{{localize this.statistic}}</span>
+                    <span class="adjustMonsterLevelFormText">{{localize this.statistic}}</span>
                 {{else}}
-                    <span class="monsterMakerFormText">{{this.displayName}}</span>
+                    <span class="adjustMonsterLevelFormText">{{this.displayName}}</span>
                 {{/if}}
-                <span class="monsterMakerFormText">{{this.displayValue}}</span>
+                <span class="adjustMonsterLevelFormText">{{this.displayValue}}</span>
             </div>
         {{/each}}
         </div>
@@ -67,12 +67,12 @@
     }
 
     function setDefaults() {
-        let nameElem = document.getElementById("monsterMakerName")
-        if(nameElem && 'PF2EMONSTERMAKER.name' in current )
-            nameElem.value = current['PF2EMONSTERMAKER.name']
-        let levelElem = document.getElementById("monsterMakerLevel")
-        if(levelElem && 'PF2EMONSTERMAKER.level' in current)
-            levelElem.value = current['PF2EMONSTERMAKER.level']
+        let nameElem = document.getElementById("adjustMonsterLevelName")
+        if(nameElem && 'PF2EADJUSTMONSTERLEVEL.name' in current )
+            nameElem.value = current['PF2EADJUSTMONSTERLEVEL.name']
+        let levelElem = document.getElementById("adjustMonsterLevelLevel")
+        if(levelElem && 'PF2EADJUSTMONSTERLEVEL.level' in current)
+            levelElem.value = current['PF2EADJUSTMONSTERLEVEL.level']
     }
     setDefaults();
 </script>

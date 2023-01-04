@@ -1,6 +1,6 @@
-import {MonsterMaker} from "./MonsterMaker"
+import {AdjustMonsterLevel} from "./AdjustMonsterLevel"
 Hooks.on('init', async function () {
-    await game["settings"].register("foundryvtt-pf2e-monster-maker", "roadmaps", {
+    await game["settings"].register("foundryvtt-pf2e-adjust-monster-level", "roadmaps", {
         scope: 'world',
         config: false,
         type: Object,
@@ -19,7 +19,7 @@ Hooks.on("renderActorSheet", async function (sheet, html) {
     let element = html.find(".adjustment-select");
     let button = $(`<a class="adjustment trait" style>Adjust Level</a>`);
     button.on("click", () => {
-        new MonsterMaker(actor).render(true)
+        new AdjustMonsterLevel(actor).render(true)
     })
     element.after(button);
 })

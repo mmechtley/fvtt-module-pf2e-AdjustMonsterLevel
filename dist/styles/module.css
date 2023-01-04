@@ -1,21 +1,21 @@
-#monsterMakerForm form{
+#adjustMonsterLevelForm form{
     display: flex;
     flex-direction: column;
 }
 
-#monsterMakerForm .monsterMakerFormText {
+#adjustMonsterLevelForm .monsterMakerFormText {
     font-size: 16px;
 }
 
-#monsterMakerForm .monsterMakerFormTextSmall {
+#adjustMonsterLevelForm .monsterMakerFormTextSmall {
     font-size: 15px;
 }
 
-#monsterMakerForm label {
+#adjustMonsterLevelForm label {
     font-size: 16px;
 }
 
-#monsterMakerForm .adjustment-group {
+#adjustMonsterLevelForm .adjustment-group {
     margin-bottom: 1em;
 }
 

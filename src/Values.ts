@@ -1239,6 +1239,138 @@ const aliases = {
             [Options.moderate]: "37",
         }
     },
+    spellDC: {
+        "-1": {
+            [Options.extreme]: "19",
+            [Options.high]: "16",
+            [Options.moderate]: "13",
+        },
+        "0": {
+            [Options.extreme]: "19",
+            [Options.high]: "16",
+            [Options.moderate]: "13",
+        },
+        "1": {
+            [Options.extreme]: "20",
+            [Options.high]: "17",
+            [Options.moderate]: "14",
+        },
+        "2": {
+            [Options.extreme]: "22",
+            [Options.high]: "18",
+            [Options.moderate]: "15",
+        },
+        "3": {
+            [Options.extreme]: "23",
+            [Options.high]: "20",
+            [Options.moderate]: "17",
+        },
+        "4": {
+            [Options.extreme]: "25",
+            [Options.high]: "21",
+            [Options.moderate]: "18",
+        },
+        "5": {
+            [Options.extreme]: "26",
+            [Options.high]: "22",
+            [Options.moderate]: "19",
+        },
+        "6": {
+            [Options.extreme]: "27",
+            [Options.high]: "24",
+            [Options.moderate]: "21",
+        },
+        "7": {
+            [Options.extreme]: "29",
+            [Options.high]: "25",
+            [Options.moderate]: "22",
+        },
+        "8": {
+            [Options.extreme]: "30",
+            [Options.high]: "26",
+            [Options.moderate]: "23",
+        },
+        "9": {
+            [Options.extreme]: "32",
+            [Options.high]: "28",
+            [Options.moderate]: "25",
+        },
+        "10": {
+            [Options.extreme]: "33",
+            [Options.high]: "29",
+            [Options.moderate]: "26",
+        },
+        "11": {
+            [Options.extreme]: "34",
+            [Options.high]: "30",
+            [Options.moderate]: "27",
+        },
+        "12": {
+            [Options.extreme]: "36",
+            [Options.high]: "32",
+            [Options.moderate]: "29",
+        },
+        "13": {
+            [Options.extreme]: "37",
+            [Options.high]: "33",
+            [Options.moderate]: "30",
+        },
+        "14": {
+            [Options.extreme]: "39",
+            [Options.high]: "34",
+            [Options.moderate]: "31",
+        },
+        "15": {
+            [Options.extreme]: "40",
+            [Options.high]: "36",
+            [Options.moderate]: "33",
+        },
+        "16": {
+            [Options.extreme]: "41",
+            [Options.high]: "37",
+            [Options.moderate]: "34",
+        },
+        "17": {
+            [Options.extreme]: "43",
+            [Options.high]: "38",
+            [Options.moderate]: "35",
+        },
+        "18": {
+            [Options.extreme]: "44",
+            [Options.high]: "40",
+            [Options.moderate]: "37",
+        },
+        "19": {
+            [Options.extreme]: "46",
+            [Options.high]: "41",
+            [Options.moderate]: "38",
+        },
+        "20": {
+            [Options.extreme]: "47",
+            [Options.high]: "42",
+            [Options.moderate]: "39",
+        },
+        "21": {
+            [Options.extreme]: "48",
+            [Options.high]: "44",
+            [Options.moderate]: "41",
+        },
+        "22": {
+            [Options.extreme]: "50",
+            [Options.high]: "45",
+            [Options.moderate]: "42",
+        },
+        "23": {
+            [Options.extreme]: "51",
+            [Options.high]: "46",
+            [Options.moderate]: "43",
+        },
+        "24": {
+            [Options.extreme]: "52",
+            [Options.high]: "48",
+            [Options.moderate]: "45",
+        }
+    },
     skills: {
         "-1": {
             [Options.extreme]: "8",
@@ -1528,6 +1660,7 @@ export const statisticValues = {
     [Statistics.strikeBonus]: aliases.strikeBonus,
     [Statistics.strikeDamage]: aliases.strikeDamage,
     [Statistics.spellcasting]: aliases.spellcasting,
+    [Statistics.spellDC]: aliases.spellDC,
 
     [Statistics.acrobatics]: aliases.skills,
     [Statistics.arcana]: aliases.skills,

@@ -1,5 +1,5 @@
 {
-  "name": "foundryvtt-pf2e-monster-maker",
+  "name": "foundryvtt-pf2e-adjust-monster-level",
   "version": "1.0.0",
   "description": "",
   "main": "webpack.config.js",
