@@ -51,7 +51,7 @@ export class AdjustMonsterLevel extends FormApplication {
     }
 
     protected async _updateObject(event: Event, formData?: object) {
-        if( formData ) {
+        if( formData && formData[Statistics.level] != this.level ) {
             let previousLevel = (this.actor as any).system.details.level.value
             this.level = formData[Statistics.level]
 
