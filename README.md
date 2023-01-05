@@ -11,9 +11,9 @@ Statistics that this module will scale:
 - All skills
 - Spellcasting modifier and DC for any spellcasting entries
 - Attack modifier and damage for any Strikes
+- Resistances and Weaknesses
 
 Statistics not scaled by this module:
-- Resistances and Weaknesses aren't handled yet (planned)
 - Spell heightening or spell level
 - Damage of non-strike abilities, e.g. dragon's breath weapon (planned for any where the formatting is reasonable)
 - Sneak Attack or similar abilities that aren't a strike
