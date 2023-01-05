@@ -1,10 +1,21 @@
 import {AdjustMonsterLevel} from "./AdjustMonsterLevel"
+import {Setting} from "./Keys"
 Hooks.on('init', async function () {
-    await game["settings"].register("foundryvtt-pf2e-adjust-monster-level", "roadmaps", {
-        scope: 'world',
+    await game["settings"].register( Setting.namespace, Setting.expandFoldout, {
+        scope: 'client',
         config: false,
-        type: Object,
-        default: {}
+        requiresReload: false,
+        type: Boolean,
+        default: false
+    });
+    await game["settings"].register( Setting.namespace, Setting.testMode, {
+        name: 'PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeLabel',
+        hint: 'PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeHint',
+        scope: 'client',
+        config: true,
+        requiresReload: false,
+        type: Boolean,
+        default: false
     });
 })
 
@@ -17,7 +28,7 @@ Hooks.on("renderActorSheet", async function (sheet, html) {
         return;
     }
     let element = html.find(".adjustment-select");
-    let button = $(`<a class="adjustment trait" style>Adjust Level</a>`);
+    let button = $(`<a class="adjustment trait" style>${AdjustMonsterLevel.localize("PF2EADJUSTMONSTERLEVEL.ACTORSHEET.buttonlabel")}</a>`);
     button.on("click", () => {
         new AdjustMonsterLevel(actor).render(true)
     })

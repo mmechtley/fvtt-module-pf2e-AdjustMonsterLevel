@@ -5,8 +5,7 @@ import {
     Levels,
     Options,
     ResistOptions,
-    savesFields,
-    Skills,
+    savesFields, Setting,
     Statistics
 } from "./Keys";
 import {diceValues, statisticValues} from "./Values";
@@ -37,7 +36,7 @@ export class AdjustMonsterLevel extends FormApplication {
 
     DataToModify : AdjustmentCategory[] = []
 
-    indexPattern = /\.(\d+)\./
+    arrayLikePattern = /\[(\d+)\]/
 
     static get defaultOptions() {
         return mergeObject( super.defaultOptions, {
@@ -76,10 +75,9 @@ export class AdjustMonsterLevel extends FormApplication {
                         }
 
                         // If something has an array index it requires special treatment
-                        let match = adjustment.targetAttribute.match( this.indexPattern )
+                        let match = adjustment.targetAttribute.match( this.arrayLikePattern )
                         if( match ) {
-                            // todo: the pattern here needs to change so disabling special handling for array-like things for now
-                            // this.mergeIndexedAdjustment( batch, adjustment, match[1] )
+                            this.mergeIndexedAdjustment( batch, adjustment, match[0] )
                         }
                         // Strike damage must be handled as an ensemble and requires special logic
                         else if( adjustment.statistic == Statistics.strikeDamage ) {
@@ -92,12 +90,22 @@ export class AdjustMonsterLevel extends FormApplication {
                 }
             }
 
-            for( const batch of batchedDocuments ) {
-                await batch.targetDocument.update( batch.data )
+            let testMode = game['settings'].get( Setting.namespace, Setting.testMode )
+            if( testMode ) {
+                console.log(`----- Data deltas for adjusting monster ${this.actor.name} ${(this.actor as any).system.details.level.value}->${this.level} -----`)
+                for( const batch of batchedDocuments ) {
+                    console.log( `${batch.targetDocument.name}` )
+                    console.log( batch.data )
+                }
             }
+            else {
+                for( const batch of batchedDocuments ) {
+                    await batch.targetDocument.update( batch.data )
+                }
 
-            // this happens last because hp won't update correctly until the actor's max hp has updated
-            await this.actor.update( this.applyHitPoints() )
+                // this happens last because hp won't update correctly until the actor's max hp has updated
+                await this.actor.update( this.updateHitPoints() )
+            }
         }
     }
 
@@ -123,7 +131,7 @@ export class AdjustMonsterLevel extends FormApplication {
             newRoll = AdjustMonsterLevel.getClosestDieRoll( rollDamage, rollMeta.dieSize as Dice, levelIncreased ) + newRoll
 
             partial[`${adjustment.targetAttribute}.${id}.damage`] = newRoll
-            console.log(`${oldRoll} -> ${newRoll}`)
+            // console.log(`${oldRoll} -> ${newRoll}`)
         }
         batch.data = mergeObject( batch.data, partial )
     }
@@ -139,25 +147,27 @@ export class AdjustMonsterLevel extends FormApplication {
     mergeIndexedAdjustment( batch: any, adjustment: Adjustment, indexStr: string ) {
         let values = statisticValues[adjustment.statistic][this.level]
         let indexStart = adjustment.targetAttribute.indexOf( indexStr )
-        let objAttr = adjustment.targetAttribute.substring( indexStart + indexStr.length + 1 )
-        // todo: this doesn't assign to the array correctly, it replaces with an object with children .0 .1 etc.
-        // todo: how do you update array elements using actor.update?
-        adjustment.targetAttribute = adjustment.targetAttribute.substring( 0, indexStart + indexStr.length )
-        console.log(adjustment.targetAttribute)
-        let targetObject = AdjustMonsterLevel.getChildField( adjustment.targetDocument, adjustment.targetAttribute )
-        console.log(targetObject)
-        let copied = JSON.parse( JSON.stringify(
-            targetObject
-        ) )
-        mergeObject( copied, { [objAttr]: AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values ) } )
+        let objAttr = adjustment.targetAttribute.substring( indexStart + indexStr.length + 1 ) // +1 for trailing dot
+        adjustment.targetAttribute = adjustment.targetAttribute.substring( 0, indexStart )
+        let index = parseInt( indexStr.substring( 1, indexStr.length - 1 ) )
+
+        // This ensures we don't stomp a previous adjustment if we are modifying multiple elements
+        let copiedArray = AdjustMonsterLevel.getChildField( batch.data, adjustment.targetAttribute )
+        if( !copiedArray ) {
+            let originalArray = AdjustMonsterLevel.getChildField( adjustment.targetDocument, adjustment.targetAttribute )
+            copiedArray = JSON.parse( JSON.stringify( originalArray ) )
+        }
+
+        copiedArray[index][objAttr] = AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values )
+
         let partial = {
-            [adjustment.targetAttribute]: copied
+            [adjustment.targetAttribute]: copiedArray
         }
         batch.data = mergeObject( batch.data, partial )
     }
 
     static getClosestDieRoll( damage: number, startingDie: Dice, increasing: boolean ) {
-        // todo: this should prolly also prefer fewer dice so that like 10d4 isn't picked
+        // todo: this should prolly also prefer fewer dice so that like 10d4 isn't picked even if it's a perfect match
         let dice = [Dice.d4, Dice.d6, Dice.d8, Dice.d10, Dice.d12]
         const startingDieIndex = dice.indexOf( startingDie )
         if( increasing && startingDieIndex > 0 ){
@@ -207,7 +217,7 @@ export class AdjustMonsterLevel extends FormApplication {
         return 0
     }
 
-    applyHitPoints() {
+    updateHitPoints() {
         let hitPoints = (this.actor as any).system.attributes.hp.max
         return { "system.attributes.hp.value": hitPoints }
     }
@@ -222,35 +232,33 @@ export class AdjustMonsterLevel extends FormApplication {
         }
 
         this.pushActorCategory( "Defenses", defenseFields )
-        this.pushActorCategory( "Ability Modifiers", abilityFields )
-        this.pushActorCategory( "Perception and Saves", savesFields )
+        this.pushActorCategory( "AbilityModifiers", abilityFields )
+        this.pushActorCategory( "PerceptionAndSaves", savesFields )
 
         let anyActor = this.actor as any
-        // todo: the attribute pattern here does not work because it masks normal object attributes with numeric names,
-        //  e.g. the damage roll on the clockwork soldier's halberd strike. Need an unambiguous way to identify these
-        // if( anyActor.system.traits.dv.length > 0 ) {
-        //     let category = new AdjustmentCategory( "Weaknesses" )
-        //     for( let i=0; i<anyActor.system.traits.dv.length; i++ ) {
-        //         const resist = anyActor.system.traits.dv[i]
-        //         let data = this.getResistWeakAdjustment( resist, `system.traits.dv.${i}.value` )
-        //         category.adjustments.push( data )
-        //     }
-        //     this.DataToModify.push( category )
-        // }
-        //
-        // if( anyActor.system.traits.dr.length > 0 ) {
-        //     let category = new AdjustmentCategory( "Resistances" )
-        //     for( let i=0; i<anyActor.system.traits.dr.length; i++ ) {
-        //         const resist = anyActor.system.traits.dr[i]
-        //         let data = this.getResistWeakAdjustment( resist, `system.traits.dr.${i}.value` )
-        //         category.adjustments.push( data )
-        //     }
-        //     this.DataToModify.push( category )
-        // }
+        if( anyActor.system.attributes.weaknesses.length > 0 ) {
+            let category = new AdjustmentCategory( AdjustMonsterLevel.localize("PF2EADJUSTMONSTERLEVEL.categoryWeaknesses") )
+            for( let i=0; i<anyActor.system.attributes.weaknesses.length; i++ ) {
+                const resist = anyActor.system.attributes.weaknesses[i]
+                let data = this.getResistWeakAdjustment( resist, `system.attributes.weaknesses[${i}].value` )
+                category.adjustments.push( data )
+            }
+            this.DataToModify.push( category )
+        }
 
-        let skills = new AdjustmentCategory( "Skills" )
+        if( anyActor.system.attributes.resistances.length > 0 ) {
+            let category = new AdjustmentCategory( AdjustMonsterLevel.localize("PF2EADJUSTMONSTERLEVEL.categoryWeaknesses") )
+            for( let i=0; i<anyActor.system.attributes.resistances.length; i++ ) {
+                const resist = anyActor.system.attributes.resistances[i]
+                let data = this.getResistWeakAdjustment( resist, `system.attributes.resistances[${i}].value` )
+                category.adjustments.push( data )
+            }
+            this.DataToModify.push( category )
+        }
+
+        let skills = new AdjustmentCategory( AdjustMonsterLevel.localize("PF2EADJUSTMONSTERLEVEL.categorySkills") )
         this.DataToModify.push( skills )
-        for (const [id, item] of this.actor.items.entries()) {
+        for (const [, item] of this.actor.items.entries()) {
             // skills
             if( item.type == 'lore' && item.name != null ){
                 let stat = ('PF2EADJUSTMONSTERLEVEL.' + item.name.toLowerCase()) as Statistics
@@ -298,7 +306,7 @@ export class AdjustMonsterLevel extends FormApplication {
     }
 
     pushActorCategory( name: string, fields: Record<string, string> ){
-        let category = new AdjustmentCategory( name )
+        let category = new AdjustmentCategory( AdjustMonsterLevel.localize(`PF2EADJUSTMONSTERLEVEL.category${name}`) )
         for( const [field, attrPath] of Object.entries( fields ) ) {
             let data = this.getActorFieldAdjustment( field as Statistics, attrPath )
             if( data )
@@ -369,7 +377,7 @@ export class AdjustMonsterLevel extends FormApplication {
             // todo: what to do about damage that is very low for the level? ratfolk grenadier hand crossbow
             // todo: what to do about damage intended to scale like a spell? ratfolk grenadier bombs
             current = Math.ceil( total ) // odd numbers of dice results in a half that should be rounded up to match the gmg numbers
-            for( const [id, rollData] of Object.entries( metaData ) ) {
+            for( const [, rollData] of Object.entries( metaData ) ) {
                 (rollData as any).totalFraction = (rollData as any).totalFraction / current
             }
         }
@@ -391,6 +399,10 @@ export class AdjustMonsterLevel extends FormApplication {
         }
 
         return null
+    }
+
+    static localize( key: string ) {
+        return (game as any).i18n.localize( key )
     }
 
     static getNormalizedValue( current: any, values: Iterable<Record<string,string>>, skipIfBelow: number=-9999 ) {
@@ -420,7 +432,7 @@ export class AdjustMonsterLevel extends FormApplication {
                 || (i == options.length-2 && current >= intervalCeil)) {
                 let frac = (current - intervalFloor) / (intervalCeil - intervalFloor)
                 frac = Math.round( frac * 10 ) / 10
-                let display = game['i18n'].localize( options[i] )
+                let display = AdjustMonsterLevel.localize( options[i] )
                 if( frac != 0 && frac != 1 ) {
                     if(frac > 0)
                         display += '+'

@@ -1,9 +1,20 @@
 {
-    "PF2EADJUSTMONSTERLEVEL.title": "Adjust Monster:",
-    "PF2EADJUSTMONSTERLEVEL.nameLevelRoadmap": "Name + Level",
-    "PF2EADJUSTMONSTERLEVEL.roadmap": "Roadmap",
-    "PF2EADJUSTMONSTERLEVEL.strike": "Strike",
-    "PF2EADJUSTMONSTERLEVEL.namePlaceholder": "Placeholder",
+    "PF2EADJUSTMONSTERLEVEL.ACTORSHEET.buttonlabel": "Adjust Level",
+    "PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeLabel": "Test Mode",
+    "PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeHint": "Logs json of updates to target documents instead of actually updating the documents",
+
+    "PF2EADJUSTMONSTERLEVEL.title": "Adjust Monster",
+    "PF2EADJUSTMONSTERLEVEL.frontMatter": "This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery Guide. Stats that fall between two tiers (e.g. between Moderate and High) will be interpolated. Stats below the minimum or above the maximum from the GMG table will be extrapolated (marked by ⚠️), except ability scores 0 or below. Preview items that will be adjusted with the foldout below.",
+    "PF2EADJUSTMONSTERLEVEL.nameLevel": "Name and Level",
+    "PF2EADJUSTMONSTERLEVEL.buttonLabelAdjust": "Adjust",
+    "PF2EADJUSTMONSTERLEVEL.statisticsToBeScaled": "Statistics to be Scaled",
+
+    "PF2EADJUSTMONSTERLEVEL.categoryDefenses": "Defenses",
+    "PF2EADJUSTMONSTERLEVEL.categoryAbilityModifiers": "Ability Modifiers",
+    "PF2EADJUSTMONSTERLEVEL.categoryPerceptionAndSaves": "Perception and Saves",
+    "PF2EADJUSTMONSTERLEVEL.categoryWeaknesses": "Weaknesses",
+    "PF2EADJUSTMONSTERLEVEL.categoryResistances": "Resistances",
+    "PF2EADJUSTMONSTERLEVEL.categorySkills": "Skills",
 
     "PF2EADJUSTMONSTERLEVEL.name": "Name",
     "PF2EADJUSTMONSTERLEVEL.level": "Level",
@@ -40,18 +51,6 @@
     "PF2EADJUSTMONSTERLEVEL.stealth": "Stealth",
     "PF2EADJUSTMONSTERLEVEL.survival": "Survival",
     "PF2EADJUSTMONSTERLEVEL.thievery": "Thievery",
-
-    "PF2EADJUSTMONSTERLEVEL.abilityScores": "Ability Scores",
-    "PF2EADJUSTMONSTERLEVEL.defencePerception": "Defence + Perception",
-    "PF2EADJUSTMONSTERLEVEL.strikes": "Strikes",
-    "PF2EADJUSTMONSTERLEVEL.skills": "Skills",
-
-    "PF2EADJUSTMONSTERLEVEL.brute":"Brute",
-    "PF2EADJUSTMONSTERLEVEL.magicalStriker":"Magical Striker",
-    "PF2EADJUSTMONSTERLEVEL.skirmisher":"Skirmisher",
-    "PF2EADJUSTMONSTERLEVEL.sniper":"Sniper",
-    "PF2EADJUSTMONSTERLEVEL.soldier":"Soldier",
-    "PF2EADJUSTMONSTERLEVEL.spellcaster":"Spellcaster",
 
     "PF2EADJUSTMONSTERLEVEL.extreme": "Extreme",
     "PF2EADJUSTMONSTERLEVEL.high": "High",

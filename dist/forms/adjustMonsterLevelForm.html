@@ -1,10 +1,7 @@
 <form>
     <h1>{{localize "PF2EADJUSTMONSTERLEVEL.title"}}</h1>
-    <p>This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery
-        Guide. Stats that fall between two tiers (e.g. between Moderate and High) will be interpolated. Stats below the
-        minimum or above the maximum from the GMG table will be extrapolated (marked by ⚠️), except ability scores 0 or
-        below. Preview items that will be adjusted with the foldout below.</p>
-    <h2>{{localize "PF2EADJUSTMONSTERLEVEL.nameLevelRoadmap"}}</h2>
+    <p>{{localize "PF2EADJUSTMONSTERLEVEL.frontMatter"}}</p>
+    <h2>{{localize "PF2EADJUSTMONSTERLEVEL.nameLevel"}}</h2>
     <div class="form-group setting">
         <label for="adjustMonsterLevelName" class="adjustMonsterLevelFormText">
             {{localize "PF2EADJUSTMONSTERLEVEL.name"}}
@@ -22,11 +19,12 @@
         </select>
     </div>
     <div class="buttons">
-        <button type="submit" id="adjustMonsterLevelFormSubmit">Adjust</button>
+        <button type="submit" id="adjustMonsterLevelFormSubmit">{{localize "PF2EADJUSTMONSTERLEVEL.buttonLabelAdjust"}}</button>
     </div>
-    <h2><a onclick="expandCollapseAdjustments()" id="adjustments-toggle" class="adjustments-collapsed">Statistics to be Scaled</a></h2>
+    <h2><a onclick="expandCollapseAdjustments()" id="adjustments-toggle" class="adjustments-collapsed">{{localize "PF2EADJUSTMONSTERLEVEL.statisticsToBeScaled"}}</a></h2>
     <div id="adjustments-content" class="adjustments-collapsed">
     {{#each ToModify}}
+        <!-- this is pre-localized in the js because items/spellcasting/etc. also have pre-localized names -->
         <h3>{{this.displayName}}</h3>
         <div class="adjustment-group">
         {{#each this.adjustments}}
@@ -48,9 +46,14 @@
     current = {{{json Current}}}
 
     function expandCollapseAdjustments() {
+        let expanded = !game.settings.get('pf2e-adjust-monster-level', 'expandFoldout')
+        setAdjustmentsExpanded( expanded )
+        game.settings.set('pf2e-adjust-monster-level', 'expandFoldout', expanded )
+    }
+
+    function setAdjustmentsExpanded( expanded ) {
         let toggle = document.getElementById("adjustments-toggle")
         let content = document.getElementById("adjustments-content")
-        let expanded = content.classList.contains('adjustments-expanded')
         if( expanded ) {
             toggle.classList.remove('adjustments-expanded')
             toggle.classList.add('adjustments-collapsed')
@@ -63,16 +66,19 @@
             content.classList.remove('adjustments-collapsed')
             content.classList.add('adjustments-expanded')
         }
-
     }
 
     function setDefaults() {
-        let nameElem = document.getElementById("adjustMonsterLevelName")
-        if(nameElem && 'PF2EADJUSTMONSTERLEVEL.name' in current )
+        let nameElem = document.getElementById( "adjustMonsterLevelName" )
+        if( nameElem && 'PF2EADJUSTMONSTERLEVEL.name' in current )
             nameElem.value = current['PF2EADJUSTMONSTERLEVEL.name']
-        let levelElem = document.getElementById("adjustMonsterLevelLevel")
-        if(levelElem && 'PF2EADJUSTMONSTERLEVEL.level' in current)
+        let levelElem = document.getElementById( "adjustMonsterLevelLevel" )
+        if( levelElem && 'PF2EADJUSTMONSTERLEVEL.level' in current )
             levelElem.value = current['PF2EADJUSTMONSTERLEVEL.level']
+
+        let expanded = game.settings.get('pf2e-adjust-monster-level', 'expandFoldout')
+        setAdjustmentsExpanded( expanded )
+
     }
     setDefaults();
 </script>
