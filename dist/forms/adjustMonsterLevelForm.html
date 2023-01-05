@@ -36,6 +36,12 @@
                 {{/if}}
                 <span class="adjustMonsterLevelFormText">{{this.displayValue}}</span>
             </div>
+            {{#if this.metaData.isItemRoll}}
+            <div class="adjustMonsterLevelFormTextSmall adjustMonsterLevelFormAnnotation">{{localize "PF2EADJUSTMONSTERLEVEL.itemRoll"}}</div>
+            {{/if}}
+            {{#if this.metaData.outOfRange}}
+            <div class="adjustMonsterLevelFormTextSmall adjustMonsterLevelFormAnnotation">{{localize "PF2EADJUSTMONSTERLEVEL.outOfRange"}}</div>
+            {{/if}}
         {{/each}}
         </div>
     {{/each}}

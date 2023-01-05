@@ -103,3 +103,10 @@ export enum ResistOptions {
     minimum = 'PF2EADJUSTMONSTERLEVEL.minimum',
     maximum = 'PF2EADJUSTMONSTERLEVEL.maximum',
 }
+
+export enum AllowDice {
+    any = 'any',
+    above = 'above',
+    below = 'below',
+    sameOnly = 'sameOnly'
+}

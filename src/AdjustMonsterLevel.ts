@@ -1,11 +1,13 @@
 import {
     abilityFields,
+    AllowDice,
     defenseFields,
     Dice,
     Levels,
     Options,
     ResistOptions,
-    savesFields, Setting,
+    savesFields,
+    Setting,
     Statistics
 } from "./Keys";
 import {diceValues, statisticValues} from "./Values";
@@ -27,7 +29,7 @@ export class Adjustment {
     public statistic : Statistics
     public displayName? : string
     public displayValue: string
-    public metaData? : any
+    public metaData? : any = {}
 }
 
 export class AdjustMonsterLevel extends FormApplication {
@@ -109,31 +111,9 @@ export class AdjustMonsterLevel extends FormApplication {
         }
     }
 
-    mergeStrikeDamage( batch:any, adjustment: Adjustment, levelIncreased: boolean ) {
-        // todo: handle things where we don't want to change the die size
-        let values = statisticValues[adjustment.statistic][this.level]
-        let totalDamage = AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values )
-
-        let partial = {}
-
-        let rolls = AdjustMonsterLevel.getChildField( adjustment.targetDocument, adjustment.targetAttribute )
-
-        for( let [id, roll] of Object.entries( rolls ) ) {
-            let oldRoll: string = (roll as any).damage
-            let rollMeta = adjustment.metaData[id]
-            let rollDamage = rollMeta.totalFraction * totalDamage
-            let newRoll = ''
-            if( rollMeta.flatFraction > 0 ) {
-                let flatDamage = Math.round( rollDamage * rollMeta.flatFraction )
-                newRoll += `+${flatDamage}`
-                rollDamage -= flatDamage
-            }
-            newRoll = AdjustMonsterLevel.getClosestDieRoll( rollDamage, rollMeta.dieSize as Dice, levelIncreased ) + newRoll
-
-            partial[`${adjustment.targetAttribute}.${id}.damage`] = newRoll
-            // console.log(`${oldRoll} -> ${newRoll}`)
-        }
-        batch.data = mergeObject( batch.data, partial )
+    updateHitPoints() {
+        let hitPoints = (this.actor as any).system.attributes.hp.max
+        return { "system.attributes.hp.value": hitPoints }
     }
 
     mergeSimpleAdjustment( batch: any, adjustment: Adjustment ) {
@@ -166,22 +146,69 @@ export class AdjustMonsterLevel extends FormApplication {
         batch.data = mergeObject( batch.data, partial )
     }
 
-    static getClosestDieRoll( damage: number, startingDie: Dice, increasing: boolean ) {
-        // todo: this should prolly also prefer fewer dice so that like 10d4 isn't picked even if it's a perfect match
+    mergeStrikeDamage( batch:any, adjustment: Adjustment, levelIncreased: boolean ) {
+        // todo: handle things where we don't want to change the die size
+        let values = statisticValues[adjustment.statistic][this.level]
+        let totalDamage = AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values )
+
+        let partial = {}
+
+        let rolls = AdjustMonsterLevel.getChildField( adjustment.targetDocument, adjustment.targetAttribute )
+
+        for( let [id, roll] of Object.entries( rolls ) ) {
+            let oldRoll: string = (roll as any).damage
+            let rollMeta = adjustment.metaData[id]
+            let rollDamage = rollMeta.totalFraction * totalDamage
+            let newRoll = ''
+
+            // do dice first since we can adjust the flat portion easier to match the target value
+            if( rollMeta.flatFraction < 1 ) {
+                let allowDice = levelIncreased ? AllowDice.above : AllowDice.below
+                if( adjustment.metaData.isItemRoll )
+                    allowDice = AllowDice.sameOnly
+                let dice = AdjustMonsterLevel.getClosestDieRoll( rollDamage, rollMeta.flatFraction, rollMeta.dieSize as Dice, allowDice )
+                newRoll = dice.roll
+                rollDamage -= dice.damage
+            }
+
+            if( rollMeta.flatFraction > 0 && rollMeta.flatFraction < 1 ) {
+                newRoll = newRoll + '+'
+            }
+
+            if( rollMeta.flatFraction > 0 ) {
+                // whatever remains
+                let flatDamage = Math.floor( rollDamage )
+                newRoll += `${flatDamage}`
+            }
+
+            partial[`${adjustment.targetAttribute}.${id}.damage`] = newRoll
+            // console.log(`${oldRoll} -> ${newRoll}`)
+        }
+        batch.data = mergeObject( batch.data, partial )
+    }
+
+    static getClosestDieRoll( totalDamage: number, flatFraction: number, startingDie: Dice, allowDice: AllowDice ) {
+        let damage = totalDamage * ( 1 - flatFraction )
+        // If we don't have the ability to adjust the total using a flat modifier, use floor to skew damage slightly
+        // in the player's favor. Otherwise, round to nearest and we'll use the flat modifier to adjust
+        let round = flatFraction == 0 ? Math.floor : Math.round
         let dice = [Dice.d4, Dice.d6, Dice.d8, Dice.d10, Dice.d12]
         const startingDieIndex = dice.indexOf( startingDie )
-        if( increasing && startingDieIndex > 0 ){
-            dice.splice(0, startingDieIndex )
+        if( allowDice == AllowDice.above && startingDieIndex > 0 ) {
+            dice.splice( 0, startingDieIndex )
         }
-        else if ( !increasing && startingDieIndex < dice.length-1 ){
-            dice.splice(dice.indexOf( startingDie ) + 1)
+        else if ( allowDice == AllowDice.below && startingDieIndex < dice.length-1 ) {
+            dice.splice( dice.indexOf( startingDie ) + 1 )
         }
-        let bestNumDice = Math.round( damage / diceValues[startingDie] )
+        else if( allowDice == AllowDice.sameOnly ) {
+            dice.splice( 0, dice.length )
+        }
+        let bestNumDice = Math.max( round( damage / diceValues[startingDie] ), 1 )
         let bestDie = startingDie
         let bestDistance = Math.abs( bestNumDice * diceValues[startingDie] - damage )
         for( const die of dice ) {
             const dieDamage = diceValues[die]
-            let numDice = Math.round(damage / dieDamage )
+            let numDice = Math.max( round(damage / dieDamage ), 1 )
             let distance = Math.abs(numDice * dieDamage - damage )
             if( distance < bestDistance ) {
                 bestNumDice = numDice
@@ -189,7 +216,7 @@ export class AdjustMonsterLevel extends FormApplication {
                 bestDistance = distance
             }
         }
-        return `${bestNumDice}${bestDie}`
+        return { roll:`${bestNumDice}${bestDie}`, damage:diceValues[bestDie] * bestNumDice }
     }
 
     static getNumericValue( normalized : any, values : any ) {
@@ -215,11 +242,6 @@ export class AdjustMonsterLevel extends FormApplication {
         }
 
         return 0
-    }
-
-    updateHitPoints() {
-        let hitPoints = (this.actor as any).system.attributes.hp.max
-        return { "system.attributes.hp.value": hitPoints }
     }
 
     // @ts-ignore
@@ -318,15 +340,21 @@ export class AdjustMonsterLevel extends FormApplication {
     getActorFieldAdjustment( stat: Statistics, fieldPath: string ) {
         const values = statisticValues[stat][this.level]
         let current = AdjustMonsterLevel.getChildField( this.actor, fieldPath )
+        let metaData: any = {}
 
         let normalized = AdjustMonsterLevel.getNormalizedValue( current, values, 1 )
         if( normalized.value > -9999 ) {
+            if( normalized.flag ){
+                metaData.outOfRange = true
+            }
             let data : Adjustment = {
                 targetDocument: this.actor,
                 targetAttribute: fieldPath,
                 normalizedValue: normalized.value,
                 displayValue: normalized.display,
-                statistic: stat }
+                statistic: stat,
+                metaData: metaData
+            }
             return data
         }
 
@@ -336,22 +364,27 @@ export class AdjustMonsterLevel extends FormApplication {
     getResistWeakAdjustment( item: any, targetAttribute: string ) {
         const values = statisticValues[Statistics.resistWeak][this.level]
         let current = item.value
+        let metaData: any = {}
 
         let normalized = AdjustMonsterLevel.getNormalizedValue( current, values, 1 )
+        if( normalized.flag ){
+            metaData.outOfRange = true
+        }
         let data : Adjustment = {
             targetDocument: this.actor,
             targetAttribute: targetAttribute,
             statistic: Statistics.resistWeak,
             normalizedValue: normalized.value,
             displayValue: normalized.display,
-            displayName: item.type
+            displayName: item.type,
+            metaData: metaData
         }
         return data
     }
 
     getItemAdjustment( stat: Statistics, item: any, targetAttribute: string ) {
         const values = statisticValues[stat][this.level]
-        let metaData: any = null
+        let metaData: any = {}
         let current = 0
         // simple fields
         if( item.type == 'lore' // skills
@@ -364,21 +397,24 @@ export class AdjustMonsterLevel extends FormApplication {
         else if( item.type == "melee" && stat == Statistics.strikeDamage ) {
             // sum up all the damage
             let total = 0
-            metaData = {}
+            // This is extremely heuristic, no guarantees
+            metaData.isItemRoll = (this.actor as any).inventory.find( i => i.name.includes( item.name ) ) != null
             for( let [id, roll] of Object.entries( item.system.damageRolls ) ) {
                 let rollValues = AdjustMonsterLevel.getDamageRollValues( (roll as any).damage )
                 total += rollValues.total
                 metaData[id] = {
                     totalFraction: rollValues.total,
                     flatFraction: rollValues.flatFraction,
-                    dieSize: rollValues.dieSize
+                    dieSize: rollValues.dieSize,
                 }
             }
-            // todo: what to do about damage that is very low for the level? ratfolk grenadier hand crossbow
-            // todo: what to do about damage intended to scale like a spell? ratfolk grenadier bombs
+
             current = Math.ceil( total ) // odd numbers of dice results in a half that should be rounded up to match the gmg numbers
             for( const [, rollData] of Object.entries( metaData ) ) {
-                (rollData as any).totalFraction = (rollData as any).totalFraction / current
+                if( (rollData as any).hasOwnProperty('totalFraction') ) {
+                    (rollData as any).totalFraction = (rollData as any).totalFraction / total
+                }
+
             }
         }
         else {
@@ -387,6 +423,9 @@ export class AdjustMonsterLevel extends FormApplication {
 
         let normalized = AdjustMonsterLevel.getNormalizedValue( current, values, 1 )
         if( normalized.value > -9999 ) {
+            if( normalized.flag ){
+                metaData.outOfRange = true
+            }
             let data: Adjustment = {
                 targetDocument: item,
                 targetAttribute: targetAttribute,
@@ -420,7 +459,7 @@ export class AdjustMonsterLevel extends FormApplication {
         }
 
         if( current < skipIfBelow ) {
-            return { value:-9999, display:"" }
+            return { value:-9999, display:"", flag:false }
         }
 
         for( let i=0; i<options.length-1; i++ ) {
@@ -438,36 +477,39 @@ export class AdjustMonsterLevel extends FormApplication {
                         display += '+'
                     display += frac.toFixed( 1 )
                 }
-                if( frac < 0 || frac > 1 ) {
-                    display += ' ⚠️'
-                }
                 return {
                     value: frac + i + 1,
-                    display: display
+                    display: display,
+                    flag: frac < 0 || frac > 1
                 }
             }
         }
 
-        return {value: -9999, display: ""}
+        return { value: -9999, display: "", flag:false }
     }
 
     static getDamageRollValues( damage: string ) {
         let total = 0
         let flat = 0
-        const plus = damage.indexOf( '+' )
-        if( plus >= 0 ) {
-            flat = parseInt( damage.substring( plus+1 ) )
-            total += flat
-            damage = damage.substring( 0, plus )
-        }
-        damage = damage.trim()
-        const d = damage.indexOf( 'd' )
         let dieSize = ''
+        const plus = damage.indexOf( '+' )
+        const d = damage.indexOf( 'd' ) // this index remains valid because we only remove trailing chars below
+
+        // Has a flat damage component after + or is only flat damage (no die)
+        if( plus >= 0 || d == -1 ) {
+            flat = parseInt( damage.substring( plus+1 ) ) // still works if plus is -1!
+            total += flat
+            if( plus >= 0 )
+                damage = damage.substring( 0, plus )
+        }
+
+        // Has dice, with or without a flat component
         if( d >= 0 ) {
             let nDice = damage.substring( 0, d )
-            dieSize = damage.substring( d )
+            dieSize = damage.substring( d ).trim() // this can't have leading/trailing whitespace cuz it's keying into a dict
             total += parseInt( nDice ) * diceValues[dieSize]
         }
+
         return {
             total: total,
             dieSize: dieSize,

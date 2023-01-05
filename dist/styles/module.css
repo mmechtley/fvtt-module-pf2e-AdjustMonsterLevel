@@ -3,12 +3,25 @@
     flex-direction: column;
 }
 
-#adjustMonsterLevelForm .monsterMakerFormText {
+#adjustMonsterLevelForm h2 {
+    margin-top: 1em;
+    border-bottom: none;
+}
+
+#adjustMonsterLevelForm h3 {
+    border-bottom: 1px solid var(--color-underline-header);
+}
+
+#adjustMonsterLevelForm .adjustMonsterLevelFormText {
     font-size: 16px;
 }
 
-#adjustMonsterLevelForm .monsterMakerFormTextSmall {
+#adjustMonsterLevelForm .adjustMonsterLevelFormTextSmall {
     font-size: 15px;
+}
+
+#adjustMonsterLevelForm .adjustMonsterLevelFormAnnotation {
+    margin-left: 1em;
 }
 
 #adjustMonsterLevelForm label {

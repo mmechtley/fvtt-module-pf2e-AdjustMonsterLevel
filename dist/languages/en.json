@@ -4,10 +4,12 @@
     "PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeHint": "Logs json of updates to target documents instead of actually updating the documents",
 
     "PF2EADJUSTMONSTERLEVEL.title": "Adjust Monster",
-    "PF2EADJUSTMONSTERLEVEL.frontMatter": "This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery Guide. Stats that fall between two tiers (e.g. between Moderate and High) will be interpolated. Stats below the minimum or above the maximum from the GMG table will be extrapolated (marked by ⚠️), except ability scores 0 or below. Preview items that will be adjusted with the foldout below.",
+    "PF2EADJUSTMONSTERLEVEL.frontMatter": "This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery Guide. Stats that fall between two tiers (e.g. between Moderate and High) will be interpolated. Stats below the minimum or above the maximum from the GMG table will be extrapolated. Ability modifiers 0 or below are ignored. Preview items that will be adjusted with the foldout below.",
     "PF2EADJUSTMONSTERLEVEL.nameLevel": "Name and Level",
     "PF2EADJUSTMONSTERLEVEL.buttonLabelAdjust": "Adjust",
     "PF2EADJUSTMONSTERLEVEL.statisticsToBeScaled": "Statistics to be Scaled",
+    "PF2EADJUSTMONSTERLEVEL.itemRoll":  "⚔️ Item roll, die size will be preserved",
+    "PF2EADJUSTMONSTERLEVEL.outOfRange": "⚠️ Value out of table range, extrapolation will occur",
 
     "PF2EADJUSTMONSTERLEVEL.categoryDefenses": "Defenses",
     "PF2EADJUSTMONSTERLEVEL.categoryAbilityModifiers": "Ability Modifiers",
