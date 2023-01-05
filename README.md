@@ -1,20 +1,25 @@
 # fvtt-module-pf2e-AdjustMonsterLevel
-A Foundry VTT module designed for Pathfinder 2E System, that allows you to create combat NPCs from scratch, using values from the Pathfinder 2e Building Creatures Guide: https://2e.aonprd.com/Rules.aspx?ID=995
+A Foundry VTT module designed for Pathfinder 2E System that allows scaling a monster's level using the creature building tables from the [Gamemastery Guide](https://2e.aonprd.com/Rules.aspx?ID=995).
 
-To use the Monster Maker, you have to create a blank NPC. Using a non-blank sheet is possible, but DCs and other special abilities will not scale. 
+Once the module is active, an Adjust Level button will appear below the creature level on NPC sheets. This opens a new window that lets you set a new name and level, and lets you preview the inferred tiers of the creature's statistics. Both individual tokens and actors can be scaled. 
 
-When you open its Character Sheet, you can find a button at the top. Clicking this button will open the monster builder.
-In there, you either use one of the roadmaps, allowing you to set values automatically for a given monster type, or you could create your unique creature by changing any of the drop-down menus.
+Statistics between two tiers (e.g. 25% between Moderate and High) will have their values interpolated to remain between those tiers. Statistics that fall below the minimum tier or above the maximum tier will have their values extrapolated similarly. These values are flagged with the ⚠️ symbol.
 
-By default, all values are moderate, meaning you will get a creature that does not possess strengths or weaknesses. If you are planning to use your values rather than roadmaps, please take a look at the Creature Building Guide to see how to create a balanced monster: https://2e.aonprd.com/Rules.aspx?ID=995. Whenever you give a monster a strength, don't forget to give it a weakness to compensate. When you are happy with your values for the monster, click the "Submit" button. This will override the current values on the sheet.
+Statistics that this module will scale:
+- All ability modifiers. Ability modifiers that are below 1 are interpreted as a dump stat or special value (e.g. -4 int for beasts) and won't be adjusted.
+- Hit points, AC, all saves, and perception
+- All skills
+- Spellcasting modifier and DC for any spellcasting entries
+- Attack modifier and damage for any Strikes
 
-Below are the images of the form:
-First part contains all of the important values like Hit Points, Level, Name etc.
-The Second part contains all of the skills as well as the Submit Button
+Statistics not scaled by this module:
+- Resistances and Weaknesses aren't handled yet (planned)
+- Spell heightening or spell level
+- Damage of non-strike abilities, e.g. dragon's breath weapon (planned for any where the formatting is reasonable)
+- Sneak Attack or similar abilities that aren't a strike
+- Any text for strikes that should scale but isn't part of the damage roll, e.g. persistent damage or splash damage
+- Inventory items
 
-![Page One of Monster Form](https://raw.githubusercontent.com/miki4920/fvtt-module-pf2e-MonsterMaker/master/images/PageOne.png)
-![Page Two of Monster Form](https://raw.githubusercontent.com/miki4920/fvtt-module-pf2e-MonsterMaker/master/images/PageTwo.png)
-
-Here is a comparison of size in relation to UI:
-![Size OVerall](https://raw.githubusercontent.com/miki4920/fvtt-module-pf2e-MonsterMaker/master/images/ImageToScale.png)
-![Size in Relation to Sidebar](https://raw.githubusercontent.com/miki4920/fvtt-module-pf2e-MonsterMaker/master/images/Size.png)
+Known Issues:
+- Strike die roll adjustments are very heuristic at the moment so always double-check them. They accurately preserve the relative amount of damage, fraction of the damage coming from each roll when there is more than one damage type, and fraction of each roll coming from flat modifier vs. dice, but the die size selected may sometimes not be ideal.
+- Related, certain spell-like attacks such as alchemical bombs may have their die size changed where strictly speaking you'd want to keep it the same but adjust the number of dice instead. As above, always double check strike damage to make sure the numbers match what you want.
