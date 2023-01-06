@@ -96,7 +96,7 @@ export const savesFields = {
     [Statistics.wil]: 'system.saves.will.value',
 }
 
-export enum Options {
+export enum Tiers {
     extreme = 'PF2EADJUSTMONSTERLEVEL.extreme',
     high = 'PF2EADJUSTMONSTERLEVEL.high',
     moderate = 'PF2EADJUSTMONSTERLEVEL.moderate',
@@ -105,12 +105,12 @@ export enum Options {
     none = 'PF2EADJUSTMONSTERLEVEL.none',
 }
 
-export enum ResistOptions {
+export enum ResistTiers {
     minimum = 'PF2EADJUSTMONSTERLEVEL.minimum',
     maximum = 'PF2EADJUSTMONSTERLEVEL.maximum',
 }
 
-export enum AreaDamage {
+export enum AreaDamageTiers {
     unlimited = 'PF2EADJUSTMONSTERLEVEL.unlimited',
     limited = 'PF2EADJUSTMONSTERLEVEL.limited'
 }

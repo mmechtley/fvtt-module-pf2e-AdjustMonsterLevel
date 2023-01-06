@@ -1,1744 +1,1744 @@
-import {AreaDamage, Dice, Options, ResistOptions, Statistics} from "./Keys";
+import {AreaDamageTiers, Dice, Tiers, ResistTiers, Statistics} from "./Keys";
 
 const aliases = {
     abilityScores: {
         "-1": {
-            [Options.extreme]: "4",
-            [Options.high]: "3",
-            [Options.moderate]: "2",
-            [Options.low]: "0"
+            [Tiers.extreme]: "4",
+            [Tiers.high]: "3",
+            [Tiers.moderate]: "2",
+            [Tiers.low]: "0"
         },
         "0": {
-            [Options.extreme]: "4",
-            [Options.high]: "3",
-            [Options.moderate]: "2",
-            [Options.low]: "0"
+            [Tiers.extreme]: "4",
+            [Tiers.high]: "3",
+            [Tiers.moderate]: "2",
+            [Tiers.low]: "0"
         },
         "1": {
-            [Options.extreme]: "5",
-            [Options.high]: "4",
-            [Options.moderate]: "3",
-            [Options.low]: "1"
+            [Tiers.extreme]: "5",
+            [Tiers.high]: "4",
+            [Tiers.moderate]: "3",
+            [Tiers.low]: "1"
         },
         "2": {
-            [Options.extreme]: "5",
-            [Options.high]: "4",
-            [Options.moderate]: "3",
-            [Options.low]: "1"
+            [Tiers.extreme]: "5",
+            [Tiers.high]: "4",
+            [Tiers.moderate]: "3",
+            [Tiers.low]: "1"
         },
         "3": {
-            [Options.extreme]: "5",
-            [Options.high]: "4",
-            [Options.moderate]: "3",
-            [Options.low]: "1"
+            [Tiers.extreme]: "5",
+            [Tiers.high]: "4",
+            [Tiers.moderate]: "3",
+            [Tiers.low]: "1"
         },
         "4": {
-            [Options.extreme]: "6",
-            [Options.high]: "5",
-            [Options.moderate]: "3",
-            [Options.low]: "2"
+            [Tiers.extreme]: "6",
+            [Tiers.high]: "5",
+            [Tiers.moderate]: "3",
+            [Tiers.low]: "2"
         },
         "5": {
-            [Options.extreme]: "6",
-            [Options.high]: "5",
-            [Options.moderate]: "4",
-            [Options.low]: "2"
+            [Tiers.extreme]: "6",
+            [Tiers.high]: "5",
+            [Tiers.moderate]: "4",
+            [Tiers.low]: "2"
         },
         "6": {
-            [Options.extreme]: "7",
-            [Options.high]: "5",
-            [Options.moderate]: "4",
-            [Options.low]: "2"
+            [Tiers.extreme]: "7",
+            [Tiers.high]: "5",
+            [Tiers.moderate]: "4",
+            [Tiers.low]: "2"
         },
         "7": {
-            [Options.extreme]: "7",
-            [Options.high]: "6",
-            [Options.moderate]: "4",
-            [Options.low]: "2"
+            [Tiers.extreme]: "7",
+            [Tiers.high]: "6",
+            [Tiers.moderate]: "4",
+            [Tiers.low]: "2"
         },
         "8": {
-            [Options.extreme]: "7",
-            [Options.high]: "6",
-            [Options.moderate]: "4",
-            [Options.low]: "3"
+            [Tiers.extreme]: "7",
+            [Tiers.high]: "6",
+            [Tiers.moderate]: "4",
+            [Tiers.low]: "3"
         },
         "9": {
-            [Options.extreme]: "7",
-            [Options.high]: "6",
-            [Options.moderate]: "4",
-            [Options.low]: "3"
+            [Tiers.extreme]: "7",
+            [Tiers.high]: "6",
+            [Tiers.moderate]: "4",
+            [Tiers.low]: "3"
         },
         "10": {
-            [Options.extreme]: "8",
-            [Options.high]: "7",
-            [Options.moderate]: "5",
-            [Options.low]: "3"
+            [Tiers.extreme]: "8",
+            [Tiers.high]: "7",
+            [Tiers.moderate]: "5",
+            [Tiers.low]: "3"
         },
         "11": {
-            [Options.extreme]: "8",
-            [Options.high]: "7",
-            [Options.moderate]: "5",
-            [Options.low]: "3"
+            [Tiers.extreme]: "8",
+            [Tiers.high]: "7",
+            [Tiers.moderate]: "5",
+            [Tiers.low]: "3"
         },
         "12": {
-            [Options.extreme]: "8",
-            [Options.high]: "7",
-            [Options.moderate]: "5",
-            [Options.low]: "4"
+            [Tiers.extreme]: "8",
+            [Tiers.high]: "7",
+            [Tiers.moderate]: "5",
+            [Tiers.low]: "4"
         },
         "13": {
-            [Options.extreme]: "9",
-            [Options.high]: "8",
-            [Options.moderate]: "5",
-            [Options.low]: "4"
+            [Tiers.extreme]: "9",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "5",
+            [Tiers.low]: "4"
         },
         "14": {
-            [Options.extreme]: "9",
-            [Options.high]: "8",
-            [Options.moderate]: "5",
-            [Options.low]: "4"
+            [Tiers.extreme]: "9",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "5",
+            [Tiers.low]: "4"
         },
         "15": {
-            [Options.extreme]: "9",
-            [Options.high]: "8",
-            [Options.moderate]: "6",
-            [Options.low]: "4"
+            [Tiers.extreme]: "9",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "4"
         },
         "16": {
-            [Options.extreme]: "10",
-            [Options.high]: "9",
-            [Options.moderate]: "6",
-            [Options.low]: "5"
+            [Tiers.extreme]: "10",
+            [Tiers.high]: "9",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "5"
         },
         "17": {
-            [Options.extreme]: "10",
-            [Options.high]: "9",
-            [Options.moderate]: "6",
-            [Options.low]: "4"
+            [Tiers.extreme]: "10",
+            [Tiers.high]: "9",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "4"
         },
         "18": {
-            [Options.extreme]: "10",
-            [Options.high]: "9",
-            [Options.moderate]: "6",
-            [Options.low]: "5"
+            [Tiers.extreme]: "10",
+            [Tiers.high]: "9",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "5"
         },
         "19": {
-            [Options.extreme]: "11",
-            [Options.high]: "10",
-            [Options.moderate]: "6",
-            [Options.low]: "5"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "10",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "5"
         },
         "20": {
-            [Options.extreme]: "11",
-            [Options.high]: "10",
-            [Options.moderate]: "7",
-            [Options.low]: "6"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "10",
+            [Tiers.moderate]: "7",
+            [Tiers.low]: "6"
         },
         "21": {
-            [Options.extreme]: "11",
-            [Options.high]: "10",
-            [Options.moderate]: "7",
-            [Options.low]: "6"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "10",
+            [Tiers.moderate]: "7",
+            [Tiers.low]: "6"
         },
         "22": {
-            [Options.extreme]: "11",
-            [Options.high]: "10",
-            [Options.moderate]: "8",
-            [Options.low]: "6"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "10",
+            [Tiers.moderate]: "8",
+            [Tiers.low]: "6"
         },
         "23": {
-            [Options.extreme]: "11",
-            [Options.high]: "10",
-            [Options.moderate]: "8",
-            [Options.low]: "6"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "10",
+            [Tiers.moderate]: "8",
+            [Tiers.low]: "6"
         },
         "24": {
-            [Options.extreme]: "13",
-            [Options.high]: "12",
-            [Options.moderate]: "9",
-            [Options.low]: "7"
+            [Tiers.extreme]: "13",
+            [Tiers.high]: "12",
+            [Tiers.moderate]: "9",
+            [Tiers.low]: "7"
         }
     },
     hitPoints: {
         "-1": {
-            [Options.high]: "9",
-            [Options.moderate]: "7",
-            [Options.low]: "5"
+            [Tiers.high]: "9",
+            [Tiers.moderate]: "7",
+            [Tiers.low]: "5"
         },
         "0": {
-            [Options.high]: "18",
-            [Options.moderate]: "15",
-            [Options.low]: "12"
+            [Tiers.high]: "18",
+            [Tiers.moderate]: "15",
+            [Tiers.low]: "12"
         },
         "1": {
-            [Options.high]: "25",
-            [Options.moderate]: "20",
-            [Options.low]: "15"
+            [Tiers.high]: "25",
+            [Tiers.moderate]: "20",
+            [Tiers.low]: "15"
         },
         "2": {
-            [Options.high]: "38",
-            [Options.moderate]: "30",
-            [Options.low]: "23"
+            [Tiers.high]: "38",
+            [Tiers.moderate]: "30",
+            [Tiers.low]: "23"
         },
         "3": {
-            [Options.high]: "56",
-            [Options.moderate]: "45",
-            [Options.low]: "34"
+            [Tiers.high]: "56",
+            [Tiers.moderate]: "45",
+            [Tiers.low]: "34"
         },
         "4": {
-            [Options.high]: "75",
-            [Options.moderate]: "60",
-            [Options.low]: "45"
+            [Tiers.high]: "75",
+            [Tiers.moderate]: "60",
+            [Tiers.low]: "45"
         },
         "5": {
-            [Options.high]: "94",
-            [Options.moderate]: "75",
-            [Options.low]: "56"
+            [Tiers.high]: "94",
+            [Tiers.moderate]: "75",
+            [Tiers.low]: "56"
         },
         "6": {
-            [Options.high]: "119",
-            [Options.moderate]: "95",
-            [Options.low]: "71"
+            [Tiers.high]: "119",
+            [Tiers.moderate]: "95",
+            [Tiers.low]: "71"
         },
         "7": {
-            [Options.high]: "144",
-            [Options.moderate]: "115",
-            [Options.low]: "86"
+            [Tiers.high]: "144",
+            [Tiers.moderate]: "115",
+            [Tiers.low]: "86"
         },
         "8": {
-            [Options.high]: "169",
-            [Options.moderate]: "135",
-            [Options.low]: "101"
+            [Tiers.high]: "169",
+            [Tiers.moderate]: "135",
+            [Tiers.low]: "101"
         },
         "9": {
-            [Options.high]: "194",
-            [Options.moderate]: "155",
-            [Options.low]: "116"
+            [Tiers.high]: "194",
+            [Tiers.moderate]: "155",
+            [Tiers.low]: "116"
         },
         "10": {
-            [Options.high]: "219",
-            [Options.moderate]: "175",
-            [Options.low]: "131"
+            [Tiers.high]: "219",
+            [Tiers.moderate]: "175",
+            [Tiers.low]: "131"
         },
         "11": {
-            [Options.high]: "244",
-            [Options.moderate]: "195",
-            [Options.low]: "146"
+            [Tiers.high]: "244",
+            [Tiers.moderate]: "195",
+            [Tiers.low]: "146"
         },
         "12": {
-            [Options.high]: "269",
-            [Options.moderate]: "215",
-            [Options.low]: "161"
+            [Tiers.high]: "269",
+            [Tiers.moderate]: "215",
+            [Tiers.low]: "161"
         },
         "13": {
-            [Options.high]: "294",
-            [Options.moderate]: "235",
-            [Options.low]: "176"
+            [Tiers.high]: "294",
+            [Tiers.moderate]: "235",
+            [Tiers.low]: "176"
         },
         "14": {
-            [Options.high]: "319",
-            [Options.moderate]: "255",
-            [Options.low]: "191"
+            [Tiers.high]: "319",
+            [Tiers.moderate]: "255",
+            [Tiers.low]: "191"
         },
         "15": {
-            [Options.high]: "344",
-            [Options.moderate]: "275",
-            [Options.low]: "206"
+            [Tiers.high]: "344",
+            [Tiers.moderate]: "275",
+            [Tiers.low]: "206"
         },
         "16": {
-            [Options.high]: "369",
-            [Options.moderate]: "295",
-            [Options.low]: "221"
+            [Tiers.high]: "369",
+            [Tiers.moderate]: "295",
+            [Tiers.low]: "221"
         },
         "17": {
-            [Options.high]: "394",
-            [Options.moderate]: "315",
-            [Options.low]: "236"
+            [Tiers.high]: "394",
+            [Tiers.moderate]: "315",
+            [Tiers.low]: "236"
         },
         "18": {
-            [Options.high]: "419",
-            [Options.moderate]: "335",
-            [Options.low]: "251"
+            [Tiers.high]: "419",
+            [Tiers.moderate]: "335",
+            [Tiers.low]: "251"
         },
         "19": {
-            [Options.high]: "444",
-            [Options.moderate]: "355",
-            [Options.low]: "266"
+            [Tiers.high]: "444",
+            [Tiers.moderate]: "355",
+            [Tiers.low]: "266"
         },
         "20": {
-            [Options.high]: "469",
-            [Options.moderate]: "375",
-            [Options.low]: "281"
+            [Tiers.high]: "469",
+            [Tiers.moderate]: "375",
+            [Tiers.low]: "281"
         },
         "21": {
-            [Options.high]: "500",
-            [Options.moderate]: "400",
-            [Options.low]: "300"
+            [Tiers.high]: "500",
+            [Tiers.moderate]: "400",
+            [Tiers.low]: "300"
         },
         "22": {
-            [Options.high]: "538",
-            [Options.moderate]: "430",
-            [Options.low]: "323"
+            [Tiers.high]: "538",
+            [Tiers.moderate]: "430",
+            [Tiers.low]: "323"
         },
         "23": {
-            [Options.high]: "575",
-            [Options.moderate]: "460",
-            [Options.low]: "345"
+            [Tiers.high]: "575",
+            [Tiers.moderate]: "460",
+            [Tiers.low]: "345"
         },
         "24": {
-            [Options.high]: "625",
-            [Options.moderate]: "500",
-            [Options.low]: "375"
+            [Tiers.high]: "625",
+            [Tiers.moderate]: "500",
+            [Tiers.low]: "375"
         }
     },
     perceptionSaves: {
         "-1": {
-            [Options.extreme]: "9",
-            [Options.high]: "8",
-            [Options.moderate]: "5",
-            [Options.low]: "2",
-            [Options.terrible]: "0"
+            [Tiers.extreme]: "9",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "5",
+            [Tiers.low]: "2",
+            [Tiers.terrible]: "0"
         },
         "0": {
-            [Options.extreme]: "10",
-            [Options.high]: "9",
-            [Options.moderate]: "6",
-            [Options.low]: "3",
-            [Options.terrible]: "1"
+            [Tiers.extreme]: "10",
+            [Tiers.high]: "9",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "3",
+            [Tiers.terrible]: "1"
         },
         "1": {
-            [Options.extreme]: "11",
-            [Options.high]: "10",
-            [Options.moderate]: "7",
-            [Options.low]: "4",
-            [Options.terrible]: "2"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "10",
+            [Tiers.moderate]: "7",
+            [Tiers.low]: "4",
+            [Tiers.terrible]: "2"
         },
         "2": {
-            [Options.extreme]: "12",
-            [Options.high]: "11",
-            [Options.moderate]: "8",
-            [Options.low]: "5",
-            [Options.terrible]: "3"
+            [Tiers.extreme]: "12",
+            [Tiers.high]: "11",
+            [Tiers.moderate]: "8",
+            [Tiers.low]: "5",
+            [Tiers.terrible]: "3"
         },
         "3": {
-            [Options.extreme]: "14",
-            [Options.high]: "12",
-            [Options.moderate]: "9",
-            [Options.low]: "6",
-            [Options.terrible]: "4"
+            [Tiers.extreme]: "14",
+            [Tiers.high]: "12",
+            [Tiers.moderate]: "9",
+            [Tiers.low]: "6",
+            [Tiers.terrible]: "4"
         },
         "4": {
-            [Options.extreme]: "15",
-            [Options.high]: "14",
-            [Options.moderate]: "11",
-            [Options.low]: "8",
-            [Options.terrible]: "6"
+            [Tiers.extreme]: "15",
+            [Tiers.high]: "14",
+            [Tiers.moderate]: "11",
+            [Tiers.low]: "8",
+            [Tiers.terrible]: "6"
         },
         "5": {
-            [Options.extreme]: "17",
-            [Options.high]: "15",
-            [Options.moderate]: "12",
-            [Options.low]: "9",
-            [Options.terrible]: "7"
+            [Tiers.extreme]: "17",
+            [Tiers.high]: "15",
+            [Tiers.moderate]: "12",
+            [Tiers.low]: "9",
+            [Tiers.terrible]: "7"
         },
         "6": {
-            [Options.extreme]: "18",
-            [Options.high]: "17",
-            [Options.moderate]: "14",
-            [Options.low]: "11",
-            [Options.terrible]: "8"
+            [Tiers.extreme]: "18",
+            [Tiers.high]: "17",
+            [Tiers.moderate]: "14",
+            [Tiers.low]: "11",
+            [Tiers.terrible]: "8"
         },
         "7": {
-            [Options.extreme]: "20",
-            [Options.high]: "18",
-            [Options.moderate]: "15",
-            [Options.low]: "12",
-            [Options.terrible]: "10"
+            [Tiers.extreme]: "20",
+            [Tiers.high]: "18",
+            [Tiers.moderate]: "15",
+            [Tiers.low]: "12",
+            [Tiers.terrible]: "10"
         },
         "8": {
-            [Options.extreme]: "21",
-            [Options.high]: "19",
-            [Options.moderate]: "16",
-            [Options.low]: "13",
-            [Options.terrible]: "11"
+            [Tiers.extreme]: "21",
+            [Tiers.high]: "19",
+            [Tiers.moderate]: "16",
+            [Tiers.low]: "13",
+            [Tiers.terrible]: "11"
         },
         "9": {
-            [Options.extreme]: "23",
-            [Options.high]: "21",
-            [Options.moderate]: "18",
-            [Options.low]: "15",
-            [Options.terrible]: "12"
+            [Tiers.extreme]: "23",
+            [Tiers.high]: "21",
+            [Tiers.moderate]: "18",
+            [Tiers.low]: "15",
+            [Tiers.terrible]: "12"
         },
         "10": {
-            [Options.extreme]: "24",
-            [Options.high]: "22",
-            [Options.moderate]: "19",
-            [Options.low]: "16",
-            [Options.terrible]: "14"
+            [Tiers.extreme]: "24",
+            [Tiers.high]: "22",
+            [Tiers.moderate]: "19",
+            [Tiers.low]: "16",
+            [Tiers.terrible]: "14"
         },
         "11": {
-            [Options.extreme]: "26",
-            [Options.high]: "24",
-            [Options.moderate]: "21",
-            [Options.low]: "18",
-            [Options.terrible]: "15"
+            [Tiers.extreme]: "26",
+            [Tiers.high]: "24",
+            [Tiers.moderate]: "21",
+            [Tiers.low]: "18",
+            [Tiers.terrible]: "15"
         },
         "12": {
-            [Options.extreme]: "27",
-            [Options.high]: "25",
-            [Options.moderate]: "22",
-            [Options.low]: "19",
-            [Options.terrible]: "16"
+            [Tiers.extreme]: "27",
+            [Tiers.high]: "25",
+            [Tiers.moderate]: "22",
+            [Tiers.low]: "19",
+            [Tiers.terrible]: "16"
         },
         "13": {
-            [Options.extreme]: "29",
-            [Options.high]: "26",
-            [Options.moderate]: "23",
-            [Options.low]: "20",
-            [Options.terrible]: "18"
+            [Tiers.extreme]: "29",
+            [Tiers.high]: "26",
+            [Tiers.moderate]: "23",
+            [Tiers.low]: "20",
+            [Tiers.terrible]: "18"
         },
         "14": {
-            [Options.extreme]: "30",
-            [Options.high]: "28",
-            [Options.moderate]: "25",
-            [Options.low]: "22",
-            [Options.terrible]: "19"
+            [Tiers.extreme]: "30",
+            [Tiers.high]: "28",
+            [Tiers.moderate]: "25",
+            [Tiers.low]: "22",
+            [Tiers.terrible]: "19"
         },
         "15": {
-            [Options.extreme]: "32",
-            [Options.high]: "29",
-            [Options.moderate]: "26",
-            [Options.low]: "23",
-            [Options.terrible]: "20"
+            [Tiers.extreme]: "32",
+            [Tiers.high]: "29",
+            [Tiers.moderate]: "26",
+            [Tiers.low]: "23",
+            [Tiers.terrible]: "20"
         },
         "16": {
-            [Options.extreme]: "33",
-            [Options.high]: "30",
-            [Options.moderate]: "28",
-            [Options.low]: "25",
-            [Options.terrible]: "22"
+            [Tiers.extreme]: "33",
+            [Tiers.high]: "30",
+            [Tiers.moderate]: "28",
+            [Tiers.low]: "25",
+            [Tiers.terrible]: "22"
         },
         "17": {
-            [Options.extreme]: "35",
-            [Options.high]: "32",
-            [Options.moderate]: "29",
-            [Options.low]: "26",
-            [Options.terrible]: "23"
+            [Tiers.extreme]: "35",
+            [Tiers.high]: "32",
+            [Tiers.moderate]: "29",
+            [Tiers.low]: "26",
+            [Tiers.terrible]: "23"
         },
         "18": {
-            [Options.extreme]: "36",
-            [Options.high]: "33",
-            [Options.moderate]: "30",
-            [Options.low]: "27",
-            [Options.terrible]: "24"
+            [Tiers.extreme]: "36",
+            [Tiers.high]: "33",
+            [Tiers.moderate]: "30",
+            [Tiers.low]: "27",
+            [Tiers.terrible]: "24"
         },
         "19": {
-            [Options.extreme]: "38",
-            [Options.high]: "35",
-            [Options.moderate]: "32",
-            [Options.low]: "29",
-            [Options.terrible]: "26"
+            [Tiers.extreme]: "38",
+            [Tiers.high]: "35",
+            [Tiers.moderate]: "32",
+            [Tiers.low]: "29",
+            [Tiers.terrible]: "26"
         },
         "20": {
-            [Options.extreme]: "39",
-            [Options.high]: "36",
-            [Options.moderate]: "33",
-            [Options.low]: "30",
-            [Options.terrible]: "27"
+            [Tiers.extreme]: "39",
+            [Tiers.high]: "36",
+            [Tiers.moderate]: "33",
+            [Tiers.low]: "30",
+            [Tiers.terrible]: "27"
         },
         "21": {
-            [Options.extreme]: "41",
-            [Options.high]: "38",
-            [Options.moderate]: "35",
-            [Options.low]: "32",
-            [Options.terrible]: "28"
+            [Tiers.extreme]: "41",
+            [Tiers.high]: "38",
+            [Tiers.moderate]: "35",
+            [Tiers.low]: "32",
+            [Tiers.terrible]: "28"
         },
         "22": {
-            [Options.extreme]: "43",
-            [Options.high]: "39",
-            [Options.moderate]: "36",
-            [Options.low]: "33",
-            [Options.terrible]: "30"
+            [Tiers.extreme]: "43",
+            [Tiers.high]: "39",
+            [Tiers.moderate]: "36",
+            [Tiers.low]: "33",
+            [Tiers.terrible]: "30"
         },
         "23": {
-            [Options.extreme]: "44",
-            [Options.high]: "40",
-            [Options.moderate]: "37",
-            [Options.low]: "34",
-            [Options.terrible]: "31"
+            [Tiers.extreme]: "44",
+            [Tiers.high]: "40",
+            [Tiers.moderate]: "37",
+            [Tiers.low]: "34",
+            [Tiers.terrible]: "31"
         },
         "24": {
-            [Options.extreme]: "46",
-            [Options.high]: "42",
-            [Options.moderate]: "38",
-            [Options.low]: "36",
-            [Options.terrible]: "32"
+            [Tiers.extreme]: "46",
+            [Tiers.high]: "42",
+            [Tiers.moderate]: "38",
+            [Tiers.low]: "36",
+            [Tiers.terrible]: "32"
         }
     },
     armorClass: {
         "-1": {
-            [Options.extreme]: "18",
-            [Options.high]: "15",
-            [Options.moderate]: "14",
-            [Options.low]: "12"
+            [Tiers.extreme]: "18",
+            [Tiers.high]: "15",
+            [Tiers.moderate]: "14",
+            [Tiers.low]: "12"
         },
         "0": {
-            [Options.extreme]: "19",
-            [Options.high]: "16",
-            [Options.moderate]: "15",
-            [Options.low]: "13"
+            [Tiers.extreme]: "19",
+            [Tiers.high]: "16",
+            [Tiers.moderate]: "15",
+            [Tiers.low]: "13"
         },
         "1": {
-            [Options.extreme]: "19",
-            [Options.high]: "16",
-            [Options.moderate]: "15",
-            [Options.low]: "13"
+            [Tiers.extreme]: "19",
+            [Tiers.high]: "16",
+            [Tiers.moderate]: "15",
+            [Tiers.low]: "13"
         },
         "2": {
-            [Options.extreme]: "21",
-            [Options.high]: "18",
-            [Options.moderate]: "17",
-            [Options.low]: "15"
+            [Tiers.extreme]: "21",
+            [Tiers.high]: "18",
+            [Tiers.moderate]: "17",
+            [Tiers.low]: "15"
         },
         "3": {
-            [Options.extreme]: "22",
-            [Options.high]: "19",
-            [Options.moderate]: "18",
-            [Options.low]: "16"
+            [Tiers.extreme]: "22",
+            [Tiers.high]: "19",
+            [Tiers.moderate]: "18",
+            [Tiers.low]: "16"
         },
         "4": {
-            [Options.extreme]: "24",
-            [Options.high]: "21",
-            [Options.moderate]: "20",
-            [Options.low]: "18"
+            [Tiers.extreme]: "24",
+            [Tiers.high]: "21",
+            [Tiers.moderate]: "20",
+            [Tiers.low]: "18"
         },
         "5": {
-            [Options.extreme]: "25",
-            [Options.high]: "22",
-            [Options.moderate]: "21",
-            [Options.low]: "19"
+            [Tiers.extreme]: "25",
+            [Tiers.high]: "22",
+            [Tiers.moderate]: "21",
+            [Tiers.low]: "19"
         },
         "6": {
-            [Options.extreme]: "27",
-            [Options.high]: "24",
-            [Options.moderate]: "23",
-            [Options.low]: "21"
+            [Tiers.extreme]: "27",
+            [Tiers.high]: "24",
+            [Tiers.moderate]: "23",
+            [Tiers.low]: "21"
         },
         "7": {
-            [Options.extreme]: "28",
-            [Options.high]: "25",
-            [Options.moderate]: "24",
-            [Options.low]: "22"
+            [Tiers.extreme]: "28",
+            [Tiers.high]: "25",
+            [Tiers.moderate]: "24",
+            [Tiers.low]: "22"
         },
         "8": {
-            [Options.extreme]: "30",
-            [Options.high]: "27",
-            [Options.moderate]: "26",
-            [Options.low]: "24"
+            [Tiers.extreme]: "30",
+            [Tiers.high]: "27",
+            [Tiers.moderate]: "26",
+            [Tiers.low]: "24"
         },
         "9": {
-            [Options.extreme]: "31",
-            [Options.high]: "28",
-            [Options.moderate]: "27",
-            [Options.low]: "25"
+            [Tiers.extreme]: "31",
+            [Tiers.high]: "28",
+            [Tiers.moderate]: "27",
+            [Tiers.low]: "25"
         },
         "10": {
-            [Options.extreme]: "33",
-            [Options.high]: "30",
-            [Options.moderate]: "29",
-            [Options.low]: "27"
+            [Tiers.extreme]: "33",
+            [Tiers.high]: "30",
+            [Tiers.moderate]: "29",
+            [Tiers.low]: "27"
         },
         "11": {
-            [Options.extreme]: "34",
-            [Options.high]: "31",
-            [Options.moderate]: "30",
-            [Options.low]: "28"
+            [Tiers.extreme]: "34",
+            [Tiers.high]: "31",
+            [Tiers.moderate]: "30",
+            [Tiers.low]: "28"
         },
         "12": {
-            [Options.extreme]: "36",
-            [Options.high]: "33",
-            [Options.moderate]: "32",
-            [Options.low]: "30"
+            [Tiers.extreme]: "36",
+            [Tiers.high]: "33",
+            [Tiers.moderate]: "32",
+            [Tiers.low]: "30"
         },
         "13": {
-            [Options.extreme]: "37",
-            [Options.high]: "34",
-            [Options.moderate]: "33",
-            [Options.low]: "31"
+            [Tiers.extreme]: "37",
+            [Tiers.high]: "34",
+            [Tiers.moderate]: "33",
+            [Tiers.low]: "31"
         },
         "14": {
-            [Options.extreme]: "39",
-            [Options.high]: "36",
-            [Options.moderate]: "35",
-            [Options.low]: "33"
+            [Tiers.extreme]: "39",
+            [Tiers.high]: "36",
+            [Tiers.moderate]: "35",
+            [Tiers.low]: "33"
         },
         "15": {
-            [Options.extreme]: "40",
-            [Options.high]: "37",
-            [Options.moderate]: "36",
-            [Options.low]: "34"
+            [Tiers.extreme]: "40",
+            [Tiers.high]: "37",
+            [Tiers.moderate]: "36",
+            [Tiers.low]: "34"
         },
         "16": {
-            [Options.extreme]: "42",
-            [Options.high]: "39",
-            [Options.moderate]: "38",
-            [Options.low]: "36"
+            [Tiers.extreme]: "42",
+            [Tiers.high]: "39",
+            [Tiers.moderate]: "38",
+            [Tiers.low]: "36"
         },
         "17": {
-            [Options.extreme]: "43",
-            [Options.high]: "40",
-            [Options.moderate]: "39",
-            [Options.low]: "37"
+            [Tiers.extreme]: "43",
+            [Tiers.high]: "40",
+            [Tiers.moderate]: "39",
+            [Tiers.low]: "37"
         },
         "18": {
-            [Options.extreme]: "45",
-            [Options.high]: "42",
-            [Options.moderate]: "41",
-            [Options.low]: "39"
+            [Tiers.extreme]: "45",
+            [Tiers.high]: "42",
+            [Tiers.moderate]: "41",
+            [Tiers.low]: "39"
         },
         "19": {
-            [Options.extreme]: "46",
-            [Options.high]: "43",
-            [Options.moderate]: "42",
-            [Options.low]: "40"
+            [Tiers.extreme]: "46",
+            [Tiers.high]: "43",
+            [Tiers.moderate]: "42",
+            [Tiers.low]: "40"
         },
         "20": {
-            [Options.extreme]: "48",
-            [Options.high]: "45",
-            [Options.moderate]: "44",
-            [Options.low]: "42"
+            [Tiers.extreme]: "48",
+            [Tiers.high]: "45",
+            [Tiers.moderate]: "44",
+            [Tiers.low]: "42"
         },
         "21": {
-            [Options.extreme]: "49",
-            [Options.high]: "46",
-            [Options.moderate]: "45",
-            [Options.low]: "43"
+            [Tiers.extreme]: "49",
+            [Tiers.high]: "46",
+            [Tiers.moderate]: "45",
+            [Tiers.low]: "43"
         },
         "22": {
-            [Options.extreme]: "51",
-            [Options.high]: "48",
-            [Options.moderate]: "47",
-            [Options.low]: "45"
+            [Tiers.extreme]: "51",
+            [Tiers.high]: "48",
+            [Tiers.moderate]: "47",
+            [Tiers.low]: "45"
         },
         "23": {
-            [Options.extreme]: "52",
-            [Options.high]: "49",
-            [Options.moderate]: "48",
-            [Options.low]: "46"
+            [Tiers.extreme]: "52",
+            [Tiers.high]: "49",
+            [Tiers.moderate]: "48",
+            [Tiers.low]: "46"
         },
         "24": {
-            [Options.extreme]: "54",
-            [Options.high]: "51",
-            [Options.moderate]: "50",
-            [Options.low]: "48"
+            [Tiers.extreme]: "54",
+            [Tiers.high]: "51",
+            [Tiers.moderate]: "50",
+            [Tiers.low]: "48"
         }
     },
     strikeBonus: {
         "-1": {
-            [Options.extreme]: "10",
-            [Options.high]: "8",
-            [Options.moderate]: "6",
-            [Options.low]: "4"
+            [Tiers.extreme]: "10",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "4"
         },
         "0": {
-            [Options.extreme]: "10",
-            [Options.high]: "8",
-            [Options.moderate]: "6",
-            [Options.low]: "4"
+            [Tiers.extreme]: "10",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "4"
         },
         "1": {
-            [Options.extreme]: "11",
-            [Options.high]: "9",
-            [Options.moderate]: "7",
-            [Options.low]: "5"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "9",
+            [Tiers.moderate]: "7",
+            [Tiers.low]: "5"
         },
         "2": {
-            [Options.extreme]: "13",
-            [Options.high]: "11",
-            [Options.moderate]: "9",
-            [Options.low]: "7"
+            [Tiers.extreme]: "13",
+            [Tiers.high]: "11",
+            [Tiers.moderate]: "9",
+            [Tiers.low]: "7"
         },
         "3": {
-            [Options.extreme]: "14",
-            [Options.high]: "12",
-            [Options.moderate]: "10",
-            [Options.low]: "8"
+            [Tiers.extreme]: "14",
+            [Tiers.high]: "12",
+            [Tiers.moderate]: "10",
+            [Tiers.low]: "8"
         },
         "4": {
-            [Options.extreme]: "16",
-            [Options.high]: "14",
-            [Options.moderate]: "12",
-            [Options.low]: "9"
+            [Tiers.extreme]: "16",
+            [Tiers.high]: "14",
+            [Tiers.moderate]: "12",
+            [Tiers.low]: "9"
         },
         "5": {
-            [Options.extreme]: "17",
-            [Options.high]: "15",
-            [Options.moderate]: "13",
-            [Options.low]: "11"
+            [Tiers.extreme]: "17",
+            [Tiers.high]: "15",
+            [Tiers.moderate]: "13",
+            [Tiers.low]: "11"
         },
         "6": {
-            [Options.extreme]: "19",
-            [Options.high]: "17",
-            [Options.moderate]: "15",
-            [Options.low]: "12"
+            [Tiers.extreme]: "19",
+            [Tiers.high]: "17",
+            [Tiers.moderate]: "15",
+            [Tiers.low]: "12"
         },
         "7": {
-            [Options.extreme]: "20",
-            [Options.high]: "18",
-            [Options.moderate]: "16",
-            [Options.low]: "13"
+            [Tiers.extreme]: "20",
+            [Tiers.high]: "18",
+            [Tiers.moderate]: "16",
+            [Tiers.low]: "13"
         },
         "8": {
-            [Options.extreme]: "22",
-            [Options.high]: "20",
-            [Options.moderate]: "18",
-            [Options.low]: "15"
+            [Tiers.extreme]: "22",
+            [Tiers.high]: "20",
+            [Tiers.moderate]: "18",
+            [Tiers.low]: "15"
         },
         "9": {
-            [Options.extreme]: "23",
-            [Options.high]: "21",
-            [Options.moderate]: "19",
-            [Options.low]: "16"
+            [Tiers.extreme]: "23",
+            [Tiers.high]: "21",
+            [Tiers.moderate]: "19",
+            [Tiers.low]: "16"
         },
         "10": {
-            [Options.extreme]: "25",
-            [Options.high]: "23",
-            [Options.moderate]: "21",
-            [Options.low]: "17"
+            [Tiers.extreme]: "25",
+            [Tiers.high]: "23",
+            [Tiers.moderate]: "21",
+            [Tiers.low]: "17"
         },
         "11": {
-            [Options.extreme]: "27",
-            [Options.high]: "24",
-            [Options.moderate]: "22",
-            [Options.low]: "19"
+            [Tiers.extreme]: "27",
+            [Tiers.high]: "24",
+            [Tiers.moderate]: "22",
+            [Tiers.low]: "19"
         },
         "12": {
-            [Options.extreme]: "28",
-            [Options.high]: "26",
-            [Options.moderate]: "24",
-            [Options.low]: "20"
+            [Tiers.extreme]: "28",
+            [Tiers.high]: "26",
+            [Tiers.moderate]: "24",
+            [Tiers.low]: "20"
         },
         "13": {
-            [Options.extreme]: "29",
-            [Options.high]: "27",
-            [Options.moderate]: "25",
-            [Options.low]: "21"
+            [Tiers.extreme]: "29",
+            [Tiers.high]: "27",
+            [Tiers.moderate]: "25",
+            [Tiers.low]: "21"
         },
         "14": {
-            [Options.extreme]: "31",
-            [Options.high]: "29",
-            [Options.moderate]: "27",
-            [Options.low]: "23"
+            [Tiers.extreme]: "31",
+            [Tiers.high]: "29",
+            [Tiers.moderate]: "27",
+            [Tiers.low]: "23"
         },
         "15": {
-            [Options.extreme]: "32",
-            [Options.high]: "30",
-            [Options.moderate]: "28",
-            [Options.low]: "24"
+            [Tiers.extreme]: "32",
+            [Tiers.high]: "30",
+            [Tiers.moderate]: "28",
+            [Tiers.low]: "24"
         },
         "16": {
-            [Options.extreme]: "34",
-            [Options.high]: "32",
-            [Options.moderate]: "30",
-            [Options.low]: "25"
+            [Tiers.extreme]: "34",
+            [Tiers.high]: "32",
+            [Tiers.moderate]: "30",
+            [Tiers.low]: "25"
         },
         "17": {
-            [Options.extreme]: "35",
-            [Options.high]: "33",
-            [Options.moderate]: "31",
-            [Options.low]: "27"
+            [Tiers.extreme]: "35",
+            [Tiers.high]: "33",
+            [Tiers.moderate]: "31",
+            [Tiers.low]: "27"
         },
         "18": {
-            [Options.extreme]: "37",
-            [Options.high]: "35",
-            [Options.moderate]: "33",
-            [Options.low]: "28"
+            [Tiers.extreme]: "37",
+            [Tiers.high]: "35",
+            [Tiers.moderate]: "33",
+            [Tiers.low]: "28"
         },
         "19": {
-            [Options.extreme]: "38",
-            [Options.high]: "36",
-            [Options.moderate]: "34",
-            [Options.low]: "29"
+            [Tiers.extreme]: "38",
+            [Tiers.high]: "36",
+            [Tiers.moderate]: "34",
+            [Tiers.low]: "29"
         },
         "20": {
-            [Options.extreme]: "40",
-            [Options.high]: "38",
-            [Options.moderate]: "36",
-            [Options.low]: "31"
+            [Tiers.extreme]: "40",
+            [Tiers.high]: "38",
+            [Tiers.moderate]: "36",
+            [Tiers.low]: "31"
         },
         "21": {
-            [Options.extreme]: "41",
-            [Options.high]: "39",
-            [Options.moderate]: "37",
-            [Options.low]: "32"
+            [Tiers.extreme]: "41",
+            [Tiers.high]: "39",
+            [Tiers.moderate]: "37",
+            [Tiers.low]: "32"
         },
         "22": {
-            [Options.extreme]: "43",
-            [Options.high]: "41",
-            [Options.moderate]: "39",
-            [Options.low]: "33"
+            [Tiers.extreme]: "43",
+            [Tiers.high]: "41",
+            [Tiers.moderate]: "39",
+            [Tiers.low]: "33"
         },
         "23": {
-            [Options.extreme]: "44",
-            [Options.high]: "42",
-            [Options.moderate]: "40",
-            [Options.low]: "35"
+            [Tiers.extreme]: "44",
+            [Tiers.high]: "42",
+            [Tiers.moderate]: "40",
+            [Tiers.low]: "35"
         },
         "24": {
-            [Options.extreme]: "46",
-            [Options.high]: "44",
-            [Options.moderate]: "42",
-            [Options.low]: "36"
+            [Tiers.extreme]: "46",
+            [Tiers.high]: "44",
+            [Tiers.moderate]: "42",
+            [Tiers.low]: "36"
         }
     },
     strikeDamage:{
         "-1": {
-            [Options.extreme]: "4",
-            [Options.high]: "3",
-            [Options.moderate]: "3",
-            [Options.low]: "2"
+            [Tiers.extreme]: "4",
+            [Tiers.high]: "3",
+            [Tiers.moderate]: "3",
+            [Tiers.low]: "2"
         },
         "0": {
-            [Options.extreme]: "6",
-            [Options.high]: "5",
-            [Options.moderate]: "4",
-            [Options.low]: "3"
+            [Tiers.extreme]: "6",
+            [Tiers.high]: "5",
+            [Tiers.moderate]: "4",
+            [Tiers.low]: "3"
         },
         "1": {
-            [Options.extreme]: "8",
-            [Options.high]: "6",
-            [Options.moderate]: "5",
-            [Options.low]: "4"
+            [Tiers.extreme]: "8",
+            [Tiers.high]: "6",
+            [Tiers.moderate]: "5",
+            [Tiers.low]: "4"
         },
         "2": {
-            [Options.extreme]: "11",
-            [Options.high]: "9",
-            [Options.moderate]: "8",
-            [Options.low]: "6"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "9",
+            [Tiers.moderate]: "8",
+            [Tiers.low]: "6"
         },
         "3": {
-            [Options.extreme]: "15",
-            [Options.high]: "12",
-            [Options.moderate]: "10",
-            [Options.low]: "8"
+            [Tiers.extreme]: "15",
+            [Tiers.high]: "12",
+            [Tiers.moderate]: "10",
+            [Tiers.low]: "8"
         },
         "4": {
-            [Options.extreme]: "18",
-            [Options.high]: "14",
-            [Options.moderate]: "12",
-            [Options.low]: "9"
+            [Tiers.extreme]: "18",
+            [Tiers.high]: "14",
+            [Tiers.moderate]: "12",
+            [Tiers.low]: "9"
         },
         "5": {
-            [Options.extreme]: "20",
-            [Options.high]: "16",
-            [Options.moderate]: "13",
-            [Options.low]: "11"
+            [Tiers.extreme]: "20",
+            [Tiers.high]: "16",
+            [Tiers.moderate]: "13",
+            [Tiers.low]: "11"
         },
         "6": {
-            [Options.extreme]: "23",
-            [Options.high]: "18",
-            [Options.moderate]: "15",
-            [Options.low]: "12"
+            [Tiers.extreme]: "23",
+            [Tiers.high]: "18",
+            [Tiers.moderate]: "15",
+            [Tiers.low]: "12"
         },
         "7": {
-            [Options.extreme]: "25",
-            [Options.high]: "20",
-            [Options.moderate]: "17",
-            [Options.low]: "13"
+            [Tiers.extreme]: "25",
+            [Tiers.high]: "20",
+            [Tiers.moderate]: "17",
+            [Tiers.low]: "13"
         },
         "8": {
-            [Options.extreme]: "28",
-            [Options.high]: "22",
-            [Options.moderate]: "18",
-            [Options.low]: "15"
+            [Tiers.extreme]: "28",
+            [Tiers.high]: "22",
+            [Tiers.moderate]: "18",
+            [Tiers.low]: "15"
         },
         "9": {
-            [Options.extreme]: "30",
-            [Options.high]: "24",
-            [Options.moderate]: "20",
-            [Options.low]: "16"
+            [Tiers.extreme]: "30",
+            [Tiers.high]: "24",
+            [Tiers.moderate]: "20",
+            [Tiers.low]: "16"
         },
         "10": {
-            [Options.extreme]: "33",
-            [Options.high]: "26",
-            [Options.moderate]: "22",
-            [Options.low]: "17"
+            [Tiers.extreme]: "33",
+            [Tiers.high]: "26",
+            [Tiers.moderate]: "22",
+            [Tiers.low]: "17"
         },
         "11": {
-            [Options.extreme]: "35",
-            [Options.high]: "28",
-            [Options.moderate]: "23",
-            [Options.low]: "19"
+            [Tiers.extreme]: "35",
+            [Tiers.high]: "28",
+            [Tiers.moderate]: "23",
+            [Tiers.low]: "19"
         },
         "12": {
-            [Options.extreme]: "38",
-            [Options.high]: "30",
-            [Options.moderate]: "25",
-            [Options.low]: "20"
+            [Tiers.extreme]: "38",
+            [Tiers.high]: "30",
+            [Tiers.moderate]: "25",
+            [Tiers.low]: "20"
         },
         "13": {
-            [Options.extreme]: "40",
-            [Options.high]: "32",
-            [Options.moderate]: "27",
-            [Options.low]: "21"
+            [Tiers.extreme]: "40",
+            [Tiers.high]: "32",
+            [Tiers.moderate]: "27",
+            [Tiers.low]: "21"
         },
         "14": {
-            [Options.extreme]: "43",
-            [Options.high]: "34",
-            [Options.moderate]: "28",
-            [Options.low]: "23"
+            [Tiers.extreme]: "43",
+            [Tiers.high]: "34",
+            [Tiers.moderate]: "28",
+            [Tiers.low]: "23"
         },
         "15": {
-            [Options.extreme]: "45",
-            [Options.high]: "36",
-            [Options.moderate]: "30",
-            [Options.low]: "24"
+            [Tiers.extreme]: "45",
+            [Tiers.high]: "36",
+            [Tiers.moderate]: "30",
+            [Tiers.low]: "24"
         },
         "16": {
-            [Options.extreme]: "48",
-            [Options.high]: "37",
-            [Options.moderate]: "31",
-            [Options.low]: "25"
+            [Tiers.extreme]: "48",
+            [Tiers.high]: "37",
+            [Tiers.moderate]: "31",
+            [Tiers.low]: "25"
         },
         "17": {
-            [Options.extreme]: "50",
-            [Options.high]: "38",
-            [Options.moderate]: "32",
-            [Options.low]: "26"
+            [Tiers.extreme]: "50",
+            [Tiers.high]: "38",
+            [Tiers.moderate]: "32",
+            [Tiers.low]: "26"
         },
         "18": {
-            [Options.extreme]: "53",
-            [Options.high]: "40",
-            [Options.moderate]: "33",
-            [Options.low]: "27"
+            [Tiers.extreme]: "53",
+            [Tiers.high]: "40",
+            [Tiers.moderate]: "33",
+            [Tiers.low]: "27"
         },
         "19": {
-            [Options.extreme]: "55",
-            [Options.high]: "42",
-            [Options.moderate]: "35",
-            [Options.low]: "28"
+            [Tiers.extreme]: "55",
+            [Tiers.high]: "42",
+            [Tiers.moderate]: "35",
+            [Tiers.low]: "28"
         },
         "20": {
-            [Options.extreme]: "58",
-            [Options.high]: "44",
-            [Options.moderate]: "37",
-            [Options.low]: "29"
+            [Tiers.extreme]: "58",
+            [Tiers.high]: "44",
+            [Tiers.moderate]: "37",
+            [Tiers.low]: "29"
         },
         "21": {
-            [Options.extreme]: "60",
-            [Options.high]: "46",
-            [Options.moderate]: "38",
-            [Options.low]: "31"
+            [Tiers.extreme]: "60",
+            [Tiers.high]: "46",
+            [Tiers.moderate]: "38",
+            [Tiers.low]: "31"
         },
         "22": {
-            [Options.extreme]: "63",
-            [Options.high]: "48",
-            [Options.moderate]: "40",
-            [Options.low]: "32"
+            [Tiers.extreme]: "63",
+            [Tiers.high]: "48",
+            [Tiers.moderate]: "40",
+            [Tiers.low]: "32"
         },
         "23": {
-            [Options.extreme]: "65",
-            [Options.high]: "50",
-            [Options.moderate]: "42",
-            [Options.low]: "33"
+            [Tiers.extreme]: "65",
+            [Tiers.high]: "50",
+            [Tiers.moderate]: "42",
+            [Tiers.low]: "33"
         },
         "24": {
-            [Options.extreme]: "68",
-            [Options.high]: "52",
-            [Options.moderate]: "44",
-            [Options.low]: "35"
+            [Tiers.extreme]: "68",
+            [Tiers.high]: "52",
+            [Tiers.moderate]: "44",
+            [Tiers.low]: "35"
         }
     },
     strikeDamageRoll: {
         "-1": {
-            [Options.extreme]: "1d6+1",
-            [Options.high]: "1d4+1",
-            [Options.moderate]: "1d4",
-            [Options.low]: "1d4"
+            [Tiers.extreme]: "1d6+1",
+            [Tiers.high]: "1d4+1",
+            [Tiers.moderate]: "1d4",
+            [Tiers.low]: "1d4"
         },
         "0": {
-            [Options.extreme]: "1d6+3",
-            [Options.high]: "1d6+2",
-            [Options.moderate]: "1d4+2",
-            [Options.low]: "1d4+1"
+            [Tiers.extreme]: "1d6+3",
+            [Tiers.high]: "1d6+2",
+            [Tiers.moderate]: "1d4+2",
+            [Tiers.low]: "1d4+1"
         },
         "1": {
-            [Options.extreme]: "1d8+4",
-            [Options.high]: "1d6+3",
-            [Options.moderate]: "1d6+2",
-            [Options.low]: "1d4+2"
+            [Tiers.extreme]: "1d8+4",
+            [Tiers.high]: "1d6+3",
+            [Tiers.moderate]: "1d6+2",
+            [Tiers.low]: "1d4+2"
         },
         "2": {
-            [Options.extreme]: "1d12+4",
-            [Options.high]: "1d10+4",
-            [Options.moderate]: "1d8+4",
-            [Options.low]: "1d6+3"
+            [Tiers.extreme]: "1d12+4",
+            [Tiers.high]: "1d10+4",
+            [Tiers.moderate]: "1d8+4",
+            [Tiers.low]: "1d6+3"
         },
         "3": {
-            [Options.extreme]: "1d12+8",
-            [Options.high]: "1d10+6",
-            [Options.moderate]: "1d8+6",
-            [Options.low]: "1d6+5"
+            [Tiers.extreme]: "1d12+8",
+            [Tiers.high]: "1d10+6",
+            [Tiers.moderate]: "1d8+6",
+            [Tiers.low]: "1d6+5"
         },
         "4": {
-            [Options.extreme]: "2d10+7",
-            [Options.high]: "2d8+5",
-            [Options.moderate]: "2d6+5",
-            [Options.low]: "2d4+4"
+            [Tiers.extreme]: "2d10+7",
+            [Tiers.high]: "2d8+5",
+            [Tiers.moderate]: "2d6+5",
+            [Tiers.low]: "2d4+4"
         },
         "5": {
-            [Options.extreme]: "2d12+7",
-            [Options.high]: "2d8+7",
-            [Options.moderate]: "2d6+6",
-            [Options.low]: "2d4+6"
+            [Tiers.extreme]: "2d12+7",
+            [Tiers.high]: "2d8+7",
+            [Tiers.moderate]: "2d6+6",
+            [Tiers.low]: "2d4+6"
         },
         "6": {
-            [Options.extreme]: "2d12+10",
-            [Options.high]: "2d8+9",
-            [Options.moderate]: "2d6+8",
-            [Options.low]: "2d4+7"
+            [Tiers.extreme]: "2d12+10",
+            [Tiers.high]: "2d8+9",
+            [Tiers.moderate]: "2d6+8",
+            [Tiers.low]: "2d4+7"
         },
         "7": {
-            [Options.extreme]: "2d12+12",
-            [Options.high]: "2d10+9",
-            [Options.moderate]: "2d8+8",
-            [Options.low]: "2d6+6"
+            [Tiers.extreme]: "2d12+12",
+            [Tiers.high]: "2d10+9",
+            [Tiers.moderate]: "2d8+8",
+            [Tiers.low]: "2d6+6"
         },
         "8": {
-            [Options.extreme]: "2d12+15",
-            [Options.high]: "2d10+11",
-            [Options.moderate]: "2d8+9",
-            [Options.low]: "2d6+8"
+            [Tiers.extreme]: "2d12+15",
+            [Tiers.high]: "2d10+11",
+            [Tiers.moderate]: "2d8+9",
+            [Tiers.low]: "2d6+8"
         },
         "9": {
-            [Options.extreme]: "2d12+17",
-            [Options.high]: "2d10+13",
-            [Options.moderate]: "2d8+11",
-            [Options.low]: "2d6+9"
+            [Tiers.extreme]: "2d12+17",
+            [Tiers.high]: "2d10+13",
+            [Tiers.moderate]: "2d8+11",
+            [Tiers.low]: "2d6+9"
         },
         "10": {
-            [Options.extreme]: "2d12+20",
-            [Options.high]: "2d12+13",
-            [Options.moderate]: "2d10+11",
-            [Options.low]: "2d6+10"
+            [Tiers.extreme]: "2d12+20",
+            [Tiers.high]: "2d12+13",
+            [Tiers.moderate]: "2d10+11",
+            [Tiers.low]: "2d6+10"
         },
         "11": {
-            [Options.extreme]: "2d12+22",
-            [Options.high]: "2d12+15",
-            [Options.moderate]: "2d10+12",
-            [Options.low]: "2d8+10"
+            [Tiers.extreme]: "2d12+22",
+            [Tiers.high]: "2d12+15",
+            [Tiers.moderate]: "2d10+12",
+            [Tiers.low]: "2d8+10"
         },
         "12": {
-            [Options.extreme]: "3d12+19",
-            [Options.high]: "3d10+14",
-            [Options.moderate]: "3d8+12",
-            [Options.low]: "3d6+10"
+            [Tiers.extreme]: "3d12+19",
+            [Tiers.high]: "3d10+14",
+            [Tiers.moderate]: "3d8+12",
+            [Tiers.low]: "3d6+10"
         },
         "13": {
-            [Options.extreme]: "3d12+21",
-            [Options.high]: "3d10+16",
-            [Options.moderate]: "3d8+14",
-            [Options.low]: "3d6+11"
+            [Tiers.extreme]: "3d12+21",
+            [Tiers.high]: "3d10+16",
+            [Tiers.moderate]: "3d8+14",
+            [Tiers.low]: "3d6+11"
         },
         "14": {
-            [Options.extreme]: "3d12+24",
-            [Options.high]: "3d10+18",
-            [Options.moderate]: "3d8+15",
-            [Options.low]: "3d6+13"
+            [Tiers.extreme]: "3d12+24",
+            [Tiers.high]: "3d10+18",
+            [Tiers.moderate]: "3d8+15",
+            [Tiers.low]: "3d6+13"
         },
         "15": {
-            [Options.extreme]: "3d12+26",
-            [Options.high]: "3d12+17",
-            [Options.moderate]: "3d10+14",
-            [Options.low]: "3d6+14"
+            [Tiers.extreme]: "3d12+26",
+            [Tiers.high]: "3d12+17",
+            [Tiers.moderate]: "3d10+14",
+            [Tiers.low]: "3d6+14"
         },
         "16": {
-            [Options.extreme]: "3d12+29",
-            [Options.high]: "3d12+18",
-            [Options.moderate]: "3d10+15",
-            [Options.low]: "3d6+15"
+            [Tiers.extreme]: "3d12+29",
+            [Tiers.high]: "3d12+18",
+            [Tiers.moderate]: "3d10+15",
+            [Tiers.low]: "3d6+15"
         },
         "17": {
-            [Options.extreme]: "3d12+31",
-            [Options.high]: "3d12+19",
-            [Options.moderate]: "3d10+16",
-            [Options.low]: "3d6+16"
+            [Tiers.extreme]: "3d12+31",
+            [Tiers.high]: "3d12+19",
+            [Tiers.moderate]: "3d10+16",
+            [Tiers.low]: "3d6+16"
         },
         "18": {
-            [Options.extreme]: "3d12+34",
-            [Options.high]: "3d12+20",
-            [Options.moderate]: "3d10+17",
-            [Options.low]: "3d6+17"
+            [Tiers.extreme]: "3d12+34",
+            [Tiers.high]: "3d12+20",
+            [Tiers.moderate]: "3d10+17",
+            [Tiers.low]: "3d6+17"
         },
         "19": {
-            [Options.extreme]: "4d12+29",
-            [Options.high]: "4d10+20",
-            [Options.moderate]: "4d8+17",
-            [Options.low]: "4d6+14"
+            [Tiers.extreme]: "4d12+29",
+            [Tiers.high]: "4d10+20",
+            [Tiers.moderate]: "4d8+17",
+            [Tiers.low]: "4d6+14"
         },
         "20": {
-            [Options.extreme]: "4d12+32",
-            [Options.high]: "4d10+22",
-            [Options.moderate]: "4d8+19",
-            [Options.low]: "4d6+15"
+            [Tiers.extreme]: "4d12+32",
+            [Tiers.high]: "4d10+22",
+            [Tiers.moderate]: "4d8+19",
+            [Tiers.low]: "4d6+15"
         },
         "21": {
-            [Options.extreme]: "4d12+34",
-            [Options.high]: "4d10+24",
-            [Options.moderate]: "4d8+20",
-            [Options.low]: "4d6+17"
+            [Tiers.extreme]: "4d12+34",
+            [Tiers.high]: "4d10+24",
+            [Tiers.moderate]: "4d8+20",
+            [Tiers.low]: "4d6+17"
         },
         "22": {
-            [Options.extreme]: "4d12+37",
-            [Options.high]: "4d10+26",
-            [Options.moderate]: "4d8+22",
-            [Options.low]: "4d6+18"
+            [Tiers.extreme]: "4d12+37",
+            [Tiers.high]: "4d10+26",
+            [Tiers.moderate]: "4d8+22",
+            [Tiers.low]: "4d6+18"
         },
         "23": {
-            [Options.extreme]: "4d12+39",
-            [Options.high]: "4d12+24",
-            [Options.moderate]: "4d10+20",
-            [Options.low]: "4d6+19"
+            [Tiers.extreme]: "4d12+39",
+            [Tiers.high]: "4d12+24",
+            [Tiers.moderate]: "4d10+20",
+            [Tiers.low]: "4d6+19"
         },
         "24": {
-            [Options.extreme]: "4d12+42",
-            [Options.high]: "4d12+26",
-            [Options.moderate]: "4d10+22",
-            [Options.low]: "4d6+21"
+            [Tiers.extreme]: "4d12+42",
+            [Tiers.high]: "4d12+26",
+            [Tiers.moderate]: "4d10+22",
+            [Tiers.low]: "4d6+21"
         }
     },
     spellcasting: {
         "-1": {
-            [Options.extreme]: "11",
-            [Options.high]: "8",
-            [Options.moderate]: "5",
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "5",
         },
         "0": {
-            [Options.extreme]: "11",
-            [Options.high]: "8",
-            [Options.moderate]: "5",
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "5",
         },
         "1": {
-            [Options.extreme]: "12",
-            [Options.high]: "9",
-            [Options.moderate]: "6",
+            [Tiers.extreme]: "12",
+            [Tiers.high]: "9",
+            [Tiers.moderate]: "6",
         },
         "2": {
-            [Options.extreme]: "14",
-            [Options.high]: "10",
-            [Options.moderate]: "7",
+            [Tiers.extreme]: "14",
+            [Tiers.high]: "10",
+            [Tiers.moderate]: "7",
         },
         "3": {
-            [Options.extreme]: "15",
-            [Options.high]: "12",
-            [Options.moderate]: "9",
+            [Tiers.extreme]: "15",
+            [Tiers.high]: "12",
+            [Tiers.moderate]: "9",
         },
         "4": {
-            [Options.extreme]: "17",
-            [Options.high]: "13",
-            [Options.moderate]: "10",
+            [Tiers.extreme]: "17",
+            [Tiers.high]: "13",
+            [Tiers.moderate]: "10",
         },
         "5": {
-            [Options.extreme]: "18",
-            [Options.high]: "14",
-            [Options.moderate]: "11",
+            [Tiers.extreme]: "18",
+            [Tiers.high]: "14",
+            [Tiers.moderate]: "11",
         },
         "6": {
-            [Options.extreme]: "19",
-            [Options.high]: "16",
-            [Options.moderate]: "13",
+            [Tiers.extreme]: "19",
+            [Tiers.high]: "16",
+            [Tiers.moderate]: "13",
         },
         "7": {
-            [Options.extreme]: "21",
-            [Options.high]: "17",
-            [Options.moderate]: "14",
+            [Tiers.extreme]: "21",
+            [Tiers.high]: "17",
+            [Tiers.moderate]: "14",
         },
         "8": {
-            [Options.extreme]: "22",
-            [Options.high]: "18",
-            [Options.moderate]: "15",
+            [Tiers.extreme]: "22",
+            [Tiers.high]: "18",
+            [Tiers.moderate]: "15",
         },
         "9": {
-            [Options.extreme]: "24",
-            [Options.high]: "20",
-            [Options.moderate]: "17",
+            [Tiers.extreme]: "24",
+            [Tiers.high]: "20",
+            [Tiers.moderate]: "17",
         },
         "10": {
-            [Options.extreme]: "25",
-            [Options.high]: "21",
-            [Options.moderate]: "18",
+            [Tiers.extreme]: "25",
+            [Tiers.high]: "21",
+            [Tiers.moderate]: "18",
         },
         "11": {
-            [Options.extreme]: "26",
-            [Options.high]: "22",
-            [Options.moderate]: "19",
+            [Tiers.extreme]: "26",
+            [Tiers.high]: "22",
+            [Tiers.moderate]: "19",
         },
         "12": {
-            [Options.extreme]: "28",
-            [Options.high]: "24",
-            [Options.moderate]: "21",
+            [Tiers.extreme]: "28",
+            [Tiers.high]: "24",
+            [Tiers.moderate]: "21",
         },
         "13": {
-            [Options.extreme]: "29",
-            [Options.high]: "25",
-            [Options.moderate]: "22",
+            [Tiers.extreme]: "29",
+            [Tiers.high]: "25",
+            [Tiers.moderate]: "22",
         },
         "14": {
-            [Options.extreme]: "31",
-            [Options.high]: "26",
-            [Options.moderate]: "23",
+            [Tiers.extreme]: "31",
+            [Tiers.high]: "26",
+            [Tiers.moderate]: "23",
         },
         "15": {
-            [Options.extreme]: "32",
-            [Options.high]: "28",
-            [Options.moderate]: "25",
+            [Tiers.extreme]: "32",
+            [Tiers.high]: "28",
+            [Tiers.moderate]: "25",
         },
         "16": {
-            [Options.extreme]: "33",
-            [Options.high]: "29",
-            [Options.moderate]: "26",
+            [Tiers.extreme]: "33",
+            [Tiers.high]: "29",
+            [Tiers.moderate]: "26",
         },
         "17": {
-            [Options.extreme]: "35",
-            [Options.high]: "30",
-            [Options.moderate]: "27",
+            [Tiers.extreme]: "35",
+            [Tiers.high]: "30",
+            [Tiers.moderate]: "27",
         },
         "18": {
-            [Options.extreme]: "36",
-            [Options.high]: "32",
-            [Options.moderate]: "29",
+            [Tiers.extreme]: "36",
+            [Tiers.high]: "32",
+            [Tiers.moderate]: "29",
         },
         "19": {
-            [Options.extreme]: "38",
-            [Options.high]: "33",
-            [Options.moderate]: "30",
+            [Tiers.extreme]: "38",
+            [Tiers.high]: "33",
+            [Tiers.moderate]: "30",
         },
         "20": {
-            [Options.extreme]: "39",
-            [Options.high]: "34",
-            [Options.moderate]: "31",
+            [Tiers.extreme]: "39",
+            [Tiers.high]: "34",
+            [Tiers.moderate]: "31",
         },
         "21": {
-            [Options.extreme]: "40",
-            [Options.high]: "36",
-            [Options.moderate]: "33",
+            [Tiers.extreme]: "40",
+            [Tiers.high]: "36",
+            [Tiers.moderate]: "33",
         },
         "22": {
-            [Options.extreme]: "42",
-            [Options.high]: "37",
-            [Options.moderate]: "34",
+            [Tiers.extreme]: "42",
+            [Tiers.high]: "37",
+            [Tiers.moderate]: "34",
         },
         "23": {
-            [Options.extreme]: "43",
-            [Options.high]: "38",
-            [Options.moderate]: "35",
+            [Tiers.extreme]: "43",
+            [Tiers.high]: "38",
+            [Tiers.moderate]: "35",
         },
         "24": {
-            [Options.extreme]: "44",
-            [Options.high]: "40",
-            [Options.moderate]: "37",
+            [Tiers.extreme]: "44",
+            [Tiers.high]: "40",
+            [Tiers.moderate]: "37",
         }
     },
     spellDC: {
         "-1": {
-            [Options.extreme]: "19",
-            [Options.high]: "16",
-            [Options.moderate]: "13",
+            [Tiers.extreme]: "19",
+            [Tiers.high]: "16",
+            [Tiers.moderate]: "13",
         },
         "0": {
-            [Options.extreme]: "19",
-            [Options.high]: "16",
-            [Options.moderate]: "13",
+            [Tiers.extreme]: "19",
+            [Tiers.high]: "16",
+            [Tiers.moderate]: "13",
         },
         "1": {
-            [Options.extreme]: "20",
-            [Options.high]: "17",
-            [Options.moderate]: "14",
+            [Tiers.extreme]: "20",
+            [Tiers.high]: "17",
+            [Tiers.moderate]: "14",
         },
         "2": {
-            [Options.extreme]: "22",
-            [Options.high]: "18",
-            [Options.moderate]: "15",
+            [Tiers.extreme]: "22",
+            [Tiers.high]: "18",
+            [Tiers.moderate]: "15",
         },
         "3": {
-            [Options.extreme]: "23",
-            [Options.high]: "20",
-            [Options.moderate]: "17",
+            [Tiers.extreme]: "23",
+            [Tiers.high]: "20",
+            [Tiers.moderate]: "17",
         },
         "4": {
-            [Options.extreme]: "25",
-            [Options.high]: "21",
-            [Options.moderate]: "18",
+            [Tiers.extreme]: "25",
+            [Tiers.high]: "21",
+            [Tiers.moderate]: "18",
         },
         "5": {
-            [Options.extreme]: "26",
-            [Options.high]: "22",
-            [Options.moderate]: "19",
+            [Tiers.extreme]: "26",
+            [Tiers.high]: "22",
+            [Tiers.moderate]: "19",
         },
         "6": {
-            [Options.extreme]: "27",
-            [Options.high]: "24",
-            [Options.moderate]: "21",
+            [Tiers.extreme]: "27",
+            [Tiers.high]: "24",
+            [Tiers.moderate]: "21",
         },
         "7": {
-            [Options.extreme]: "29",
-            [Options.high]: "25",
-            [Options.moderate]: "22",
+            [Tiers.extreme]: "29",
+            [Tiers.high]: "25",
+            [Tiers.moderate]: "22",
         },
         "8": {
-            [Options.extreme]: "30",
-            [Options.high]: "26",
-            [Options.moderate]: "23",
+            [Tiers.extreme]: "30",
+            [Tiers.high]: "26",
+            [Tiers.moderate]: "23",
         },
         "9": {
-            [Options.extreme]: "32",
-            [Options.high]: "28",
-            [Options.moderate]: "25",
+            [Tiers.extreme]: "32",
+            [Tiers.high]: "28",
+            [Tiers.moderate]: "25",
         },
         "10": {
-            [Options.extreme]: "33",
-            [Options.high]: "29",
-            [Options.moderate]: "26",
+            [Tiers.extreme]: "33",
+            [Tiers.high]: "29",
+            [Tiers.moderate]: "26",
         },
         "11": {
-            [Options.extreme]: "34",
-            [Options.high]: "30",
-            [Options.moderate]: "27",
+            [Tiers.extreme]: "34",
+            [Tiers.high]: "30",
+            [Tiers.moderate]: "27",
         },
         "12": {
-            [Options.extreme]: "36",
-            [Options.high]: "32",
-            [Options.moderate]: "29",
+            [Tiers.extreme]: "36",
+            [Tiers.high]: "32",
+            [Tiers.moderate]: "29",
         },
         "13": {
-            [Options.extreme]: "37",
-            [Options.high]: "33",
-            [Options.moderate]: "30",
+            [Tiers.extreme]: "37",
+            [Tiers.high]: "33",
+            [Tiers.moderate]: "30",
         },
         "14": {
-            [Options.extreme]: "39",
-            [Options.high]: "34",
-            [Options.moderate]: "31",
+            [Tiers.extreme]: "39",
+            [Tiers.high]: "34",
+            [Tiers.moderate]: "31",
         },
         "15": {
-            [Options.extreme]: "40",
-            [Options.high]: "36",
-            [Options.moderate]: "33",
+            [Tiers.extreme]: "40",
+            [Tiers.high]: "36",
+            [Tiers.moderate]: "33",
         },
         "16": {
-            [Options.extreme]: "41",
-            [Options.high]: "37",
-            [Options.moderate]: "34",
+            [Tiers.extreme]: "41",
+            [Tiers.high]: "37",
+            [Tiers.moderate]: "34",
         },
         "17": {
-            [Options.extreme]: "43",
-            [Options.high]: "38",
-            [Options.moderate]: "35",
+            [Tiers.extreme]: "43",
+            [Tiers.high]: "38",
+            [Tiers.moderate]: "35",
         },
         "18": {
-            [Options.extreme]: "44",
-            [Options.high]: "40",
-            [Options.moderate]: "37",
+            [Tiers.extreme]: "44",
+            [Tiers.high]: "40",
+            [Tiers.moderate]: "37",
         },
         "19": {
-            [Options.extreme]: "46",
-            [Options.high]: "41",
-            [Options.moderate]: "38",
+            [Tiers.extreme]: "46",
+            [Tiers.high]: "41",
+            [Tiers.moderate]: "38",
         },
         "20": {
-            [Options.extreme]: "47",
-            [Options.high]: "42",
-            [Options.moderate]: "39",
+            [Tiers.extreme]: "47",
+            [Tiers.high]: "42",
+            [Tiers.moderate]: "39",
         },
         "21": {
-            [Options.extreme]: "48",
-            [Options.high]: "44",
-            [Options.moderate]: "41",
+            [Tiers.extreme]: "48",
+            [Tiers.high]: "44",
+            [Tiers.moderate]: "41",
         },
         "22": {
-            [Options.extreme]: "50",
-            [Options.high]: "45",
-            [Options.moderate]: "42",
+            [Tiers.extreme]: "50",
+            [Tiers.high]: "45",
+            [Tiers.moderate]: "42",
         },
         "23": {
-            [Options.extreme]: "51",
-            [Options.high]: "46",
-            [Options.moderate]: "43",
+            [Tiers.extreme]: "51",
+            [Tiers.high]: "46",
+            [Tiers.moderate]: "43",
         },
         "24": {
-            [Options.extreme]: "52",
-            [Options.high]: "48",
-            [Options.moderate]: "45",
+            [Tiers.extreme]: "52",
+            [Tiers.high]: "48",
+            [Tiers.moderate]: "45",
         }
     },
     skills: {
         "-1": {
-            [Options.extreme]: "8",
-            [Options.high]: "5",
-            [Options.moderate]: "4",
-            [Options.low]: "2"
+            [Tiers.extreme]: "8",
+            [Tiers.high]: "5",
+            [Tiers.moderate]: "4",
+            [Tiers.low]: "2"
         },
         "0": {
-            [Options.extreme]: "9",
-            [Options.high]: "6",
-            [Options.moderate]: "5",
-            [Options.low]: "3"
+            [Tiers.extreme]: "9",
+            [Tiers.high]: "6",
+            [Tiers.moderate]: "5",
+            [Tiers.low]: "3"
         },
         "1": {
-            [Options.extreme]: "10",
-            [Options.high]: "7",
-            [Options.moderate]: "6",
-            [Options.low]: "4"
+            [Tiers.extreme]: "10",
+            [Tiers.high]: "7",
+            [Tiers.moderate]: "6",
+            [Tiers.low]: "4"
         },
         "2": {
-            [Options.extreme]: "11",
-            [Options.high]: "8",
-            [Options.moderate]: "7",
-            [Options.low]: "5"
+            [Tiers.extreme]: "11",
+            [Tiers.high]: "8",
+            [Tiers.moderate]: "7",
+            [Tiers.low]: "5"
         },
         "3": {
-            [Options.extreme]: "13",
-            [Options.high]: "10",
-            [Options.moderate]: "9",
-            [Options.low]: "6"
+            [Tiers.extreme]: "13",
+            [Tiers.high]: "10",
+            [Tiers.moderate]: "9",
+            [Tiers.low]: "6"
         },
         "4": {
-            [Options.extreme]: "15",
-            [Options.high]: "12",
-            [Options.moderate]: "10",
-            [Options.low]: "8"
+            [Tiers.extreme]: "15",
+            [Tiers.high]: "12",
+            [Tiers.moderate]: "10",
+            [Tiers.low]: "8"
         },
         "5": {
-            [Options.extreme]: "16",
-            [Options.high]: "13",
-            [Options.moderate]: "12",
-            [Options.low]: "9"
+            [Tiers.extreme]: "16",
+            [Tiers.high]: "13",
+            [Tiers.moderate]: "12",
+            [Tiers.low]: "9"
         },
         "6": {
-            [Options.extreme]: "18",
-            [Options.high]: "15",
-            [Options.moderate]: "13",
-            [Options.low]: "10"
+            [Tiers.extreme]: "18",
+            [Tiers.high]: "15",
+            [Tiers.moderate]: "13",
+            [Tiers.low]: "10"
         },
         "7": {
-            [Options.extreme]: "20",
-            [Options.high]: "17",
-            [Options.moderate]: "15",
-            [Options.low]: "12"
+            [Tiers.extreme]: "20",
+            [Tiers.high]: "17",
+            [Tiers.moderate]: "15",
+            [Tiers.low]: "12"
         },
         "8": {
-            [Options.extreme]: "21",
-            [Options.high]: "18",
-            [Options.moderate]: "16",
-            [Options.low]: "13"
+            [Tiers.extreme]: "21",
+            [Tiers.high]: "18",
+            [Tiers.moderate]: "16",
+            [Tiers.low]: "13"
         },
         "9": {
-            [Options.extreme]: "23",
-            [Options.high]: "20",
-            [Options.moderate]: "18",
-            [Options.low]: "14"
+            [Tiers.extreme]: "23",
+            [Tiers.high]: "20",
+            [Tiers.moderate]: "18",
+            [Tiers.low]: "14"
         },
         "10": {
-            [Options.extreme]: "25",
-            [Options.high]: "22",
-            [Options.moderate]: "19",
-            [Options.low]: "16"
+            [Tiers.extreme]: "25",
+            [Tiers.high]: "22",
+            [Tiers.moderate]: "19",
+            [Tiers.low]: "16"
         },
         "11": {
-            [Options.extreme]: "26",
-            [Options.high]: "23",
-            [Options.moderate]: "21",
-            [Options.low]: "18"
+            [Tiers.extreme]: "26",
+            [Tiers.high]: "23",
+            [Tiers.moderate]: "21",
+            [Tiers.low]: "18"
         },
         "12": {
-            [Options.extreme]: "28",
-            [Options.high]: "25",
-            [Options.moderate]: "22",
-            [Options.low]: "19"
+            [Tiers.extreme]: "28",
+            [Tiers.high]: "25",
+            [Tiers.moderate]: "22",
+            [Tiers.low]: "19"
         },
         "13": {
-            [Options.extreme]: "30",
-            [Options.high]: "27",
-            [Options.moderate]: "24",
-            [Options.low]: "21"
+            [Tiers.extreme]: "30",
+            [Tiers.high]: "27",
+            [Tiers.moderate]: "24",
+            [Tiers.low]: "21"
         },
         "14": {
-            [Options.extreme]: "31",
-            [Options.high]: "28",
-            [Options.moderate]: "25",
-            [Options.low]: "22"
+            [Tiers.extreme]: "31",
+            [Tiers.high]: "28",
+            [Tiers.moderate]: "25",
+            [Tiers.low]: "22"
         },
         "15": {
-            [Options.extreme]: "33",
-            [Options.high]: "30",
-            [Options.moderate]: "27",
-            [Options.low]: "23"
+            [Tiers.extreme]: "33",
+            [Tiers.high]: "30",
+            [Tiers.moderate]: "27",
+            [Tiers.low]: "23"
         },
         "16": {
-            [Options.extreme]: "35",
-            [Options.high]: "32",
-            [Options.moderate]: "28",
-            [Options.low]: "25"
+            [Tiers.extreme]: "35",
+            [Tiers.high]: "32",
+            [Tiers.moderate]: "28",
+            [Tiers.low]: "25"
         },
         "17": {
-            [Options.extreme]: "36",
-            [Options.high]: "33",
-            [Options.moderate]: "30",
-            [Options.low]: "26"
+            [Tiers.extreme]: "36",
+            [Tiers.high]: "33",
+            [Tiers.moderate]: "30",
+            [Tiers.low]: "26"
         },
         "18": {
-            [Options.extreme]: "38",
-            [Options.high]: "35",
-            [Options.moderate]: "31",
-            [Options.low]: "28"
+            [Tiers.extreme]: "38",
+            [Tiers.high]: "35",
+            [Tiers.moderate]: "31",
+            [Tiers.low]: "28"
         },
         "19": {
-            [Options.extreme]: "40",
-            [Options.high]: "37",
-            [Options.moderate]: "33",
-            [Options.low]: "29"
+            [Tiers.extreme]: "40",
+            [Tiers.high]: "37",
+            [Tiers.moderate]: "33",
+            [Tiers.low]: "29"
         },
         "20": {
-            [Options.extreme]: "41",
-            [Options.high]: "38",
-            [Options.moderate]: "34",
-            [Options.low]: "30"
+            [Tiers.extreme]: "41",
+            [Tiers.high]: "38",
+            [Tiers.moderate]: "34",
+            [Tiers.low]: "30"
         },
         "21": {
-            [Options.extreme]: "43",
-            [Options.high]: "40",
-            [Options.moderate]: "36",
-            [Options.low]: "31"
+            [Tiers.extreme]: "43",
+            [Tiers.high]: "40",
+            [Tiers.moderate]: "36",
+            [Tiers.low]: "31"
         },
         "22": {
-            [Options.extreme]: "45",
-            [Options.high]: "42",
-            [Options.moderate]: "37",
-            [Options.low]: "32"
+            [Tiers.extreme]: "45",
+            [Tiers.high]: "42",
+            [Tiers.moderate]: "37",
+            [Tiers.low]: "32"
         },
         "23": {
-            [Options.extreme]: "46",
-            [Options.high]: "43",
-            [Options.moderate]: "38",
-            [Options.low]: "34"
+            [Tiers.extreme]: "46",
+            [Tiers.high]: "43",
+            [Tiers.moderate]: "38",
+            [Tiers.low]: "34"
         },
         "24": {
-            [Options.extreme]: "48",
-            [Options.high]: "45",
-            [Options.moderate]: "40",
-            [Options.low]: "36"
+            [Tiers.extreme]: "48",
+            [Tiers.high]: "45",
+            [Tiers.moderate]: "40",
+            [Tiers.low]: "36"
         }
     },
     resistWeak: {
         "-1": {
-            [ResistOptions.minimum]: "1",
-            [ResistOptions.maximum]: "1",
+            [ResistTiers.minimum]: "1",
+            [ResistTiers.maximum]: "1",
         },
         "0": {
-            [ResistOptions.minimum]: "1",
-            [ResistOptions.maximum]: "3",
+            [ResistTiers.minimum]: "1",
+            [ResistTiers.maximum]: "3",
         },
         "1": {
-            [ResistOptions.minimum]: "2",
-            [ResistOptions.maximum]: "3",
+            [ResistTiers.minimum]: "2",
+            [ResistTiers.maximum]: "3",
         },
         "2": {
-            [ResistOptions.minimum]: "2",
-            [ResistOptions.maximum]: "5",
+            [ResistTiers.minimum]: "2",
+            [ResistTiers.maximum]: "5",
         },
         "3": {
-            [ResistOptions.minimum]: "3",
-            [ResistOptions.maximum]: "6",
+            [ResistTiers.minimum]: "3",
+            [ResistTiers.maximum]: "6",
         },
         "4": {
-            [ResistOptions.minimum]: "4",
-            [ResistOptions.maximum]: "7",
+            [ResistTiers.minimum]: "4",
+            [ResistTiers.maximum]: "7",
         },
         "5": {
-            [ResistOptions.minimum]: "4",
-            [ResistOptions.maximum]: "8",
+            [ResistTiers.minimum]: "4",
+            [ResistTiers.maximum]: "8",
         },
         "6": {
-            [ResistOptions.minimum]: "5",
-            [ResistOptions.maximum]: "9",
+            [ResistTiers.minimum]: "5",
+            [ResistTiers.maximum]: "9",
         },
         "7": {
-            [ResistOptions.minimum]: "5",
-            [ResistOptions.maximum]: "10",
+            [ResistTiers.minimum]: "5",
+            [ResistTiers.maximum]: "10",
         },
         "8": {
-            [ResistOptions.minimum]: "6",
-            [ResistOptions.maximum]: "11",
+            [ResistTiers.minimum]: "6",
+            [ResistTiers.maximum]: "11",
         },
         "9": {
-            [ResistOptions.minimum]: "6",
-            [ResistOptions.maximum]: "12",
+            [ResistTiers.minimum]: "6",
+            [ResistTiers.maximum]: "12",
         },
         "10": {
-            [ResistOptions.minimum]: "7",
-            [ResistOptions.maximum]: "13",
+            [ResistTiers.minimum]: "7",
+            [ResistTiers.maximum]: "13",
         },
         "11": {
-            [ResistOptions.minimum]: "7",
-            [ResistOptions.maximum]: "14",
+            [ResistTiers.minimum]: "7",
+            [ResistTiers.maximum]: "14",
         },
         "12": {
-            [ResistOptions.minimum]: "8",
-            [ResistOptions.maximum]: "15",
+            [ResistTiers.minimum]: "8",
+            [ResistTiers.maximum]: "15",
         },
         "13": {
-            [ResistOptions.minimum]: "8",
-            [ResistOptions.maximum]: "16",
+            [ResistTiers.minimum]: "8",
+            [ResistTiers.maximum]: "16",
         },
         "14": {
-            [ResistOptions.minimum]: "9",
-            [ResistOptions.maximum]: "17",
+            [ResistTiers.minimum]: "9",
+            [ResistTiers.maximum]: "17",
         },
         "15": {
-            [ResistOptions.minimum]: "9",
-            [ResistOptions.maximum]: "18",
+            [ResistTiers.minimum]: "9",
+            [ResistTiers.maximum]: "18",
         },
         "16": {
-            [ResistOptions.minimum]: "9",
-            [ResistOptions.maximum]: "19",
+            [ResistTiers.minimum]: "9",
+            [ResistTiers.maximum]: "19",
         },
         "17": {
-            [ResistOptions.minimum]: "10",
-            [ResistOptions.maximum]: "19",
+            [ResistTiers.minimum]: "10",
+            [ResistTiers.maximum]: "19",
         },
         "18": {
-            [ResistOptions.minimum]: "10",
-            [ResistOptions.maximum]: "20",
+            [ResistTiers.minimum]: "10",
+            [ResistTiers.maximum]: "20",
         },
         "19": {
-            [ResistOptions.minimum]: "11",
-            [ResistOptions.maximum]: "21",
+            [ResistTiers.minimum]: "11",
+            [ResistTiers.maximum]: "21",
         },
         "20": {
-            [ResistOptions.minimum]: "11",
-            [ResistOptions.maximum]: "22",
+            [ResistTiers.minimum]: "11",
+            [ResistTiers.maximum]: "22",
         },
         "21": {
-            [ResistOptions.minimum]: "12",
-            [ResistOptions.maximum]: "23",
+            [ResistTiers.minimum]: "12",
+            [ResistTiers.maximum]: "23",
         },
         "22": {
-            [ResistOptions.minimum]: "12",
-            [ResistOptions.maximum]: "24",
+            [ResistTiers.minimum]: "12",
+            [ResistTiers.maximum]: "24",
         },
         "23": {
-            [ResistOptions.minimum]: "13",
-            [ResistOptions.maximum]: "25",
+            [ResistTiers.minimum]: "13",
+            [ResistTiers.maximum]: "25",
         },
         "24": {
-            [ResistOptions.minimum]: "13",
-            [ResistOptions.maximum]: "26",
+            [ResistTiers.minimum]: "13",
+            [ResistTiers.maximum]: "26",
         }
     },
     areaDamage: {
         "-1": {
-            [AreaDamage.unlimited]: "2",
-            [AreaDamage.limited]: "4",
+            [AreaDamageTiers.unlimited]: "2",
+            [AreaDamageTiers.limited]: "4",
         },
         "0": {
-            [AreaDamage.unlimited]: "4",
-            [AreaDamage.limited]: "6",
+            [AreaDamageTiers.unlimited]: "4",
+            [AreaDamageTiers.limited]: "6",
         },
         "1": {
-            [AreaDamage.unlimited]: "5",
-            [AreaDamage.limited]: "7",
+            [AreaDamageTiers.unlimited]: "5",
+            [AreaDamageTiers.limited]: "7",
         },
         "2": {
-            [AreaDamage.unlimited]: "7",
-            [AreaDamage.limited]: "11",
+            [AreaDamageTiers.unlimited]: "7",
+            [AreaDamageTiers.limited]: "11",
         },
         "3": {
-            [AreaDamage.unlimited]: "9",
-            [AreaDamage.limited]: "14",
+            [AreaDamageTiers.unlimited]: "9",
+            [AreaDamageTiers.limited]: "14",
         },
         "4": {
-            [AreaDamage.unlimited]: "11",
-            [AreaDamage.limited]: "18",
+            [AreaDamageTiers.unlimited]: "11",
+            [AreaDamageTiers.limited]: "18",
         },
         "5": {
-            [AreaDamage.unlimited]: "12",
-            [AreaDamage.limited]: "21",
+            [AreaDamageTiers.unlimited]: "12",
+            [AreaDamageTiers.limited]: "21",
         },
         "6": {
-            [AreaDamage.unlimited]: "14",
-            [AreaDamage.limited]: "25",
+            [AreaDamageTiers.unlimited]: "14",
+            [AreaDamageTiers.limited]: "25",
         },
         "7": {
-            [AreaDamage.unlimited]: "15",
-            [AreaDamage.limited]: "28",
+            [AreaDamageTiers.unlimited]: "15",
+            [AreaDamageTiers.limited]: "28",
         },
         "8": {
-            [AreaDamage.unlimited]: "17",
-            [AreaDamage.limited]: "32",
+            [AreaDamageTiers.unlimited]: "17",
+            [AreaDamageTiers.limited]: "32",
         },
         "9": {
-            [AreaDamage.unlimited]: "18",
-            [AreaDamage.limited]: "35",
+            [AreaDamageTiers.unlimited]: "18",
+            [AreaDamageTiers.limited]: "35",
         },
         "10": {
-            [AreaDamage.unlimited]: "20",
-            [AreaDamage.limited]: "39",
+            [AreaDamageTiers.unlimited]: "20",
+            [AreaDamageTiers.limited]: "39",
         },
         "11": {
-            [AreaDamage.unlimited]: "21",
-            [AreaDamage.limited]: "42",
+            [AreaDamageTiers.unlimited]: "21",
+            [AreaDamageTiers.limited]: "42",
         },
         "12": {
-            [AreaDamage.unlimited]: "23",
-            [AreaDamage.limited]: "46",
+            [AreaDamageTiers.unlimited]: "23",
+            [AreaDamageTiers.limited]: "46",
         },
         "13": {
-            [AreaDamage.unlimited]: "24",
-            [AreaDamage.limited]: "49",
+            [AreaDamageTiers.unlimited]: "24",
+            [AreaDamageTiers.limited]: "49",
         },
         "14": {
-            [AreaDamage.unlimited]: "26",
-            [AreaDamage.limited]: "53",
+            [AreaDamageTiers.unlimited]: "26",
+            [AreaDamageTiers.limited]: "53",
         },
         "15": {
-            [AreaDamage.unlimited]: "27",
-            [AreaDamage.limited]: "56",
+            [AreaDamageTiers.unlimited]: "27",
+            [AreaDamageTiers.limited]: "56",
         },
         "16": {
-            [AreaDamage.unlimited]: "28",
-            [AreaDamage.limited]: "60",
+            [AreaDamageTiers.unlimited]: "28",
+            [AreaDamageTiers.limited]: "60",
         },
         "17": {
-            [AreaDamage.unlimited]: "29",
-            [AreaDamage.limited]: "63",
+            [AreaDamageTiers.unlimited]: "29",
+            [AreaDamageTiers.limited]: "63",
         },
         "18": {
-            [AreaDamage.unlimited]: "30",
-            [AreaDamage.limited]: "67",
+            [AreaDamageTiers.unlimited]: "30",
+            [AreaDamageTiers.limited]: "67",
         },
         "19": {
-            [AreaDamage.unlimited]: "32",
-            [AreaDamage.limited]: "70",
+            [AreaDamageTiers.unlimited]: "32",
+            [AreaDamageTiers.limited]: "70",
         },
         "20": {
-            [AreaDamage.unlimited]: "33",
-            [AreaDamage.limited]: "74",
+            [AreaDamageTiers.unlimited]: "33",
+            [AreaDamageTiers.limited]: "74",
         },
         "21": {
-            [AreaDamage.unlimited]: "35",
-            [AreaDamage.limited]: "77",
+            [AreaDamageTiers.unlimited]: "35",
+            [AreaDamageTiers.limited]: "77",
         },
         "22": {
-            [AreaDamage.unlimited]: "36",
-            [AreaDamage.limited]: "81",
+            [AreaDamageTiers.unlimited]: "36",
+            [AreaDamageTiers.limited]: "81",
         },
         "23": {
-            [AreaDamage.unlimited]: "38",
-            [AreaDamage.limited]: "84",
+            [AreaDamageTiers.unlimited]: "38",
+            [AreaDamageTiers.limited]: "84",
         },
         "24": {
-            [AreaDamage.unlimited]: "39",
-            [AreaDamage.limited]: "88",
+            [AreaDamageTiers.unlimited]: "39",
+            [AreaDamageTiers.limited]: "88",
         }
     }
 }

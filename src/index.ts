@@ -1,5 +1,6 @@
 import {AdjustMonsterLevel} from "./AdjustMonsterLevel"
 import {Setting} from "./Keys"
+import {localize} from "./Utils";
 Hooks.on('init', async function () {
     await game["settings"].register( Setting.namespace, Setting.expandFoldout, {
         scope: 'client',
@@ -28,7 +29,7 @@ Hooks.on("renderActorSheet", async function (sheet, html) {
         return;
     }
     let element = html.find(".adjustment-select");
-    let button = $(`<a class="adjustment trait" style>${AdjustMonsterLevel.localize("PF2EADJUSTMONSTERLEVEL.ACTORSHEET.buttonlabel")}</a>`);
+    let button = $(`<a class="adjustment trait" style>${localize("PF2EADJUSTMONSTERLEVEL.ACTORSHEET.buttonlabel")}</a>`);
     button.on("click", () => {
         new AdjustMonsterLevel(actor).render(true)
     })
