@@ -26,7 +26,11 @@
         "systems": [{
             "id": "pf2e",
             "type": "system",
-            "manifest": "https://github.com/foundryvtt/pf2e/releases/latest/download/system.json"
+            "manifest": "https://github.com/foundryvtt/pf2e/releases/latest/download/system.json",
+            "compatibility": {
+                "minimum": "4.6.3",
+                "verified": "4.6.3"
+            }
         }]
     },
     "url": "https://github.com/biphenyl/fvtt-module-pf2e-AdjustMonsterLevel",
