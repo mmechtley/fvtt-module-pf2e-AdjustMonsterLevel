@@ -34,6 +34,8 @@ export enum Statistics {
     // Strikes
     strikeBonus = 'PF2EADJUSTMONSTERLEVEL.strikeBonus',
     strikeDamage = 'PF2EADJUSTMONSTERLEVEL.strikeDamage',
+
+    // Spells
     spellcasting = 'PF2EADJUSTMONSTERLEVEL.spellcasting',
     spellDC = 'PF2EADJUSTMONSTERLEVEL.spellDC',
 
@@ -54,6 +56,10 @@ export enum Statistics {
     stealth = 'PF2EADJUSTMONSTERLEVEL.stealth',
     survival = 'PF2EADJUSTMONSTERLEVEL.survival',
     thievery = 'PF2EADJUSTMONSTERLEVEL.thievery',
+
+    // text inside an item entry
+    description = 'PF2EADJUSTMONSTERLEVEL.description',
+    areaDamage = 'PF2EADJUSTMONSTERLEVEL.areaDamage'
 }
 
 export enum Dice {
@@ -102,6 +108,11 @@ export enum Options {
 export enum ResistOptions {
     minimum = 'PF2EADJUSTMONSTERLEVEL.minimum',
     maximum = 'PF2EADJUSTMONSTERLEVEL.maximum',
+}
+
+export enum AreaDamage {
+    unlimited = 'PF2EADJUSTMONSTERLEVEL.unlimited',
+    limited = 'PF2EADJUSTMONSTERLEVEL.limited'
 }
 
 export enum AllowDice {

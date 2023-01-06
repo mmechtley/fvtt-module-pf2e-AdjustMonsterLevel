@@ -1,4 +1,4 @@
-import {Dice, Options, ResistOptions, Statistics} from "./Keys";
+import {AreaDamage, Dice, Options, ResistOptions, Statistics} from "./Keys";
 
 const aliases = {
     abilityScores: {
@@ -1634,6 +1634,112 @@ const aliases = {
             [ResistOptions.minimum]: "13",
             [ResistOptions.maximum]: "26",
         }
+    },
+    areaDamage: {
+        "-1": {
+            [AreaDamage.unlimited]: "2",
+            [AreaDamage.limited]: "4",
+        },
+        "0": {
+            [AreaDamage.unlimited]: "4",
+            [AreaDamage.limited]: "6",
+        },
+        "1": {
+            [AreaDamage.unlimited]: "5",
+            [AreaDamage.limited]: "7",
+        },
+        "2": {
+            [AreaDamage.unlimited]: "7",
+            [AreaDamage.limited]: "11",
+        },
+        "3": {
+            [AreaDamage.unlimited]: "9",
+            [AreaDamage.limited]: "14",
+        },
+        "4": {
+            [AreaDamage.unlimited]: "11",
+            [AreaDamage.limited]: "18",
+        },
+        "5": {
+            [AreaDamage.unlimited]: "12",
+            [AreaDamage.limited]: "21",
+        },
+        "6": {
+            [AreaDamage.unlimited]: "14",
+            [AreaDamage.limited]: "25",
+        },
+        "7": {
+            [AreaDamage.unlimited]: "15",
+            [AreaDamage.limited]: "28",
+        },
+        "8": {
+            [AreaDamage.unlimited]: "17",
+            [AreaDamage.limited]: "32",
+        },
+        "9": {
+            [AreaDamage.unlimited]: "18",
+            [AreaDamage.limited]: "35",
+        },
+        "10": {
+            [AreaDamage.unlimited]: "20",
+            [AreaDamage.limited]: "39",
+        },
+        "11": {
+            [AreaDamage.unlimited]: "21",
+            [AreaDamage.limited]: "42",
+        },
+        "12": {
+            [AreaDamage.unlimited]: "23",
+            [AreaDamage.limited]: "46",
+        },
+        "13": {
+            [AreaDamage.unlimited]: "24",
+            [AreaDamage.limited]: "49",
+        },
+        "14": {
+            [AreaDamage.unlimited]: "26",
+            [AreaDamage.limited]: "53",
+        },
+        "15": {
+            [AreaDamage.unlimited]: "27",
+            [AreaDamage.limited]: "56",
+        },
+        "16": {
+            [AreaDamage.unlimited]: "28",
+            [AreaDamage.limited]: "60",
+        },
+        "17": {
+            [AreaDamage.unlimited]: "29",
+            [AreaDamage.limited]: "63",
+        },
+        "18": {
+            [AreaDamage.unlimited]: "30",
+            [AreaDamage.limited]: "67",
+        },
+        "19": {
+            [AreaDamage.unlimited]: "32",
+            [AreaDamage.limited]: "70",
+        },
+        "20": {
+            [AreaDamage.unlimited]: "33",
+            [AreaDamage.limited]: "74",
+        },
+        "21": {
+            [AreaDamage.unlimited]: "35",
+            [AreaDamage.limited]: "77",
+        },
+        "22": {
+            [AreaDamage.unlimited]: "36",
+            [AreaDamage.limited]: "81",
+        },
+        "23": {
+            [AreaDamage.unlimited]: "38",
+            [AreaDamage.limited]: "84",
+        },
+        "24": {
+            [AreaDamage.unlimited]: "39",
+            [AreaDamage.limited]: "88",
+        }
     }
 }
 
@@ -1678,6 +1784,8 @@ export const statisticValues = {
     [Statistics.stealth]: aliases.skills,
     [Statistics.survival]: aliases.skills,
     [Statistics.thievery]: aliases.skills,
+
+    [Statistics.areaDamage]: aliases.areaDamage
 }
 
 export const diceValues = {

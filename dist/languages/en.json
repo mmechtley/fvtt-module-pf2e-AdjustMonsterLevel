@@ -62,5 +62,8 @@
     "PF2EADJUSTMONSTERLEVEL.none": "None",
 
     "PF2EADJUSTMONSTERLEVEL.minimum": "Minimum",
-    "PF2EADJUSTMONSTERLEVEL.maximum": "Maximum"
+    "PF2EADJUSTMONSTERLEVEL.maximum": "Maximum",
+
+    "PF2EADJUSTMONSTERLEVEL.unlimited": "Unlimited",
+    "PF2EADJUSTMONSTERLEVEL.limited": "Limited"
 }

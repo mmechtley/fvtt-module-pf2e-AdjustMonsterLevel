@@ -1,6 +1,7 @@
 import {
     abilityFields,
     AllowDice,
+    AreaDamage,
     defenseFields,
     Dice,
     Levels,
@@ -32,13 +33,16 @@ export class Adjustment {
     public metaData? : any = {}
 }
 
+export const arrayLikePattern = /\[(\d+)\]/
+export const damageRollPattern = /\[\[\/r\s*(\d+d\d+)\[\s*(\w+)\s*\]\s*\]\]/g
+export const savePattern = /@Check\[type:\w+\|dc:(\d+)[|:\w]*\]/g
+export const areaTemplatePattern = /@Template/
+
 export class AdjustMonsterLevel extends FormApplication {
     actor = <BaseActor>this.object
     level = "-1"
 
     DataToModify : AdjustmentCategory[] = []
-
-    arrayLikePattern = /\[(\d+)\]/
 
     static get defaultOptions() {
         return mergeObject( super.defaultOptions, {
@@ -77,13 +81,16 @@ export class AdjustMonsterLevel extends FormApplication {
                         }
 
                         // If something has an array index it requires special treatment
-                        let match = adjustment.targetAttribute.match( this.arrayLikePattern )
+                        let match = adjustment.targetAttribute.match( arrayLikePattern )
                         if( match ) {
                             this.mergeIndexedAdjustment( batch, adjustment, match[0] )
                         }
                         // Strike damage must be handled as an ensemble and requires special logic
                         else if( adjustment.statistic == Statistics.strikeDamage ) {
                             this.mergeStrikeDamage( batch, adjustment, this.level > previousLevel )
+                        }
+                        else if( adjustment.statistic == Statistics.description ) {
+                            this.mergeDescription( batch, adjustment )
                         }
                         else {
                             this.mergeSimpleAdjustment( batch, adjustment )
@@ -147,7 +154,6 @@ export class AdjustMonsterLevel extends FormApplication {
     }
 
     mergeStrikeDamage( batch:any, adjustment: Adjustment, levelIncreased: boolean ) {
-        // todo: handle things where we don't want to change the die size
         let values = statisticValues[adjustment.statistic][this.level]
         let totalDamage = AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values )
 
@@ -187,6 +193,40 @@ export class AdjustMonsterLevel extends FormApplication {
         batch.data = mergeObject( batch.data, partial )
     }
 
+    mergeDescription( batch: any, adjustment: Adjustment ) {
+        let values = statisticValues[adjustment.metaData.statisticTable][this.level]
+        // DC-like adjustments
+        let originalText: string = ''
+        let replacementText: string = ''
+        if( adjustment.metaData.statisticTable == Statistics.spellDC ) {
+            let newDC = AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values )
+            originalText = adjustment.metaData.replaceText
+            replacementText = adjustment.metaData.replaceText.replace( adjustment.metaData.replaceValues[0], newDC.toString() )
+        }
+        // damage roll-like adjustments
+        else {
+            let newDamage = AdjustMonsterLevel.getNumericValue( adjustment.normalizedValue, values )
+            let newRoll = AdjustMonsterLevel.getClosestDieRoll( newDamage, 0, adjustment.metaData.dieSize as Dice, AllowDice.sameOnly )
+            originalText = adjustment.metaData.replaceText
+            replacementText = adjustment.metaData.replaceText.replace( adjustment.metaData.replaceValues[0], newRoll.roll )
+        }
+
+        if( originalText !== '' && replacementText !== '' ) {
+            // This ensures we don't stomp a previous adjustment if we are adjusting multiple text entries
+            let copiedText = AdjustMonsterLevel.getChildField( batch.data, adjustment.targetAttribute )
+            if( !copiedText ) {
+                copiedText = AdjustMonsterLevel.getChildField( adjustment.targetDocument, adjustment.targetAttribute )
+            }
+
+            copiedText = copiedText.replace( originalText, replacementText )
+
+            let partial = {
+                [adjustment.targetAttribute]: copiedText
+            }
+            batch.data = mergeObject( batch.data, partial )
+        }
+    }
+
     static getClosestDieRoll( totalDamage: number, flatFraction: number, startingDie: Dice, allowDice: AllowDice ) {
         let damage = totalDamage * ( 1 - flatFraction )
         // If we don't have the ability to adjust the total using a flat modifier, use floor to skew damage slightly
@@ -220,7 +260,9 @@ export class AdjustMonsterLevel extends FormApplication {
     }
 
     static getNumericValue( normalized : any, values : any ) {
-        let options = [ResistOptions.minimum, ResistOptions.maximum, Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme]
+        let options = [AreaDamage.unlimited, AreaDamage.limited,
+            ResistOptions.minimum, ResistOptions.maximum,
+            Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme]
 
         // remove ones that aren't in values
         options = options.filter( v => v in values )
@@ -230,7 +272,7 @@ export class AdjustMonsterLevel extends FormApplication {
             if( normalized < i+1 && i != 0 )
                 continue
 
-            if( normalized > i+2 && i != options.length-1 )
+            if( normalized > i+2 && i != options.length-2 )
                 continue
 
             const frac = normalized - ( i+1 )
@@ -295,6 +337,8 @@ export class AdjustMonsterLevel extends FormApplication {
                     // duplicate and use for spell dc as well, since the relative proficiency is always the same
                     let dcData = JSON.parse( JSON.stringify( data ) ) as Adjustment
                     dcData.targetAttribute = 'system.spelldc.dc'
+                    dcData.statistic = Statistics.spellDC
+                    dcData.targetDocument = item
                     let category = new AdjustmentCategory( item.name )
                     category.adjustments.push( data )
                     category.adjustments.push( dcData )
@@ -312,6 +356,18 @@ export class AdjustMonsterLevel extends FormApplication {
                     category.adjustments.push( damageData )
                 if( category.adjustments.length > 0 )
                     this.DataToModify.push( category )
+            }
+            // todo: additional stuff like this
+            else if( item.type == 'action'
+                && (item as any).system.actionCategory.value == 'offensive'
+                && (item as any).system.actionType.value == 'action'
+                && item.name != null ) {
+                let adjustments = this.getTextAdjustments( item, 'system.description.value' )
+                if( adjustments.length > 0 ){
+                    let category = new AdjustmentCategory( item.name )
+                    category.adjustments = adjustments
+                    this.DataToModify.push( category )
+                }
             }
             // todo: spells? heighten for instance. spell-like abilities like dragon breath?
         }
@@ -398,6 +454,7 @@ export class AdjustMonsterLevel extends FormApplication {
             // sum up all the damage
             let total = 0
             // This is extremely heuristic, no guarantees
+            // todo: there may be other things where we want to keep the die size, cover those as they come up
             metaData.isItemRoll = (this.actor as any).inventory.find( i => i.name.includes( item.name ) ) != null
             for( let [id, roll] of Object.entries( item.system.damageRolls ) ) {
                 let rollValues = AdjustMonsterLevel.getDamageRollValues( (roll as any).damage )
@@ -414,7 +471,6 @@ export class AdjustMonsterLevel extends FormApplication {
                 if( (rollData as any).hasOwnProperty('totalFraction') ) {
                     (rollData as any).totalFraction = (rollData as any).totalFraction / total
                 }
-
             }
         }
         else {
@@ -423,7 +479,7 @@ export class AdjustMonsterLevel extends FormApplication {
 
         let normalized = AdjustMonsterLevel.getNormalizedValue( current, values, 1 )
         if( normalized.value > -9999 ) {
-            if( normalized.flag ){
+            if( normalized.flag ) {
                 metaData.outOfRange = true
             }
             let data: Adjustment = {
@@ -440,13 +496,86 @@ export class AdjustMonsterLevel extends FormApplication {
         return null
     }
 
+    getTextAdjustments( item: any, targetAttribute: string ) {
+        let adjustments: Adjustment[] = []
+        let text = AdjustMonsterLevel.getChildField( item, targetAttribute )
+        let damageRolls = text.matchAll( damageRollPattern )
+        let saves = text.matchAll( savePattern )
+        // todo: these prolly need their own special damage array or something
+        for( const damageRoll of damageRolls ) {
+            // todo: should we filter by damage type? physical scales weirdly sometimes
+            const roll = damageRoll[1]
+            const type = damageRoll[2]
+
+            // todo: should look at the text for an area and infer whether it's area damage or strike-like single target
+            // todo: this is prolly insufficient because sneak-attack like things should not be using the strike table
+            let statisticTable = text.match( areaTemplatePattern ) ? Statistics.areaDamage : Statistics.strikeDamage
+            let damageValues = statisticValues[statisticTable][this.level]
+
+            let rollStats = AdjustMonsterLevel.getDamageRollValues( roll )
+            let normalized = AdjustMonsterLevel.getNormalizedValue( rollStats.total, damageValues, 1 )
+            if( normalized.value > -9999 ) {
+                let metaData: any = {
+                    replaceText: damageRoll[0],
+                    replaceValues: [roll],
+                    statisticTable: statisticTable,
+                    dieSize: rollStats.dieSize
+                }
+                if( normalized.flag ) {
+                    metaData.outOfRange = true
+                }
+
+                let data: Adjustment = {
+                    targetDocument: item,
+                    targetAttribute: targetAttribute,
+                    statistic: Statistics.description,
+                    normalizedValue: normalized.value,
+                    displayValue: normalized.display,
+                    displayName: `Text: Roll ${roll} ${type}`,
+                    metaData: metaData
+                }
+                adjustments.push( data )
+            }
+        }
+
+        const dcValues = statisticValues[Statistics.spellDC][this.level]
+        for( const saveCheck of saves ) {
+            let currentDC = parseInt( saveCheck[1] )
+            let normalized = AdjustMonsterLevel.getNormalizedValue( currentDC, dcValues, 1 )
+            if( normalized.value > -9999 ) {
+                let metaData: any = {
+                    replaceText: saveCheck[0],
+                    replaceValues: [saveCheck[1]],
+                    statisticTable: Statistics.spellDC
+                }
+                if( normalized.flag ){
+                    metaData.outOfRange = true
+                }
+                let data: Adjustment = {
+                    targetDocument: item,
+                    targetAttribute: targetAttribute,
+                    statistic: Statistics.description,
+                    normalizedValue: normalized.value,
+                    displayValue: normalized.display,
+                    displayName: `Text: Save DC ${saveCheck[1]}`,
+                    metaData: metaData
+                }
+                adjustments.push( data )
+            }
+        }
+
+        return adjustments
+    }
+
     static localize( key: string ) {
         return (game as any).i18n.localize( key )
     }
 
     static getNormalizedValue( current: any, values: Iterable<Record<string,string>>, skipIfBelow: number=-9999 ) {
         // ordered from lowest to highest
-        let options = [ResistOptions.minimum, ResistOptions.maximum, Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme]
+        let options = [AreaDamage.unlimited, AreaDamage.limited,
+            ResistOptions.minimum, ResistOptions.maximum,
+            Options.terrible, Options.low, Options.moderate, Options.high, Options.extreme]
 
         // remove ones that aren't in values
         options = options.filter( v => v in values )
@@ -472,10 +601,16 @@ export class AdjustMonsterLevel extends FormApplication {
                 let frac = (current - intervalFloor) / (intervalCeil - intervalFloor)
                 frac = Math.round( frac * 10 ) / 10
                 let display = AdjustMonsterLevel.localize( options[i] )
-                if( frac != 0 && frac != 1 ) {
-                    if(frac > 0)
+                let displayFrac = frac
+                if( frac >= 1 ) {
+                    display = AdjustMonsterLevel.localize( options[i+1] )
+                    displayFrac -= 1
+                }
+
+                if( displayFrac != 0 ) {
+                    if( displayFrac > 0 )
                         display += '+'
-                    display += frac.toFixed( 1 )
+                    display += displayFrac.toFixed( 1 )
                 }
                 return {
                     value: frac + i + 1,
@@ -520,7 +655,7 @@ export class AdjustMonsterLevel extends FormApplication {
     static getChildField( obj: any, fieldPath: string ) {
         let current = obj
         let separated = fieldPath.split( '.' )
-        while( separated.length > 0 )
+        while( separated.length > 0 && current != null )
         {
             current = current[separated[0]]
             separated.splice( 0, 1 )
