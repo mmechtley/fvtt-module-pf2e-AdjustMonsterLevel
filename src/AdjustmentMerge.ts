@@ -2,6 +2,11 @@ import {Adjustment} from "./Adjustments";
 import {statisticValues} from "./Values";
 import {getChildField, getClosestDieRoll, getNumericValue} from "./Utils";
 import {AllowDice, Dice, Statistics} from "./Keys";
+import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
+import {InlineMacroMetadata} from "./Metadata/InlineMacroMetadata";
+import {InlineRollMetadata} from "./Metadata/InlineRollMetadata";
+import {InlineRoll, RollComponentData} from "./InlineData/InlineRoll";
+import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
 
 export function mergeSimpleAdjustment( newLevel: string, batch: any, adjustment: Adjustment ) {
     let values = statisticValues[adjustment.statistic][newLevel]
@@ -34,6 +39,7 @@ export function mergeIndexedAdjustment( newLevel: string, batch: any, adjustment
 }
 
 export function mergeStrikeDamage( newLevel: string, batch:any, adjustment: Adjustment, levelIncreased: boolean ) {
+    const metadata = adjustment.metadata as DamageRollMetadata
     let values = statisticValues[adjustment.statistic][newLevel]
     let totalDamage = getNumericValue( adjustment.normalizedValue, values )
 
@@ -42,15 +48,14 @@ export function mergeStrikeDamage( newLevel: string, batch:any, adjustment: Adju
     let rolls = getChildField( adjustment.targetDocument, adjustment.targetAttribute )
 
     for( let [id, roll] of Object.entries( rolls ) ) {
-        let oldRoll: string = (roll as any).damage
-        let rollMeta = adjustment.metaData[id]
+        let rollMeta = metadata.components[id]
         let rollDamage = rollMeta.totalFraction * totalDamage
         let newRoll = ''
 
         // do dice first since we can adjust the flat portion easier to match the target value
         if( rollMeta.flatFraction < 1 ) {
             let allowDice = levelIncreased ? AllowDice.above : AllowDice.below
-            if( adjustment.metaData.isItemRoll )
+            if( adjustment.metadata.isItemRoll )
                 allowDice = AllowDice.sameOnly
             let dice = getClosestDieRoll( rollDamage, rollMeta.flatFraction, rollMeta.dieSize as Dice, allowDice )
             newRoll = dice.roll
@@ -68,27 +73,57 @@ export function mergeStrikeDamage( newLevel: string, batch:any, adjustment: Adju
         }
 
         partial[`${adjustment.targetAttribute}.${id}.damage`] = newRoll
-        // console.log(`${oldRoll} -> ${newRoll}`)
     }
     batch.data = mergeObject( batch.data, partial )
 }
 
-export function mergeDescription( newLevel: string, batch: any, adjustment: Adjustment ) {
-    let values = statisticValues[adjustment.metaData.statisticTable][newLevel]
+export function mergeDescription( newLevel: string, batch: any, adjustment: Adjustment, levelIncreased: boolean ) {
+    const metadata = adjustment.metadata as InlineMacroMetadata
+    const values = statisticValues[metadata.statisticTable][newLevel]
     // DC-like adjustments
     let originalText: string = ''
     let replacementText: string = ''
-    if( adjustment.metaData.statisticTable == Statistics.spellDC ) {
+    if( metadata.statisticTable == Statistics.spellDC ) {
+        const checkMetadata = metadata as InlineCheckMetadata
         let newDC = getNumericValue( adjustment.normalizedValue, values )
-        originalText = adjustment.metaData.replaceText
-        replacementText = adjustment.metaData.replaceText.replace( adjustment.metaData.replaceValues[0], newDC.toString() )
+        originalText = metadata.replaceText
+        replacementText = metadata.replaceText.replace( checkMetadata.replaceValues[0], newDC.toString() )
     }
     // damage roll-like adjustments
     else {
-        let newDamage = getNumericValue( adjustment.normalizedValue, values )
-        let newRoll = getClosestDieRoll( newDamage, 0, adjustment.metaData.dieSize as Dice, AllowDice.sameOnly )
-        originalText = adjustment.metaData.replaceText
-        replacementText = adjustment.metaData.replaceText.replace( adjustment.metaData.replaceValues[0], newRoll.roll )
+        const rollMetadata = metadata as InlineRollMetadata
+        let totalDamage = getNumericValue( adjustment.normalizedValue, values )
+
+        let inlineRoll = new InlineRoll()
+        inlineRoll.hasTrailingLabel = rollMetadata.hasTrailingLabel
+
+        for( const component of rollMetadata.components ) {
+            let rollDamage = component.totalFraction * totalDamage
+            let newComponent = new RollComponentData()
+            newComponent.damageType = component.rollData.damageType
+
+            // do dice first since we can adjust the flat portion easier to match the target value
+            if( component.flatFraction < 1 ) {
+                let allowDice = levelIncreased ? AllowDice.above : AllowDice.below
+                // todo: this should prolly be a flag set on creation/parse, rather than relying on this heuristic
+                if( metadata.statisticTable == Statistics.areaDamage )
+                    allowDice = AllowDice.sameOnly
+                let dice = getClosestDieRoll( rollDamage, component.flatFraction, component.rollData.dieSize, allowDice )
+                newComponent.dieSize = dice.dieSize
+                newComponent.numDice = dice.numDice
+                rollDamage -= dice.damage
+            }
+
+            if( component.flatFraction > 0 ) {
+                // whatever remains
+                newComponent.flatModifier = Math.floor( rollDamage )
+            }
+
+            inlineRoll.rolls.push( newComponent )
+        }
+
+        originalText = metadata.replaceText
+        replacementText = inlineRoll.toInlineString()
     }
 
     if( originalText !== '' && replacementText !== '' ) {

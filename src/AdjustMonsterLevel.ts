@@ -71,7 +71,7 @@ export class AdjustMonsterLevel extends FormApplication {
                     }
                     // Description may have multiple adjustments and require special logic
                     else if( adjustment.statistic == Statistics.description ) {
-                        mergeDescription( this.data.level, batch, adjustment )
+                        mergeDescription( this.data.level, batch, adjustment, this.data.level > previousLevel )
                     }
                     else {
                         mergeSimpleAdjustment( this.data.level, batch, adjustment )

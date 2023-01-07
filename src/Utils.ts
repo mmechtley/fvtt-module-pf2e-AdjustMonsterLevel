@@ -47,7 +47,12 @@ export function getClosestDieRoll( totalDamage: number, flatFraction: number, st
             bestDistance = distance
         }
     }
-    return { roll:`${bestNumDice}${bestDie}`, damage:diceValues[bestDie] * bestNumDice }
+    return {
+        roll:`${bestNumDice}${bestDie}`,
+        damage:diceValues[bestDie] * bestNumDice,
+        numDice: bestNumDice,
+        dieSize: bestDie
+    }
 }
 
 export function getNumericValue( normalized : any, values : any ) {

@@ -16,5 +16,5 @@ export class Adjustment {
     public statistic: Statistics
     public displayName?: string
     public displayValue: string
-    public metaData?: any = {}
+    public metadata?: any = {}
 }

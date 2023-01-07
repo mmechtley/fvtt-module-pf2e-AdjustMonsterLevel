@@ -3,15 +3,21 @@ import {statisticValues} from "./Values";
 import {getChildField, getDamageRollValues, getNormalizedValue} from "./Utils";
 import {Adjustment} from "./Adjustments";
 import {TargetData} from "./AdjustMonsterLevel";
-export const damageRollPattern = /\[\[\/r\s*(\d+d\d+)\[\s*(\w+)\s*]\s*]]/g
-export const rollPattern = /\[{2}\/r(?:.(?!\[{2}))*]{2}/g  // note no capturing groups
+import {InlineRoll} from "./InlineData/InlineRoll";
+import {InlineRollMetadata, InlineRollComponentMetadata} from "./Metadata/InlineRollMetadata";
+import {BaseMetadata} from "./Metadata/BaseMetadata";
+import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
+import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
+
+// note no capturing groups, the whole thing is the roll, including tooltip if it has it
+export const rollPattern = /\[{2}\/r(?:.(?!\[{2}))*]{2}(?:\{[^}]*})?/g
 export const savePattern = /@Check\[type:\w+\|dc:(\d+)[|:\w]*]/g
 export const areaTemplatePattern = /@Template/
 
 export function getActorFieldAdjustment( targetData: TargetData, stat: Statistics, fieldPath: string ) {
     const values = statisticValues[stat][targetData.level]
     let current = getChildField( targetData.actor, fieldPath )
-    let metaData: any = {}
+    let metaData: BaseMetadata = {}
 
     let normalized = getNormalizedValue( current, values, 1 )
     if( normalized.value > -9999 ) {
@@ -24,7 +30,7 @@ export function getActorFieldAdjustment( targetData: TargetData, stat: Statistic
             normalizedValue: normalized.value,
             displayValue: normalized.display,
             statistic: stat,
-            metaData: metaData
+            metadata: metaData
         }
         return data
     }
@@ -35,7 +41,7 @@ export function getActorFieldAdjustment( targetData: TargetData, stat: Statistic
 export function getResistWeakAdjustment( targetData: TargetData, item: any, targetAttribute: string ) {
     const values = statisticValues[Statistics.resistWeak][targetData.level]
     let current = item.value
-    let metaData: any = {}
+    let metaData: BaseMetadata = {}
 
     let normalized = getNormalizedValue( current, values, 1 )
     if( normalized.flag ){
@@ -48,33 +54,36 @@ export function getResistWeakAdjustment( targetData: TargetData, item: any, targ
         normalizedValue: normalized.value,
         displayValue: normalized.display,
         displayName: item.type,
-        metaData: metaData
+        metadata: metaData
     }
     return data
 }
 
 export function getItemAdjustment( targetData: TargetData, stat: Statistics, item: any, targetAttribute: string ) {
     const values = statisticValues[stat][targetData.level]
-    let metaData: any = {}
+    let metaData: BaseMetadata
     let current = 0
     // simple fields
     if( item.type == 'lore' // skills
         || item.type == "spellcastingEntry"  // spellcasting
         || ( item.type == "melee" && stat == Statistics.strikeBonus ) // strike attack bonus
     ) {
+        metaData = new BaseMetadata()
         current = getChildField( item, targetAttribute )
     }
     // strike damage needs to be considered as a whole with all rolls contributing
     else if( item.type == "melee" && stat == Statistics.strikeDamage ) {
+        let dmgMetadata = new DamageRollMetadata()
+        metaData = dmgMetadata
         // sum up all the damage
         let total = 0
         // This is extremely heuristic, no guarantees
         // todo: there may be other things where we want to keep the die size, cover those as they come up
-        metaData.isItemRoll = (targetData.actor as any).inventory.find( i => i.name.includes( item.name ) ) != null
+        dmgMetadata.isItemRoll = (targetData.actor as any).inventory.find( i => i.name.includes( item.name ) ) != null
         for( let [id, roll] of Object.entries( item.system.damageRolls ) ) {
             let rollValues = getDamageRollValues( (roll as any).damage )
             total += rollValues.total
-            metaData[id] = {
+            dmgMetadata.components[id] = {
                 totalFraction: rollValues.total,
                 flatFraction: rollValues.flatFraction,
                 dieSize: rollValues.dieSize,
@@ -82,10 +91,8 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
         }
 
         current = Math.ceil( total ) // odd numbers of dice results in a half that should be rounded up to match the gmg numbers
-        for( const [, rollData] of Object.entries( metaData ) ) {
-            if( (rollData as any).hasOwnProperty('totalFraction') ) {
-                (rollData as any).totalFraction = (rollData as any).totalFraction / total
-            }
+        for( const [, rollData] of dmgMetadata.components ) {
+            rollData.totalFraction /= total
         }
     }
     else {
@@ -103,7 +110,7 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
             statistic: stat,
             normalizedValue: normalized.value,
             displayValue: normalized.display,
-            metaData: metaData
+            metadata: metaData
         }
         return data
     }
@@ -114,40 +121,59 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
 export function getTextAdjustments( currentLevel: string, item: any, targetAttribute: string ) {
     let adjustments: Adjustment[] = []
     let text = getChildField( item, targetAttribute )
-    let damageRolls = text.matchAll( damageRollPattern )
     let saves = text.matchAll( savePattern )
-    // todo: maybe try to use the existing parser for rolls? convert to roll object, do math, create new roll object, toString it or whatever
     let rolls = text.matchAll( rollPattern )
-    for (const roll of rolls) {
-        if( !roll[0].includes('d20') ) {
-            // let hmm = new DamageRoll(roll[1])
-            // console.log(hmm)
-            // console.log(roll[1])
-        }
-    }
-    // todo: these prolly need their own special damage array or something
-    for( const damageRoll of damageRolls ) {
-        // todo: should we filter by damage type? physical scales weirdly sometimes
-        const roll = damageRoll[1]
-        const type = damageRoll[2]
 
-        // todo: should look at the text for an area and infer whether it's area damage or strike-like single target
-        // todo: this is prolly insufficient because sneak-attack like things should not be using the strike table
+    for( const roll of rolls ) {
+        // skip check-like things, these are only for damage
+        if( roll[0].includes( 'd20') ) {
+            continue
+        }
+
+        const inlineRoll = InlineRoll.parse( roll[0] )
+
+        // Skip rolls where there is no damage type, as these are usually bonuses and i don't know how they should scale
+        if( inlineRoll.rolls.filter( r => r.damageType.length > 0 ).length == 0 ) {
+            continue
+        }
+
+        let componentMetaData: InlineRollComponentMetadata[] = []
+
+        // todo: this is prolly insufficient because sneak-attack like things should not be using either strike or area damage tables
         let statisticTable = text.match( areaTemplatePattern ) ? Statistics.areaDamage : Statistics.strikeDamage
         let damageValues = statisticValues[statisticTable][currentLevel]
 
-        let rollStats = getDamageRollValues( roll )
-        let normalized = getNormalizedValue( rollStats.total, damageValues, 1 )
+        // sum up all the damage for this roll
+        let total = 0
+        for( const rollData of inlineRoll.rolls ) {
+            let rollValues = getDamageRollValues( rollData.toSimpleString() )
+            total += rollValues.total
+            componentMetaData.push({
+                rollData: rollData,
+                totalFraction: rollValues.total,
+                flatFraction: rollValues.flatFraction,
+            })
+        }
+
+        let current = Math.ceil( total ) // odd numbers of dice results in a half that should be rounded up to match the gmg numbers
+        for( const meta of componentMetaData ) {
+            meta.totalFraction /= total
+        }
+
+        let normalized = getNormalizedValue( current, damageValues, 1 )
+
         if( normalized.value > -9999 ) {
-            let metaData: any = {
-                replaceText: damageRoll[0],
-                replaceValues: [roll],
+            let metaData: InlineRollMetadata = {
+                replaceText: roll[0],
                 statisticTable: statisticTable,
-                dieSize: rollStats.dieSize
+                components: componentMetaData,
+                hasTrailingLabel: inlineRoll.hasTrailingLabel
             }
             if( normalized.flag ) {
                 metaData.outOfRange = true
             }
+
+            let display = inlineRoll.toReadableString()
 
             let data: Adjustment = {
                 targetDocument: item,
@@ -155,8 +181,8 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
                 statistic: Statistics.description,
                 normalizedValue: normalized.value,
                 displayValue: normalized.display,
-                displayName: `Text: Roll ${roll} ${type}`,
-                metaData: metaData
+                displayName: `Text: Roll ${display}`,
+                metadata: metaData
             }
             adjustments.push( data )
         }
@@ -167,7 +193,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
         let currentDC = parseInt( saveCheck[1] )
         let normalized = getNormalizedValue( currentDC, dcValues, 1 )
         if( normalized.value > -9999 ) {
-            let metaData: any = {
+            let metaData: InlineCheckMetadata = {
                 replaceText: saveCheck[0],
                 replaceValues: [saveCheck[1]],
                 statisticTable: Statistics.spellDC
@@ -182,7 +208,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
                 normalizedValue: normalized.value,
                 displayValue: normalized.display,
                 displayName: `Text: Save DC ${saveCheck[1]}`,
-                metaData: metaData
+                metadata: metaData
             }
             adjustments.push( data )
         }
