@@ -35,6 +35,7 @@
                     <span class="adjustMonsterLevelFormText">{{this.displayName}}</span>
                 {{/if}}
                 <span class="adjustMonsterLevelFormText">{{this.displayValue}}</span>
+                <input type="checkbox" name="{{concat 'adjustments.' this.id}}" checked />
             </div>
             {{#if this.metaData.isItemRoll}}
             <div class="adjustMonsterLevelFormTextSmall adjustMonsterLevelFormAnnotation">{{localize "PF2EADJUSTMONSTERLEVEL.itemRoll"}}</div>

@@ -1,4 +1,5 @@
 import {Statistics} from "./Keys";
+import {v4} from 'uuid'
 
 export class AdjustmentCategory {
     public displayName: string
@@ -10,6 +11,7 @@ export class AdjustmentCategory {
 }
 
 export class Adjustment {
+    public id: string
     public targetDocument: any
     public targetAttribute: string
     public normalizedValue: number
@@ -17,4 +19,9 @@ export class Adjustment {
     public displayName?: string
     public displayValue: string
     public metadata?: any = {}
+
+    public constructor( init?:Partial<Adjustment> ) {
+        Object.assign( this, init )
+        this.id = v4()
+    }
 }

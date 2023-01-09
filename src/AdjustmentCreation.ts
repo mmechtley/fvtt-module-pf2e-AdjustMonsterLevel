@@ -4,7 +4,7 @@ import {getChildField, getDamageRollValues, getNormalizedValue} from "./Utils";
 import {Adjustment} from "./Adjustments";
 import {TargetData} from "./AdjustMonsterLevel";
 import {InlineRoll} from "./InlineData/InlineRoll";
-import {InlineRollMetadata, InlineRollComponentMetadata} from "./Metadata/InlineRollMetadata";
+import {InlineRollComponentMetadata, InlineRollMetadata} from "./Metadata/InlineRollMetadata";
 import {BaseMetadata} from "./Metadata/BaseMetadata";
 import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
 import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
@@ -24,15 +24,14 @@ export function getActorFieldAdjustment( targetData: TargetData, stat: Statistic
         if( normalized.flag ){
             metaData.outOfRange = true
         }
-        let data : Adjustment = {
+        return new Adjustment({
             targetDocument: targetData.actor,
             targetAttribute: fieldPath,
             normalizedValue: normalized.value,
             displayValue: normalized.display,
             statistic: stat,
             metadata: metaData
-        }
-        return data
+        })
     }
 
     return null
@@ -47,7 +46,7 @@ export function getResistWeakAdjustment( targetData: TargetData, item: any, targ
     if( normalized.flag ){
         metaData.outOfRange = true
     }
-    let data : Adjustment = {
+    let data = new Adjustment({
         targetDocument: targetData.actor,
         targetAttribute: targetAttribute,
         statistic: Statistics.resistWeak,
@@ -55,7 +54,7 @@ export function getResistWeakAdjustment( targetData: TargetData, item: any, targ
         displayValue: normalized.display,
         displayName: item.type,
         metadata: metaData
-    }
+    })
     return data
 }
 
@@ -104,15 +103,14 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
         if( normalized.flag ) {
             metaData.outOfRange = true
         }
-        let data: Adjustment = {
+        return new Adjustment({
             targetDocument: item,
             targetAttribute: targetAttribute,
             statistic: stat,
             normalizedValue: normalized.value,
             displayValue: normalized.display,
             metadata: metaData
-        }
-        return data
+        })
     }
 
     return null
@@ -175,7 +173,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
 
             let display = inlineRoll.toReadableString()
 
-            let data: Adjustment = {
+            let data = new Adjustment({
                 targetDocument: item,
                 targetAttribute: targetAttribute,
                 statistic: Statistics.description,
@@ -183,7 +181,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
                 displayValue: normalized.display,
                 displayName: `Text: Roll ${display}`,
                 metadata: metaData
-            }
+            })
             adjustments.push( data )
         }
     }
@@ -201,7 +199,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
             if( normalized.flag ){
                 metaData.outOfRange = true
             }
-            let data: Adjustment = {
+            let data = new Adjustment({
                 targetDocument: item,
                 targetAttribute: targetAttribute,
                 statistic: Statistics.description,
@@ -209,7 +207,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
                 displayValue: normalized.display,
                 displayName: `Text: Save DC ${saveCheck[1]}`,
                 metadata: metaData
-            }
+            })
             adjustments.push( data )
         }
     }

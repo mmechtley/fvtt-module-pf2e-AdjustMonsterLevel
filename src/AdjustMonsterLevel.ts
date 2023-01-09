@@ -54,6 +54,10 @@ export class AdjustMonsterLevel extends FormApplication {
 
             for( const category of this.DataToModify ){
                 for( const adjustment of category.adjustments ) {
+                    // Skip if the checkbox for this adjustment was unchecked on the form
+                    if( !formData['adjustments.'+ adjustment.id] )
+                        continue
+
                     let batch = batchedDocuments.find( b => b.targetDocument == adjustment.targetDocument )
                     if( !batch ){
                         batch = { targetDocument: adjustment.targetDocument, data: {} }
@@ -152,10 +156,14 @@ export class AdjustMonsterLevel extends FormApplication {
                 let data = getItemAdjustment( this.data, Statistics.spellcasting, item, 'system.spelldc.value' )
                 if( data ) {
                     // duplicate and use for spell dc as well, since the relative proficiency is always the same
-                    let dcData = JSON.parse( JSON.stringify( data ) ) as Adjustment
-                    dcData.targetAttribute = 'system.spelldc.dc'
-                    dcData.statistic = Statistics.spellDC
-                    dcData.targetDocument = item
+                    let dcData = new Adjustment({
+                        targetDocument: data.targetDocument,
+                        targetAttribute: 'system.spelldc.dc',
+                        statistic: Statistics.spellDC,
+                        normalizedValue: data.normalizedValue,
+                        displayValue: data.displayValue,
+                        metadata: JSON.parse( JSON.stringify( data.metadata ) )
+                    })
                     let category = new AdjustmentCategory( item.name )
                     category.adjustments.push( data )
                     category.adjustments.push( dcData )
