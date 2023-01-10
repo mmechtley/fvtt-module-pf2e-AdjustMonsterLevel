@@ -12,11 +12,12 @@ Statistics that this module will scale:
 - Spellcasting modifier and DC for any spellcasting entries
 - Attack modifier and damage for any Strikes
 - Resistances and Weaknesses
+- Check DCs or damage on most non-strike abilities, e.g. breath weapons, frightening presence, swallow whole 
 
 Statistics not scaled by this module:
 - Spell heightening or spell level
-- Damage of non-strike abilities, e.g. dragon's breath weapon (planned for any where the formatting is reasonable)
-- Sneak Attack or similar abilities that aren't a strike
+- Untyped damage on non-strike abilities, e.g. additional damage from Focused Assault
+- Sneak Attack or similar abilities where the damage is part of a rule element, not text
 - Any text for strikes that should scale but isn't part of the damage roll, e.g. persistent damage or splash damage
 - Inventory items
 
