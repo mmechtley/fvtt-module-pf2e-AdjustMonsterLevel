@@ -48,7 +48,10 @@ export function mergeStrikeDamage( newLevel: string, batch:any, adjustment: Adju
     let rolls = getChildField( adjustment.targetDocument, adjustment.targetAttribute )
 
     for( let [id, roll] of Object.entries( rolls ) ) {
-        let rollMeta = metadata.components[id]
+        let rollMeta = metadata.components.get( id )
+        if( !rollMeta ) {
+            continue
+        }
         let rollDamage = rollMeta.totalFraction * totalDamage
         let newRoll = ''
 

@@ -159,7 +159,7 @@ export function getDamageRollValues( damage: string ) {
 
     return {
         total: total,
-        dieSize: dieSize,
+        dieSize: dieSize as Dice,
         flatFraction: flat / total
     }
 }

@@ -80,15 +80,15 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
         for( let [id, roll] of Object.entries( item.system.damageRolls ) ) {
             let rollValues = getDamageRollValues( (roll as any).damage )
             total += rollValues.total
-            dmgMetadata.components[id] = {
+            dmgMetadata.components.set( id, {
                 totalFraction: rollValues.total,
                 flatFraction: rollValues.flatFraction,
                 dieSize: rollValues.dieSize,
-            }
+            } )
         }
 
         current = Math.ceil( total ) // odd numbers of dice results in a half that should be rounded up to match the gmg numbers
-        for( const [, rollData] of dmgMetadata.components ) {
+        for( const [id, rollData] of dmgMetadata.components ) {
             rollData.totalFraction /= total
         }
     }

@@ -1,6 +1,6 @@
 {
     "PF2EADJUSTMONSTERLEVEL.ACTORSHEET.buttonlabel": "Adjust Level",
-    "PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeLabel": "Test Mode",
+    "PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeLabel": "Developer Test Mode",
     "PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeHint": "Logs json of updates to target documents instead of actually updating the documents",
 
     "PF2EADJUSTMONSTERLEVEL.title": "Adjust Monster",
