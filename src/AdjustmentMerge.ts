@@ -1,7 +1,7 @@
 import {Adjustment} from "./Adjustments";
 import {statisticValues} from "./Values";
 import {getChildField, getClosestDieRoll, getNumericValue} from "./Utils";
-import {AllowDice, Dice, Statistics} from "./Keys";
+import {AllowDice, Dice} from "./Keys";
 import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
 import {InlineMacroMetadata} from "./Metadata/InlineMacroMetadata";
 import {InlineRollMetadata} from "./Metadata/InlineRollMetadata";
@@ -55,8 +55,8 @@ export function mergeStrikeDamage( newLevel: string, batch:any, adjustment: Adju
         // do dice first since we can adjust the flat portion easier to match the target value
         if( rollMeta.flatFraction < 1 ) {
             let allowDice = levelIncreased ? AllowDice.above : AllowDice.below
-            if( adjustment.metadata.isItemRoll )
-                allowDice = AllowDice.sameOnly
+            if( metadata.allowDice != AllowDice.any )
+                allowDice = metadata.allowDice
             let dice = getClosestDieRoll( rollDamage, rollMeta.flatFraction, rollMeta.dieSize as Dice, allowDice )
             newRoll = dice.roll
             rollDamage -= dice.damage
@@ -83,14 +83,15 @@ export function mergeDescription( newLevel: string, batch: any, adjustment: Adju
     // DC-like adjustments
     let originalText: string = ''
     let replacementText: string = ''
-    if( metadata.statisticTable == Statistics.spellDC ) {
+    if( metadata.macroType == 'InlineCheck' ) {
         const checkMetadata = metadata as InlineCheckMetadata
-        let newDC = getNumericValue( adjustment.normalizedValue, values )
+        let inlineCheck = checkMetadata.originalCheck.clone()
+        inlineCheck.dc = getNumericValue( adjustment.normalizedValue, values )
         originalText = metadata.replaceText
-        replacementText = metadata.replaceText.replace( checkMetadata.replaceValues[0], newDC.toString() )
+        replacementText = inlineCheck.toInlineString()
     }
     // damage roll-like adjustments
-    else {
+    else if( metadata.macroType == 'InlineRoll' ) {
         const rollMetadata = metadata as InlineRollMetadata
         let totalDamage = getNumericValue( adjustment.normalizedValue, values )
 
@@ -105,9 +106,8 @@ export function mergeDescription( newLevel: string, batch: any, adjustment: Adju
             // do dice first since we can adjust the flat portion easier to match the target value
             if( component.flatFraction < 1 ) {
                 let allowDice = levelIncreased ? AllowDice.above : AllowDice.below
-                // todo: this should prolly be a flag set on creation/parse, rather than relying on this heuristic
-                if( metadata.statisticTable == Statistics.areaDamage )
-                    allowDice = AllowDice.sameOnly
+                if( rollMetadata.allowDice != AllowDice.any )
+                    allowDice = rollMetadata.allowDice
                 let dice = getClosestDieRoll( rollDamage, component.flatFraction, component.rollData.dieSize, allowDice )
                 newComponent.dieSize = dice.dieSize
                 newComponent.numDice = dice.numDice

@@ -182,11 +182,7 @@ export class AdjustMonsterLevel extends FormApplication {
                 if( category.adjustments.length > 0 )
                     this.DataToModify.push( category )
             }
-            // todo: ensure we're covering all relevant actions. what about Swallow Whole and Frightful Presence?
-            else if( item.type == 'action'
-                && (item as any).system.actionCategory.value == 'offensive'
-                && (item as any).system.actionType.value == 'action'
-                && item.name != null ) {
+            else if( item.type == 'action' && item.name != null ) {
                 let adjustments = getTextAdjustments( this.data.level, item, 'system.description.value' )
                 if( adjustments.length > 0 ){
                     let category = new AdjustmentCategory( item.name )

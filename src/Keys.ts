@@ -20,16 +20,16 @@ export enum Statistics {
 
     hp = 'PF2EADJUSTMONSTERLEVEL.hp',
 
-    per = 'PF2EADJUSTMONSTERLEVEL.per',
+    perception = 'PF2EADJUSTMONSTERLEVEL.perception',
 
     ac = 'PF2EADJUSTMONSTERLEVEL.ac',
 
     resistWeak = 'PF2EADJUSTMONSTERLEVEL.resistWeak',
 
     // Saves
-    fort = 'PF2EADJUSTMONSTERLEVEL.fort',
-    ref = 'PF2EADJUSTMONSTERLEVEL.ref',
-    wil = 'PF2EADJUSTMONSTERLEVEL.wil',
+    fortitude = 'PF2EADJUSTMONSTERLEVEL.fortitude',
+    reflex = 'PF2EADJUSTMONSTERLEVEL.reflex',
+    will = 'PF2EADJUSTMONSTERLEVEL.will',
 
     // Strikes
     strikeBonus = 'PF2EADJUSTMONSTERLEVEL.strikeBonus',
@@ -90,10 +90,10 @@ export const abilityFields = {
 }
 
 export const savesFields = {
-    [Statistics.per]: 'system.attributes.perception.value',
-    [Statistics.fort]: 'system.saves.fortitude.value',
-    [Statistics.ref]: 'system.saves.reflex.value',
-    [Statistics.wil]: 'system.saves.will.value',
+    [Statistics.perception]: 'system.attributes.perception.value',
+    [Statistics.fortitude]: 'system.saves.fortitude.value',
+    [Statistics.reflex]: 'system.saves.reflex.value',
+    [Statistics.will]: 'system.saves.will.value',
 }
 
 export enum Tiers {

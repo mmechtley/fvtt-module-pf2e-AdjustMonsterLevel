@@ -1753,15 +1753,15 @@ export const statisticValues = {
 
     [Statistics.hp]: aliases.hitPoints,
 
-    [Statistics.per]: aliases.perceptionSaves,
+    [Statistics.perception]: aliases.perceptionSaves,
 
     [Statistics.ac]: aliases.armorClass,
 
     [Statistics.resistWeak]: aliases.resistWeak,
 
-    [Statistics.fort]: aliases.perceptionSaves,
-    [Statistics.ref]: aliases.perceptionSaves,
-    [Statistics.wil]: aliases.perceptionSaves,
+    [Statistics.fortitude]: aliases.perceptionSaves,
+    [Statistics.reflex]: aliases.perceptionSaves,
+    [Statistics.will]: aliases.perceptionSaves,
 
     [Statistics.strikeBonus]: aliases.strikeBonus,
     [Statistics.strikeDamage]: aliases.strikeDamage,

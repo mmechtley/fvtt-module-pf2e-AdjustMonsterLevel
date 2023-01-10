@@ -1,4 +1,4 @@
-import {Statistics} from "./Keys";
+import {AllowDice, Statistics} from "./Keys";
 import {statisticValues} from "./Values";
 import {getChildField, getDamageRollValues, getNormalizedValue} from "./Utils";
 import {Adjustment} from "./Adjustments";
@@ -8,10 +8,8 @@ import {InlineRollComponentMetadata, InlineRollMetadata} from "./Metadata/Inline
 import {BaseMetadata} from "./Metadata/BaseMetadata";
 import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
 import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
+import {InlineCheck} from "./InlineData/InlineCheck";
 
-// note no capturing groups, the whole thing is the roll, including tooltip if it has it
-export const rollPattern = /\[{2}\/r(?:.(?!\[{2}))*]{2}(?:\{[^}]*})?/g
-export const savePattern = /@Check\[type:\w+\|dc:(\d+)[|:\w]*]/g
 export const areaTemplatePattern = /@Template/
 
 export function getActorFieldAdjustment( targetData: TargetData, stat: Statistics, fieldPath: string ) {
@@ -46,7 +44,7 @@ export function getResistWeakAdjustment( targetData: TargetData, item: any, targ
     if( normalized.flag ){
         metaData.outOfRange = true
     }
-    let data = new Adjustment({
+    return new Adjustment({
         targetDocument: targetData.actor,
         targetAttribute: targetAttribute,
         statistic: Statistics.resistWeak,
@@ -55,7 +53,6 @@ export function getResistWeakAdjustment( targetData: TargetData, item: any, targ
         displayName: item.type,
         metadata: metaData
     })
-    return data
 }
 
 export function getItemAdjustment( targetData: TargetData, stat: Statistics, item: any, targetAttribute: string ) {
@@ -78,7 +75,8 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
         let total = 0
         // This is extremely heuristic, no guarantees
         // todo: there may be other things where we want to keep the die size, cover those as they come up
-        dmgMetadata.isItemRoll = (targetData.actor as any).inventory.find( i => i.name.includes( item.name ) ) != null
+        const hasCorrespondingItem = (targetData.actor as any).inventory.find(i => i.name.includes( item.name ) ) != null
+        dmgMetadata.allowDice = hasCorrespondingItem ? AllowDice.sameOnly : AllowDice.any
         for( let [id, roll] of Object.entries( item.system.damageRolls ) ) {
             let rollValues = getDamageRollValues( (roll as any).damage )
             total += rollValues.total
@@ -119,10 +117,11 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
 export function getTextAdjustments( currentLevel: string, item: any, targetAttribute: string ) {
     let adjustments: Adjustment[] = []
     let text = getChildField( item, targetAttribute )
-    let saves = text.matchAll( savePattern )
-    let rolls = text.matchAll( rollPattern )
+    let checks = text.matchAll( InlineCheck.pattern )
+    let rolls = text.matchAll( InlineRoll.pattern )
 
     for( const roll of rolls ) {
+        // todo: if a number seems sus, create the adjustment but default it to off?
         // skip check-like things, these are only for damage
         if( roll[0].includes( 'd20') ) {
             continue
@@ -161,12 +160,14 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
         let normalized = getNormalizedValue( current, damageValues, 1 )
 
         if( normalized.value > -9999 ) {
-            let metaData: InlineRollMetadata = {
+            let metaData= new InlineRollMetadata({
                 replaceText: roll[0],
                 statisticTable: statisticTable,
                 components: componentMetaData,
-                hasTrailingLabel: inlineRoll.hasTrailingLabel
-            }
+                hasTrailingLabel: inlineRoll.hasTrailingLabel,
+                // todo: does this need to be smarter?
+                allowDice: statisticTable == Statistics.areaDamage ? AllowDice.sameOnly : AllowDice.any
+            })
             if( normalized.flag ) {
                 metaData.outOfRange = true
             }
@@ -187,28 +188,31 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
     }
 
     const dcValues = statisticValues[Statistics.spellDC][currentLevel]
-    for( const saveCheck of saves ) {
-        let currentDC = parseInt( saveCheck[1] )
-        let normalized = getNormalizedValue( currentDC, dcValues, 1 )
-        if( normalized.value > -9999 ) {
-            let metaData: InlineCheckMetadata = {
-                replaceText: saveCheck[0],
-                replaceValues: [saveCheck[1]],
-                statisticTable: Statistics.spellDC
+    for( const check of checks ) {
+        const inlineCheck = InlineCheck.parse( check[0] )
+        // Some DCs reference variables on the actor, such as class DCs etc. Ignore those, and only modify numeric DCs
+        if( Number.isFinite( inlineCheck.dc ) ){
+            let normalized = getNormalizedValue( inlineCheck.dc, dcValues, 1 )
+            if( normalized.value > -9999 ) {
+                let metaData = new InlineCheckMetadata({
+                    replaceText: check[0],
+                    originalCheck: inlineCheck,
+                    statisticTable: Statistics.spellDC
+                })
+                if( normalized.flag ){
+                    metaData.outOfRange = true
+                }
+                let data = new Adjustment({
+                    targetDocument: item,
+                    targetAttribute: targetAttribute,
+                    statistic: Statistics.description,
+                    normalizedValue: normalized.value,
+                    displayValue: normalized.display,
+                    displayName: `Text: Check ${inlineCheck.toReadableString()}`,
+                    metadata: metaData
+                })
+                adjustments.push( data )
             }
-            if( normalized.flag ){
-                metaData.outOfRange = true
-            }
-            let data = new Adjustment({
-                targetDocument: item,
-                targetAttribute: targetAttribute,
-                statistic: Statistics.description,
-                normalizedValue: normalized.value,
-                displayValue: normalized.display,
-                displayName: `Text: Save DC ${saveCheck[1]}`,
-                metadata: metaData
-            })
-            adjustments.push( data )
         }
     }
 

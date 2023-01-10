@@ -39,16 +39,20 @@ export class RollComponentData {
 }
 
 export class InlineRoll {
+    // note no capturing groups, the whole thing is the roll, including tooltip if it has it
+    // todo: support blind rolls too
+    public static readonly pattern = /\[{2}\/r(?:.(?!\[{2}))*]{2}(?:\{[^}]*})?/g
+
     public hasTrailingLabel : boolean
     public rolls: RollComponentData[] = []
 
     public static parse( rollString: string ): InlineRoll {
         let roll = new InlineRoll()
-        const tooltip = rollString.match(/](\{.*})$/)
-        if( tooltip ) {
+        const label = rollString.match(/](\{.*})$/)
+        if( label ) {
             roll.hasTrailingLabel = true
-            const ttStart = rollString.lastIndexOf('{')
-            rollString = rollString.substring( 0, ttStart )
+            const labelStart = rollString.lastIndexOf('{')
+            rollString = rollString.substring( 0, labelStart )
         }
         // begin by removing the [[/r and ]] from the ends
         rollString = rollString.replace(/^\[{2}\/r/, '').replace(/]{2}$/, '')
@@ -90,24 +94,24 @@ export class InlineRoll {
     }
 
     public toReadableString() : string {
-        let tooltip = ''
+        let label = ''
         for( let i = 0; i < this.rolls.length; i++ ) {
             const roll = this.rolls[i];
             let simple = roll.toSimpleString()
 
             if( i > 0 ) {
-                tooltip += ' plus '
+                label += ' plus '
             }
 
-            tooltip += `${simple} ${roll.damageType.length > 0 ? roll.damageType : 'damage'}`
+            label += `${simple} ${roll.damageType.length > 0 ? roll.damageType : 'damage'}`
         }
 
-        return tooltip
+        return label
     }
 
     public toInlineString() : string {
         let output = ''
-        let tooltip = ''
+        let label = ''
         for( let i = 0; i < this.rolls.length; i++ ) {
             const roll = this.rolls[i];
             let simple = roll.toSimpleString()
@@ -115,10 +119,10 @@ export class InlineRoll {
 
             if( i > 0 ) {
                 output += ','
-                tooltip += ' plus '
+                label += ' plus '
             }
 
-            tooltip += `${simple} ${roll.damageType}${roll.damageType.length > 0 ? ' ' : ''}damage`
+            label += `${simple} ${roll.damageType}${roll.damageType.length > 0 ? ' ' : ''}damage`
 
             output += withType
         }
@@ -130,7 +134,7 @@ export class InlineRoll {
         output = `[[/r ${output}]]`
 
         if( this.hasTrailingLabel ){
-            output += `{${tooltip}}`
+            output += `{${label}}`
         }
 
         return output

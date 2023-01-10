@@ -1,5 +1,5 @@
 import {BaseMetadata} from "./BaseMetadata";
-import {Dice} from "../Keys";
+import {AllowDice, Dice} from "../Keys";
 
 export class DamageRollComponentMetadata {
     public totalFraction: number
@@ -8,7 +8,7 @@ export class DamageRollComponentMetadata {
 }
 
 export class DamageRollMetadata extends BaseMetadata {
-    public isItemRoll: boolean
+    public allowDice: AllowDice
     public components: Map<string, DamageRollComponentMetadata>
 
     constructor() {
