@@ -75,6 +75,9 @@ export const Skills: Statistics[] = [Statistics.acrobatics, Statistics.arcana, S
     Statistics.occultism, Statistics.performance, Statistics.religion, Statistics.society, Statistics.stealth,
     Statistics.survival, Statistics.thievery]
 
+export const AbilityModifiers: Statistics[] = [Statistics.str, Statistics.dex, Statistics.con, Statistics.int,
+    Statistics.wis, Statistics.cha]
+
 export const defenseFields ={
     [Statistics.hp]: 'system.attributes.hp.max',
     [Statistics.ac]: 'system.attributes.ac.value',

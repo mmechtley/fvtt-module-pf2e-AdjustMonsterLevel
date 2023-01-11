@@ -97,6 +97,7 @@ export class InlineRoll {
         return roll
     }
 
+    // todo: this and the label on the next one should support non-damage labels
     public toReadableString() : string {
         let label = ''
         for( let i = 0; i < this.rolls.length; i++ ) {

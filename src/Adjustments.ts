@@ -18,6 +18,7 @@ export class Adjustment {
     public statistic: Statistics
     public displayName?: string
     public displayValue: string
+    public apply: boolean = true
     public metadata?: any = {}
 
     public constructor( init?:Partial<Adjustment> ) {

@@ -1,4 +1,4 @@
-import {AllowDice, Statistics} from "./Keys";
+import {AbilityModifiers, AllowDice, Statistics} from "./Keys";
 import {statisticValues} from "./Values";
 import {getChildField, getDamageRollValues, getNormalizedValue} from "./Utils";
 import {Adjustment} from "./Adjustments";
@@ -15,12 +15,16 @@ export const areaTemplatePattern = /@Template/
 export function getActorFieldAdjustment( targetData: TargetData, stat: Statistics, fieldPath: string ) {
     const values = statisticValues[stat][targetData.level]
     let current = getChildField( targetData.actor, fieldPath )
-    let metaData: BaseMetadata = {}
+    let metaData: BaseMetadata = new BaseMetadata()
 
-    let normalized = getNormalizedValue( current, values, 1 )
+    let normalized = getNormalizedValue( current, values, -20 )
     if( normalized.value > -9999 ) {
+        const dumpStat = current < 1 && AbilityModifiers.includes( stat )
         if( normalized.flag ){
             metaData.outOfRange = true
+        }
+        if( dumpStat ) {
+            metaData.dumpStat = true
         }
         return new Adjustment({
             targetDocument: targetData.actor,
@@ -28,7 +32,8 @@ export function getActorFieldAdjustment( targetData: TargetData, stat: Statistic
             normalizedValue: normalized.value,
             displayValue: normalized.display,
             statistic: stat,
-            metadata: metaData
+            apply: !dumpStat,
+            metadata: metaData,
         })
     }
 
@@ -75,7 +80,7 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
         let total = 0
         // This is extremely heuristic, no guarantees
         // todo: there may be other things where we want to keep the die size, cover those as they come up
-        const hasCorrespondingItem = (targetData.actor as any).inventory.find(i => i.name.includes( item.name ) ) != null
+        const hasCorrespondingItem = (targetData.actor as any).inventory.find( i => i.name.includes( item.name ) ) != null
         dmgMetadata.allowDice = hasCorrespondingItem ? AllowDice.sameOnly : AllowDice.any
         for( let [id, roll] of Object.entries( item.system.damageRolls ) ) {
             let rollValues = getDamageRollValues( (roll as any).damage )
@@ -129,6 +134,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
 
         const inlineRoll = InlineRoll.parse( roll[0] )
 
+        // todo: may actually want to do some of these
         // Skip rolls where there is no damage type, as these are usually bonuses and i don't know how they should scale
         if( inlineRoll.rolls.filter( r => r.damageType.length > 0 ).length == 0 ) {
             continue
@@ -136,7 +142,8 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
 
         let componentMetaData: InlineRollComponentMetadata[] = []
 
-        // todo: this is prolly insufficient because sneak-attack like things should not be using either strike or area damage tables
+        // todo: this is prolly insufficient because things like Focused Assault should not be using either strike or area damage tables
+        // todo: some text blocks may be very long with multiple rolls and the template doesn't apply to them all. try to be smart?
         let statisticTable = text.match( areaTemplatePattern ) ? Statistics.areaDamage : Statistics.strikeDamage
         let damageValues = statisticValues[statisticTable][currentLevel]
 

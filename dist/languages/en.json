@@ -9,7 +9,8 @@
     "PF2EADJUSTMONSTERLEVEL.buttonLabelAdjust": "Adjust",
     "PF2EADJUSTMONSTERLEVEL.statisticsToBeScaled": "Statistics to be Scaled",
     "PF2EADJUSTMONSTERLEVEL.preservesDieSize":  "🎲 Die size will be preserved",
-    "PF2EADJUSTMONSTERLEVEL.outOfRange": "⚠️ Value out of table range, extrapolation will occur",
+    "PF2EADJUSTMONSTERLEVEL.outOfRange": "⚠️ Value out of table range, will be extrapolated",
+    "PF2EADJUSTMONSTERLEVEL.dumpStat": "⤵️ Suspected dump stat, disabled by default",
 
     "PF2EADJUSTMONSTERLEVEL.categoryDefenses": "Defenses",
     "PF2EADJUSTMONSTERLEVEL.categoryAbilityModifiers": "Ability Modifiers",
