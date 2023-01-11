@@ -39,11 +39,12 @@ export class RollComponentData {
 }
 
 export class InlineRoll {
+    // todo: some rolls have the roll20 style # comment syntax, like breath weapon recharge d4
     // note no capturing groups, the whole thing is the roll, including tooltip if it has it
-    // todo: support blind rolls too
-    public static readonly pattern = /\[{2}\/r(?:.(?!\[{2}))*]{2}(?:\{[^}]*})?/g
+    public static readonly pattern = /\[{2}\/b?r(?:.(?!\[{2}))*]{2}(?:\{[^}]*})?/g
 
-    public hasTrailingLabel : boolean
+    public hasTrailingLabel : boolean = false
+    public blind: boolean = false
     public rolls: RollComponentData[] = []
 
     public static parse( rollString: string ): InlineRoll {
@@ -54,8 +55,11 @@ export class InlineRoll {
             const labelStart = rollString.lastIndexOf('{')
             rollString = rollString.substring( 0, labelStart )
         }
+        if( rollString.match( /^\[{2}\/b/ ) ) {
+            roll.blind = true
+        }
         // begin by removing the [[/r and ]] from the ends
-        rollString = rollString.replace(/^\[{2}\/r/, '').replace(/]{2}$/, '')
+        rollString = rollString.replace(/^\[{2}\/b?r/, '').replace(/]{2}$/, '')
         rollString = rollString.trim()
         // remove surrounding brackets for compound rolls if they are present
         rollString = rollString.replace(/^\{*/, '').replace(/}*$/, '')
@@ -131,7 +135,7 @@ export class InlineRoll {
             output = `{${output}}`
         }
 
-        output = `[[/r ${output}]]`
+        output = `[[/${this.blind ? 'b': ''}r ${output}]]`
 
         if( this.hasTrailingLabel ){
             output += `{${label}}`

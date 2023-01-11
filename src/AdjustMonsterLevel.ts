@@ -31,6 +31,7 @@ export class AdjustMonsterLevel extends FormApplication {
         return mergeObject( super.defaultOptions, {
             classes: ["form"],
             popOut: true,
+            resizable: true,
             template: `modules/pf2e-adjust-monster-level/forms/adjustMonsterLevelForm.html`,
             id: "adjustMonsterLevelForm",
             title: "Adjust Level Form",

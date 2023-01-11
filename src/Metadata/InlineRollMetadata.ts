@@ -10,6 +10,7 @@ export class InlineRollComponentMetadata {
 
 export class InlineRollMetadata extends InlineMacroMetadata {
     public hasTrailingLabel: boolean
+    public blind: boolean
     public allowDice: AllowDice
     public components: InlineRollComponentMetadata[]
 

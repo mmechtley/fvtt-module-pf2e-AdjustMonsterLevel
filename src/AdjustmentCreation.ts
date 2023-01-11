@@ -160,11 +160,12 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
         let normalized = getNormalizedValue( current, damageValues, 1 )
 
         if( normalized.value > -9999 ) {
-            let metaData= new InlineRollMetadata({
+            let metaData = new InlineRollMetadata({
                 replaceText: roll[0],
                 statisticTable: statisticTable,
                 components: componentMetaData,
                 hasTrailingLabel: inlineRoll.hasTrailingLabel,
+                blind: inlineRoll.blind,
                 // todo: does this need to be smarter?
                 allowDice: statisticTable == Statistics.areaDamage ? AllowDice.sameOnly : AllowDice.any
             })

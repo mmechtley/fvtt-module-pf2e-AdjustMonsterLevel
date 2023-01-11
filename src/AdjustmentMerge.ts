@@ -100,6 +100,7 @@ export function mergeDescription( newLevel: string, batch: any, adjustment: Adju
 
         let inlineRoll = new InlineRoll()
         inlineRoll.hasTrailingLabel = rollMetadata.hasTrailingLabel
+        inlineRoll.blind = rollMetadata.blind
 
         for( const component of rollMetadata.components ) {
             let rollDamage = component.totalFraction * totalDamage
