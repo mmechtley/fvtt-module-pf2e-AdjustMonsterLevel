@@ -9,10 +9,10 @@ export class InlineRollComponentMetadata {
 }
 
 export class InlineRollMetadata extends InlineMacroMetadata {
-    public hasTrailingLabel: boolean
-    public blind: boolean
+    public originalRoll: InlineRoll
     public allowDice: AllowDice
     public components: InlineRollComponentMetadata[]
+    public damageTypeLabel: string
 
     get macroType() {
         return 'InlineRoll'

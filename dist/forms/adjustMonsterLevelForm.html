@@ -46,6 +46,9 @@
             {{#if this.metadata.outOfRange}}
             <div class="adjustMonsterLevelFormTextSmall adjustMonsterLevelFormAnnotation">{{localize "PF2EADJUSTMONSTERLEVEL.outOfRange"}}</div>
             {{/if}}
+            {{#if this.metadata.damageTypeLabel}}
+            <div class="adjustMonsterLevelFormTextSmall adjustMonsterLevelFormAnnotation">{{localize this.metadata.damageTypeLabel}}</div>
+            {{/if}}
         {{/each}}
         </div>
     {{/each}}

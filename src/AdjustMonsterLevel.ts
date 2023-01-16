@@ -88,8 +88,7 @@ export class AdjustMonsterLevel extends FormApplication {
             if( testMode ) {
                 console.log(`----- Data deltas for adjusting monster ${this.data.actor.name} ${(this.data.actor as any).system.details.level.value}->${this.data.level} -----`)
                 for( const batch of batchedDocuments ) {
-                    console.log( `${batch.targetDocument.name}` )
-                    console.log( batch.data )
+                    console.log( `${batch.targetDocument.name}`, batch.data )
                 }
             }
             else {

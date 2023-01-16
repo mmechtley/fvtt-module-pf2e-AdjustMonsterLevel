@@ -1,4 +1,4 @@
-import {AreaDamageTiers, Dice, Tiers, ResistTiers, Statistics} from "./Keys";
+import {AreaDamageTiers, Dice, Tiers, ResistTiers, Statistics, AllowDice} from "./Keys";
 
 const aliases = {
     abilityScores: {
@@ -1740,6 +1740,166 @@ const aliases = {
             [AreaDamageTiers.unlimited]: "39",
             [AreaDamageTiers.limited]: "88",
         }
+    },
+    // I just made this one up. It's intended for flat damage addition like sneak attack or Focused Assault.
+    // The tiers are just sneak attack progression with d4, d6, d8, and d10
+    additionalDamage: {
+        "-1": {
+            [Tiers.low]: "2",
+            [Tiers.moderate]: "3",
+            [Tiers.high]: "4",
+            [Tiers.extreme]: "5"
+        },
+        "0": {
+            [Tiers.low]: "3",
+            [Tiers.moderate]: "4",
+            [Tiers.high]: "5",
+            [Tiers.extreme]: "6"
+        },
+        "1": {
+            [Tiers.low]: "3",
+            [Tiers.moderate]: "4",
+            [Tiers.high]: "5",
+            [Tiers.extreme]: "7"
+        },
+        "2": {
+            [Tiers.low]: "4",
+            [Tiers.moderate]: "5",
+            [Tiers.high]: "6",
+            [Tiers.extreme]: "8"
+        },
+        "3": {
+            [Tiers.low]: "4",
+            [Tiers.moderate]: "6",
+            [Tiers.high]: "7",
+            [Tiers.extreme]: "9"
+        },
+        "4": {
+            [Tiers.low]: "5",
+            [Tiers.moderate]: "6",
+            [Tiers.high]: "8",
+            [Tiers.extreme]: "10"
+        },
+        "5": {
+            [Tiers.low]: "5",
+            [Tiers.moderate]: "7",
+            [Tiers.high]: "9",
+            [Tiers.extreme]: "11"
+        },
+        "6": {
+            [Tiers.low]: "5",
+            [Tiers.moderate]: "7",
+            [Tiers.high]: "10",
+            [Tiers.extreme]: "12"
+        },
+        "7": {
+            [Tiers.low]: "6",
+            [Tiers.moderate]: "8",
+            [Tiers.high]: "10",
+            [Tiers.extreme]: "12"
+        },
+        "8": {
+            [Tiers.low]: "6",
+            [Tiers.moderate]: "8",
+            [Tiers.high]: "11",
+            [Tiers.extreme]: "13"
+        },
+        "9": {
+            [Tiers.low]: "6",
+            [Tiers.moderate]: "9",
+            [Tiers.high]: "11",
+            [Tiers.extreme]: "14"
+        },
+        "10": {
+            [Tiers.low]: "7",
+            [Tiers.moderate]: "9",
+            [Tiers.high]: "12",
+            [Tiers.extreme]: "14"
+        },
+        "11": {
+            [Tiers.low]: "7",
+            [Tiers.moderate]: "10",
+            [Tiers.high]: "12",
+            [Tiers.extreme]: "15"
+        },
+        "12": {
+            [Tiers.low]: "7",
+            [Tiers.moderate]: "10",
+            [Tiers.high]: "13",
+            [Tiers.extreme]: "16"
+        },
+        "13": {
+            [Tiers.low]: "8",
+            [Tiers.moderate]: "11",
+            [Tiers.high]: "14",
+            [Tiers.extreme]: "17"
+        },
+        "14": {
+            [Tiers.low]: "8",
+            [Tiers.moderate]: "11",
+            [Tiers.high]: "14",
+            [Tiers.extreme]: "17"
+        },
+        "15": {
+            [Tiers.low]: "8",
+            [Tiers.moderate]: "11",
+            [Tiers.high]: "15",
+            [Tiers.extreme]: "18"
+        },
+        "16": {
+            [Tiers.low]: "8",
+            [Tiers.moderate]: "12",
+            [Tiers.high]: "15",
+            [Tiers.extreme]: "19"
+        },
+        "17": {
+            [Tiers.low]: "9",
+            [Tiers.moderate]: "12",
+            [Tiers.high]: "16",
+            [Tiers.extreme]: "19"
+        },
+        "18": {
+            [Tiers.low]: "9",
+            [Tiers.moderate]: "13",
+            [Tiers.high]: "16",
+            [Tiers.extreme]: "20"
+        },
+        "19": {
+            [Tiers.low]: "9",
+            [Tiers.moderate]: "13",
+            [Tiers.high]: "17",
+            [Tiers.extreme]: "21"
+        },
+        "20": {
+            [Tiers.low]: "10",
+            [Tiers.moderate]: "14",
+            [Tiers.high]: "17",
+            [Tiers.extreme]: "21"
+        },
+        "21": {
+            [Tiers.low]: "10",
+            [Tiers.moderate]: "14",
+            [Tiers.high]: "18",
+            [Tiers.extreme]: "22"
+        },
+        "22": {
+            [Tiers.low]: "10",
+            [Tiers.moderate]: "14",
+            [Tiers.high]: "19",
+            [Tiers.extreme]: "23"
+        },
+        "23": {
+            [Tiers.low]: "11",
+            [Tiers.moderate]: "15",
+            [Tiers.high]: "19",
+            [Tiers.extreme]: "23"
+        },
+        "24": {
+            [Tiers.low]: "11",
+            [Tiers.moderate]: "15",
+            [Tiers.high]: "20",
+            [Tiers.extreme]: "24"
+        }
     }
 }
 
@@ -1785,7 +1945,8 @@ export const statisticValues = {
     [Statistics.survival]: aliases.skills,
     [Statistics.thievery]: aliases.skills,
 
-    [Statistics.areaDamage]: aliases.areaDamage
+    [Statistics.areaDamage]: aliases.areaDamage,
+    [Statistics.additionalDamage]: aliases.additionalDamage
 }
 
 export const diceValues = {
@@ -1794,4 +1955,16 @@ export const diceValues = {
     [Dice.d8]: 4.5,
     [Dice.d10]: 5.5,
     [Dice.d12]: 6.5
+}
+
+export const inlineAllowDice = {
+    [Statistics.strikeDamage]: AllowDice.any,
+    [Statistics.areaDamage]: AllowDice.sameOnly,
+    [Statistics.additionalDamage]: AllowDice.sameOnly
+}
+
+export const inlineDamageLabel = {
+    [Statistics.strikeDamage]: "PF2EADJUSTMONSTERLEVEL.inlineStrikeDamage",
+    [Statistics.areaDamage]: "PF2EADJUSTMONSTERLEVEL.inlineAreaDamage",
+    [Statistics.additionalDamage]: "PF2EADJUSTMONSTERLEVEL.inlineExtraDamage"
 }

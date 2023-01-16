@@ -1,5 +1,5 @@
 import {AbilityModifiers, AllowDice, Statistics} from "./Keys";
-import {statisticValues} from "./Values";
+import {inlineAllowDice, inlineDamageLabel, statisticValues} from "./Values";
 import {getChildField, getDamageRollValues, getNormalizedValue} from "./Utils";
 import {Adjustment} from "./Adjustments";
 import {TargetData} from "./AdjustMonsterLevel";
@@ -119,6 +119,8 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
     return null
 }
 
+
+
 export function getTextAdjustments( currentLevel: string, item: any, targetAttribute: string ) {
     let adjustments: Adjustment[] = []
     let text = getChildField( item, targetAttribute )
@@ -127,24 +129,33 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
 
     for( const roll of rolls ) {
         // todo: if a number seems sus, create the adjustment but default it to off?
-        // skip check-like things, these are only for damage
+        // skip check-like things entirely
         if( roll[0].includes( 'd20') ) {
             continue
         }
 
         const inlineRoll = InlineRoll.parse( roll[0] )
 
-        // todo: may actually want to do some of these
-        // Skip rolls where there is no damage type, as these are usually bonuses and i don't know how they should scale
-        if( inlineRoll.rolls.filter( r => r.damageType.length > 0 ).length == 0 ) {
+        // Skip rolls where there is no damage type or "damage" is not in the text, as these are usually things like
+        // breath weapon recharge and should not be scaled
+        if( !inlineRoll.isDamage ) {
             continue
         }
 
         let componentMetaData: InlineRollComponentMetadata[] = []
 
-        // todo: this is prolly insufficient because things like Focused Assault should not be using either strike or area damage tables
         // todo: some text blocks may be very long with multiple rolls and the template doesn't apply to them all. try to be smart?
         let statisticTable = text.match( areaTemplatePattern ) ? Statistics.areaDamage : Statistics.strikeDamage
+        // todo: VERY heuristic. additional damage is *usually* just dice (no flat bonus) OR only flat bonus (vampire
+        //  drink blood etc) from what i've seen
+
+        if( statisticTable == Statistics.strikeDamage
+            && inlineRoll.rolls.length == 1
+            && ( inlineRoll.rolls[0].flatModifier == 0
+                || inlineRoll.rolls[0].numDice == 0 )
+        ) {
+            statisticTable = Statistics.additionalDamage
+        }
         let damageValues = statisticValues[statisticTable][currentLevel]
 
         // sum up all the damage for this roll
@@ -171,10 +182,9 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
                 replaceText: roll[0],
                 statisticTable: statisticTable,
                 components: componentMetaData,
-                hasTrailingLabel: inlineRoll.hasTrailingLabel,
-                blind: inlineRoll.blind,
-                // todo: does this need to be smarter?
-                allowDice: statisticTable == Statistics.areaDamage ? AllowDice.sameOnly : AllowDice.any
+                originalRoll: inlineRoll,
+                allowDice: inlineAllowDice[statisticTable],
+                damageTypeLabel: inlineDamageLabel[statisticTable]
             })
             if( normalized.flag ) {
                 metaData.outOfRange = true

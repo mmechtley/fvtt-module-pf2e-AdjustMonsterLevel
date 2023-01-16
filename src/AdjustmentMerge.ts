@@ -5,7 +5,7 @@ import {AllowDice, Dice} from "./Keys";
 import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
 import {InlineMacroMetadata} from "./Metadata/InlineMacroMetadata";
 import {InlineRollMetadata} from "./Metadata/InlineRollMetadata";
-import {InlineRoll, RollComponentData} from "./InlineData/InlineRoll";
+import {InlineRoll} from "./InlineData/InlineRoll";
 import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
 
 export function mergeSimpleAdjustment( newLevel: string, batch: any, adjustment: Adjustment ) {
@@ -47,7 +47,7 @@ export function mergeStrikeDamage( newLevel: string, batch:any, adjustment: Adju
 
     let rolls = getChildField( adjustment.targetDocument, adjustment.targetAttribute )
 
-    for( let [id, roll] of Object.entries( rolls ) ) {
+    for( const [id] of Object.entries( rolls ) ) {
         let rollMeta = metadata.components.get( id )
         if( !rollMeta ) {
             continue
@@ -98,14 +98,12 @@ export function mergeDescription( newLevel: string, batch: any, adjustment: Adju
         const rollMetadata = metadata as InlineRollMetadata
         let totalDamage = getNumericValue( adjustment.normalizedValue, values )
 
-        let inlineRoll = new InlineRoll()
-        inlineRoll.hasTrailingLabel = rollMetadata.hasTrailingLabel
-        inlineRoll.blind = rollMetadata.blind
+        let inlineRoll = rollMetadata.originalRoll.clone()
+        inlineRoll.rolls.splice( 0 )
 
         for( const component of rollMetadata.components ) {
             let rollDamage = component.totalFraction * totalDamage
-            let newComponent = new RollComponentData()
-            newComponent.damageType = component.rollData.damageType
+            let newComponent = component.rollData.clone()
 
             // do dice first since we can adjust the flat portion easier to match the target value
             if( component.flatFraction < 1 ) {
@@ -127,7 +125,7 @@ export function mergeDescription( newLevel: string, batch: any, adjustment: Adju
         }
 
         originalText = metadata.replaceText
-        replacementText = inlineRoll.toInlineString()
+        replacementText = inlineRoll.toInlineRollString()
     }
 
     if( originalText !== '' && replacementText !== '' ) {

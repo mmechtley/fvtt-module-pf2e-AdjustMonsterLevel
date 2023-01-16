@@ -17,7 +17,7 @@ export class InlineCheck {
 
     public static parse( checkString: string ): InlineCheck {
         let check = new InlineCheck()
-        const tooltip = checkString.match(/](\{.*})$/)
+        const tooltip = checkString.match( /](\{[^{}[\]]*})$/ )
         if( tooltip ) {
             const labelStart = checkString.lastIndexOf('{')
             check.trailingLabel = checkString.substring( labelStart+1, checkString.length-1 )

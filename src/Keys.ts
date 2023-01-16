@@ -59,7 +59,8 @@ export enum Statistics {
 
     // text inside an item entry
     description = 'PF2EADJUSTMONSTERLEVEL.description',
-    areaDamage = 'PF2EADJUSTMONSTERLEVEL.areaDamage'
+    areaDamage = 'PF2EADJUSTMONSTERLEVEL.areaDamage',
+    additionalDamage = 'PF2EADJUSTMONSTERLEVEL.additionalDamage'
 }
 
 export enum Dice {

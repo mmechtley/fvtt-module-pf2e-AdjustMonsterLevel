@@ -3,6 +3,9 @@
     "PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeLabel": "Developer Test Mode",
     "PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeHint": "Logs json of updates to target documents instead of actually updating the documents",
 
+    "PF2EADJUSTMONSTERLEVEL.damageInline": "damage",
+    "PF2EADJUSTMONSTERLEVEL.plusInline": "plus",
+
     "PF2EADJUSTMONSTERLEVEL.title": "Adjust Monster",
     "PF2EADJUSTMONSTERLEVEL.frontMatter": "This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery Guide. Stats that fall between two tiers (e.g. between Moderate and High) will be interpolated. Stats below the minimum or above the maximum from the GMG table will be extrapolated. Ability modifiers 0 or below are ignored. You may preview items that will be adjusted and enable or disable individual adjustments via the foldout below.",
     "PF2EADJUSTMONSTERLEVEL.nameLevel": "Name and Level",
@@ -11,6 +14,9 @@
     "PF2EADJUSTMONSTERLEVEL.preservesDieSize":  "🎲 Die size will be preserved",
     "PF2EADJUSTMONSTERLEVEL.outOfRange": "⚠️ Value out of table range, will be extrapolated",
     "PF2EADJUSTMONSTERLEVEL.dumpStat": "⤵️ Suspected dump stat, disabled by default",
+    "PF2EADJUSTMONSTERLEVEL.inlineAreaDamage": "💥 Inferred to be area damage",
+    "PF2EADJUSTMONSTERLEVEL.inlineStrikeDamage": "🤛 Inferred to be strike-like damage",
+    "PF2EADJUSTMONSTERLEVEL.inlineExtraDamage": "🗡️ Inferred to be extra damage (sneak attack-like)",
 
     "PF2EADJUSTMONSTERLEVEL.categoryDefenses": "Defenses",
     "PF2EADJUSTMONSTERLEVEL.categoryAbilityModifiers": "Ability Modifiers",
