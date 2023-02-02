@@ -1,12 +1,13 @@
 import {Adjustment} from "./Adjustments";
 import {statisticValues} from "./Values";
 import {getChildField, getClosestDieRoll, getNumericValue} from "./Utils";
-import {AllowDice, Dice} from "./Keys";
+import {AllowDice, Dice, Statistics} from "./Keys";
 import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
 import {InlineMacroMetadata} from "./Metadata/InlineMacroMetadata";
 import {InlineRollMetadata} from "./Metadata/InlineRollMetadata";
 import {InlineRoll} from "./InlineData/InlineRoll";
 import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
+import {RuleMetadata} from "./Metadata/RuleMetadata";
 
 export function mergeSimpleAdjustment( newLevel: string, batch: any, adjustment: Adjustment ) {
     let values = statisticValues[adjustment.statistic][newLevel]
@@ -17,7 +18,6 @@ export function mergeSimpleAdjustment( newLevel: string, batch: any, adjustment:
 }
 
 export function mergeIndexedAdjustment( newLevel: string, batch: any, adjustment: Adjustment, indexStr: string ) {
-    let values = statisticValues[adjustment.statistic][newLevel]
     let indexStart = adjustment.targetAttribute.indexOf( indexStr )
     let objAttr = adjustment.targetAttribute.substring( indexStart + indexStr.length + 1 ) // +1 for trailing dot
     adjustment.targetAttribute = adjustment.targetAttribute.substring( 0, indexStart )
@@ -30,7 +30,15 @@ export function mergeIndexedAdjustment( newLevel: string, batch: any, adjustment
         copiedArray = JSON.parse( JSON.stringify( originalArray ) )
     }
 
-    copiedArray[index][objAttr] = getNumericValue( adjustment.normalizedValue, values )
+    let newValue: any
+    if( adjustment.statistic == Statistics.rule ) {
+        newValue = getNewRuleValue( newLevel, adjustment )
+    }
+    else {
+        let values = statisticValues[adjustment.statistic][newLevel]
+        newValue = getNumericValue( adjustment.normalizedValue, values )
+    }
+    copiedArray[index][objAttr] = newValue
 
     let partial = {
         [adjustment.targetAttribute]: copiedArray
@@ -142,4 +150,16 @@ export function mergeDescription( newLevel: string, batch: any, adjustment: Adju
         }
         batch.data = mergeObject( batch.data, partial )
     }
+}
+
+export function getNewRuleValue( newLevel: string, adjustment: Adjustment ) {
+    const metadata = adjustment.metadata as RuleMetadata
+    if( metadata.key == 'DamageDice' ) {
+        const values = statisticValues[metadata.statisticTable][newLevel]
+        const newDamage = getNumericValue( adjustment.normalizedValue, values )
+        const newRoll = getClosestDieRoll( newDamage, 0, metadata.dieSize, AllowDice.sameOnly )
+        console.log(newDamage, newRoll)
+        return newRoll.numDice
+    }
+    return null
 }

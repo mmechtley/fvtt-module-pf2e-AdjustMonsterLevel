@@ -1,4 +1,4 @@
-import {AbilityModifiers, AllowDice, Statistics} from "./Keys";
+import {AbilityModifiers, AllowDice, Dice, Statistics} from "./Keys";
 import {inlineAllowDice, inlineDamageLabel, statisticValues} from "./Values";
 import {getChildField, getDamageRollValues, getNormalizedValue} from "./Utils";
 import {Adjustment} from "./Adjustments";
@@ -9,10 +9,11 @@ import {BaseMetadata} from "./Metadata/BaseMetadata";
 import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
 import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
 import {InlineCheck} from "./InlineData/InlineCheck";
+import {RuleMetadata} from "./Metadata/RuleMetadata";
 
 export const areaTemplatePattern = /@Template/
 
-export function getActorFieldAdjustment( targetData: TargetData, stat: Statistics, fieldPath: string ) {
+export function getActorFieldAdjustment( targetData: TargetData, stat: Statistics, fieldPath: string ): Adjustment | null {
     const values = statisticValues[stat][targetData.level]
     let current = getChildField( targetData.actor, fieldPath )
     let metaData: BaseMetadata = new BaseMetadata()
@@ -40,7 +41,7 @@ export function getActorFieldAdjustment( targetData: TargetData, stat: Statistic
     return null
 }
 
-export function getResistWeakAdjustment( targetData: TargetData, item: any, targetAttribute: string ) {
+export function getResistWeakAdjustment( targetData: TargetData, item: any, targetAttribute: string ): Adjustment {
     const values = statisticValues[Statistics.resistWeak][targetData.level]
     let current = item.value
     let metaData: BaseMetadata = {}
@@ -60,7 +61,7 @@ export function getResistWeakAdjustment( targetData: TargetData, item: any, targ
     })
 }
 
-export function getItemAdjustment( targetData: TargetData, stat: Statistics, item: any, targetAttribute: string ) {
+export function getItemAdjustment( targetData: TargetData, stat: Statistics, item: any, targetAttribute: string ): Adjustment | null {
     const values = statisticValues[stat][targetData.level]
     let metaData: BaseMetadata
     let current = 0
@@ -121,14 +122,14 @@ export function getItemAdjustment( targetData: TargetData, stat: Statistics, ite
 
 
 
-export function getTextAdjustments( currentLevel: string, item: any, targetAttribute: string ) {
+export function getTextAdjustments( currentLevel: string, item: any, targetAttribute: string ) : Adjustment[] {
     let adjustments: Adjustment[] = []
-    let text = getChildField( item, targetAttribute )
-    let checks = text.matchAll( InlineCheck.pattern )
-    let rolls = text.matchAll( InlineRoll.pattern )
+    const text = getChildField( item, targetAttribute );
+    const checks = text.matchAll( InlineCheck.pattern );
+    const rolls = text.matchAll( InlineRoll.pattern );
+    const hasAreaTemplate = text.match( areaTemplatePattern );
 
     for( const roll of rolls ) {
-        // todo: if a number seems sus, create the adjustment but default it to off?
         // skip check-like things entirely
         if( roll[0].includes( 'd20') ) {
             continue
@@ -142,13 +143,14 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
             continue
         }
 
-        let componentMetaData: InlineRollComponentMetadata[] = []
+        let componentMetadata: InlineRollComponentMetadata[] = []
 
+        // todo: if a number seems sus, create the adjustment but default it to off?
         // todo: some text blocks may be very long with multiple rolls and the template doesn't apply to them all. try to be smart?
-        let statisticTable = text.match( areaTemplatePattern ) ? Statistics.areaDamage : Statistics.strikeDamage
+        let statisticTable = hasAreaTemplate ? Statistics.areaDamage : Statistics.strikeDamage
+
         // todo: VERY heuristic. additional damage is *usually* just dice (no flat bonus) OR only flat bonus (vampire
         //  drink blood etc) from what i've seen
-
         if( statisticTable == Statistics.strikeDamage
             && inlineRoll.rolls.length == 1
             && ( inlineRoll.rolls[0].flatModifier == 0
@@ -163,7 +165,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
         for( const rollData of inlineRoll.rolls ) {
             let rollValues = getDamageRollValues( rollData.toSimpleString() )
             total += rollValues.total
-            componentMetaData.push({
+            componentMetadata.push({
                 rollData: rollData,
                 totalFraction: rollValues.total,
                 flatFraction: rollValues.flatFraction,
@@ -171,7 +173,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
         }
 
         let current = Math.ceil( total ) // odd numbers of dice results in a half that should be rounded up to match the gmg numbers
-        for( const meta of componentMetaData ) {
+        for( const meta of componentMetadata ) {
             meta.totalFraction /= total
         }
 
@@ -181,7 +183,7 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
             let metaData = new InlineRollMetadata({
                 replaceText: roll[0],
                 statisticTable: statisticTable,
-                components: componentMetaData,
+                components: componentMetadata,
                 originalRoll: inlineRoll,
                 allowDice: inlineAllowDice[statisticTable],
                 damageTypeLabel: inlineDamageLabel[statisticTable]
@@ -227,6 +229,47 @@ export function getTextAdjustments( currentLevel: string, item: any, targetAttri
                     normalizedValue: normalized.value,
                     displayValue: normalized.display,
                     displayName: `Text: Check ${inlineCheck.toReadableString()}`,
+                    metadata: metaData
+                })
+                adjustments.push( data )
+            }
+        }
+    }
+
+    return adjustments
+}
+
+export function getRuleAdjustments( currentLevel: string, item: any ) : Adjustment[] {
+    let adjustments: Adjustment[] = []
+    const rules = getChildField( item, 'system.rules' )
+
+    for( let i=0; i<rules.length; i++ ) {
+        const rule = rules[i]
+        // This one is pretty simple as it maps well to the Additional Damage table (because I made that from Sneak Attack to begin with)
+        // todo: should this default to off?
+        if( rule.key == 'DamageDice' ) {
+            let damageValues = statisticValues[Statistics.additionalDamage][currentLevel]
+            let roll = `${rule.diceNumber}${rule.dieSize}`
+            let damage = getDamageRollValues( roll )
+            let normalized = getNormalizedValue( damage.total, damageValues, 1 )
+            if( normalized.value > -9999 ) {
+                let metaData = new RuleMetadata({
+                    key: rule.key,
+                    dieSize: rule.dieSize as Dice,
+                    statisticTable: Statistics.additionalDamage,
+                    damageTypeLabel: inlineDamageLabel[Statistics.additionalDamage]
+                })
+                if( normalized.flag ) {
+                    metaData.outOfRange = true
+                }
+
+                let data = new Adjustment({
+                    targetDocument: item,
+                    targetAttribute: `system.rules[${i}].diceNumber`,
+                    statistic: Statistics.rule,
+                    normalizedValue: normalized.value,
+                    displayValue: normalized.display,
+                    displayName: `Rule: DamageDice numDice ${rule.diceNumber}`,
                     metadata: metaData
                 })
                 adjustments.push( data )

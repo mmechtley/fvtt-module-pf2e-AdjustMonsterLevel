@@ -1741,164 +1741,190 @@ const aliases = {
             [AreaDamageTiers.limited]: "88",
         }
     },
-    // I just made this one up. It's intended for flat damage addition like sneak attack or Focused Assault.
-    // The tiers are just sneak attack progression with d4, d6, d8, and d10
+    // I just made this one up. It's intended for flat damage addition like sneak attack.
+    // The tiers are just sneak attack die progression with d4, d6, d8, d10, d12
     additionalDamage: {
         "-1": {
-            [Tiers.low]: "2",
-            [Tiers.moderate]: "3",
-            [Tiers.high]: "4",
-            [Tiers.extreme]: "5"
+            [Tiers.terrible]: "2.5",
+            [Tiers.low]: "3.5",
+            [Tiers.moderate]: "4.5",
+            [Tiers.high]: "5.5",
+            [Tiers.extreme]: "6.5"
         },
         "0": {
-            [Tiers.low]: "3",
-            [Tiers.moderate]: "4",
-            [Tiers.high]: "5",
-            [Tiers.extreme]: "6"
+            [Tiers.terrible]: "2.5",
+            [Tiers.low]: "3.5",
+            [Tiers.moderate]: "4.5",
+            [Tiers.high]: "5.5",
+            [Tiers.extreme]: "6.5"
         },
         "1": {
-            [Tiers.low]: "3",
-            [Tiers.moderate]: "4",
-            [Tiers.high]: "5",
-            [Tiers.extreme]: "7"
+            [Tiers.terrible]: "2.5",
+            [Tiers.low]: "3.5",
+            [Tiers.moderate]: "4.5",
+            [Tiers.high]: "5.5",
+            [Tiers.extreme]: "6.5"
         },
         "2": {
-            [Tiers.low]: "4",
-            [Tiers.moderate]: "5",
-            [Tiers.high]: "6",
-            [Tiers.extreme]: "8"
+            [Tiers.terrible]: "2.5",
+            [Tiers.low]: "3.5",
+            [Tiers.moderate]: "4.5",
+            [Tiers.high]: "5.5",
+            [Tiers.extreme]: "6.5"
         },
         "3": {
-            [Tiers.low]: "4",
-            [Tiers.moderate]: "6",
-            [Tiers.high]: "7",
-            [Tiers.extreme]: "9"
+            [Tiers.terrible]: "2.5",
+            [Tiers.low]: "3.5",
+            [Tiers.moderate]: "4.5",
+            [Tiers.high]: "5.5",
+            [Tiers.extreme]: "6.5"
         },
         "4": {
-            [Tiers.low]: "5",
-            [Tiers.moderate]: "6",
-            [Tiers.high]: "8",
-            [Tiers.extreme]: "10"
+            [Tiers.terrible]: "2.5",
+            [Tiers.low]: "3.5",
+            [Tiers.moderate]: "4.5",
+            [Tiers.high]: "5.5",
+            [Tiers.extreme]: "6.5"
         },
         "5": {
-            [Tiers.low]: "5",
-            [Tiers.moderate]: "7",
-            [Tiers.high]: "9",
-            [Tiers.extreme]: "11"
+            [Tiers.terrible]: "5",
+            [Tiers.low]: "7",
+            [Tiers.moderate]: "9",
+            [Tiers.high]: "11",
+            [Tiers.extreme]: "13"
         },
         "6": {
-            [Tiers.low]: "5",
-            [Tiers.moderate]: "7",
-            [Tiers.high]: "10",
-            [Tiers.extreme]: "12"
+            [Tiers.terrible]: "5",
+            [Tiers.low]: "7",
+            [Tiers.moderate]: "9",
+            [Tiers.high]: "11",
+            [Tiers.extreme]: "13"
         },
         "7": {
-            [Tiers.low]: "6",
-            [Tiers.moderate]: "8",
-            [Tiers.high]: "10",
-            [Tiers.extreme]: "12"
+            [Tiers.terrible]: "5",
+            [Tiers.low]: "7",
+            [Tiers.moderate]: "9",
+            [Tiers.high]: "11",
+            [Tiers.extreme]: "13"
         },
         "8": {
-            [Tiers.low]: "6",
-            [Tiers.moderate]: "8",
+            [Tiers.terrible]: "5",
+            [Tiers.low]: "7",
+            [Tiers.moderate]: "9",
             [Tiers.high]: "11",
             [Tiers.extreme]: "13"
         },
         "9": {
-            [Tiers.low]: "6",
+            [Tiers.terrible]: "5",
+            [Tiers.low]: "7",
             [Tiers.moderate]: "9",
             [Tiers.high]: "11",
-            [Tiers.extreme]: "14"
+            [Tiers.extreme]: "13"
         },
         "10": {
+            [Tiers.terrible]: "5",
             [Tiers.low]: "7",
             [Tiers.moderate]: "9",
-            [Tiers.high]: "12",
-            [Tiers.extreme]: "14"
+            [Tiers.high]: "11",
+            [Tiers.extreme]: "13"
         },
         "11": {
-            [Tiers.low]: "7",
-            [Tiers.moderate]: "10",
-            [Tiers.high]: "12",
-            [Tiers.extreme]: "15"
+            [Tiers.terrible]: "7.5",
+            [Tiers.low]: "10.5",
+            [Tiers.moderate]: "13.5",
+            [Tiers.high]: "16.5",
+            [Tiers.extreme]: "19.5"
         },
         "12": {
-            [Tiers.low]: "7",
-            [Tiers.moderate]: "10",
-            [Tiers.high]: "13",
-            [Tiers.extreme]: "16"
+            [Tiers.terrible]: "7.5",
+            [Tiers.low]: "10.5",
+            [Tiers.moderate]: "13.5",
+            [Tiers.high]: "16.5",
+            [Tiers.extreme]: "19.5"
         },
         "13": {
-            [Tiers.low]: "8",
-            [Tiers.moderate]: "11",
-            [Tiers.high]: "14",
-            [Tiers.extreme]: "17"
+            [Tiers.terrible]: "7.5",
+            [Tiers.low]: "10.5",
+            [Tiers.moderate]: "13.5",
+            [Tiers.high]: "16.5",
+            [Tiers.extreme]: "19.5"
         },
         "14": {
-            [Tiers.low]: "8",
-            [Tiers.moderate]: "11",
-            [Tiers.high]: "14",
-            [Tiers.extreme]: "17"
+            [Tiers.terrible]: "7.5",
+            [Tiers.low]: "10.5",
+            [Tiers.moderate]: "13.5",
+            [Tiers.high]: "16.5",
+            [Tiers.extreme]: "19.5"
         },
         "15": {
-            [Tiers.low]: "8",
-            [Tiers.moderate]: "11",
-            [Tiers.high]: "15",
-            [Tiers.extreme]: "18"
+            [Tiers.terrible]: "7.5",
+            [Tiers.low]: "10.5",
+            [Tiers.moderate]: "13.5",
+            [Tiers.high]: "16.5",
+            [Tiers.extreme]: "19.5"
         },
         "16": {
-            [Tiers.low]: "8",
-            [Tiers.moderate]: "12",
-            [Tiers.high]: "15",
-            [Tiers.extreme]: "19"
+            [Tiers.terrible]: "7.5",
+            [Tiers.low]: "10.5",
+            [Tiers.moderate]: "13.5",
+            [Tiers.high]: "16.5",
+            [Tiers.extreme]: "19.5"
         },
         "17": {
-            [Tiers.low]: "9",
-            [Tiers.moderate]: "12",
-            [Tiers.high]: "16",
-            [Tiers.extreme]: "19"
+            [Tiers.terrible]: "10",
+            [Tiers.low]: "14",
+            [Tiers.moderate]: "18",
+            [Tiers.high]: "22",
+            [Tiers.extreme]: "26"
         },
         "18": {
-            [Tiers.low]: "9",
-            [Tiers.moderate]: "13",
-            [Tiers.high]: "16",
-            [Tiers.extreme]: "20"
+            [Tiers.terrible]: "10",
+            [Tiers.low]: "14",
+            [Tiers.moderate]: "18",
+            [Tiers.high]: "22",
+            [Tiers.extreme]: "26"
         },
         "19": {
-            [Tiers.low]: "9",
-            [Tiers.moderate]: "13",
-            [Tiers.high]: "17",
-            [Tiers.extreme]: "21"
+            [Tiers.terrible]: "10",
+            [Tiers.low]: "14",
+            [Tiers.moderate]: "18",
+            [Tiers.high]: "22",
+            [Tiers.extreme]: "26"
         },
         "20": {
-            [Tiers.low]: "10",
-            [Tiers.moderate]: "14",
-            [Tiers.high]: "17",
-            [Tiers.extreme]: "21"
+            [Tiers.terrible]: "10",
+            [Tiers.low]: "14",
+            [Tiers.moderate]: "18",
+            [Tiers.high]: "22",
+            [Tiers.extreme]: "26"
         },
         "21": {
-            [Tiers.low]: "10",
-            [Tiers.moderate]: "14",
-            [Tiers.high]: "18",
-            [Tiers.extreme]: "22"
+            [Tiers.terrible]: "10",
+            [Tiers.low]: "14",
+            [Tiers.moderate]: "18",
+            [Tiers.high]: "22",
+            [Tiers.extreme]: "26"
         },
         "22": {
-            [Tiers.low]: "10",
-            [Tiers.moderate]: "14",
-            [Tiers.high]: "19",
-            [Tiers.extreme]: "23"
+            [Tiers.terrible]: "10",
+            [Tiers.low]: "14",
+            [Tiers.moderate]: "18",
+            [Tiers.high]: "22",
+            [Tiers.extreme]: "26"
         },
         "23": {
-            [Tiers.low]: "11",
-            [Tiers.moderate]: "15",
-            [Tiers.high]: "19",
-            [Tiers.extreme]: "23"
+            [Tiers.terrible]: "12.5",
+            [Tiers.low]: "17.5",
+            [Tiers.moderate]: "22.5",
+            [Tiers.high]: "27.5",
+            [Tiers.extreme]: "32.5"
         },
         "24": {
-            [Tiers.low]: "11",
-            [Tiers.moderate]: "15",
-            [Tiers.high]: "20",
-            [Tiers.extreme]: "24"
+            [Tiers.terrible]: "12.5",
+            [Tiers.low]: "17.5",
+            [Tiers.moderate]: "22.5",
+            [Tiers.high]: "27.5",
+            [Tiers.extreme]: "32.5"
         }
     }
 }

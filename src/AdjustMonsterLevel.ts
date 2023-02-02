@@ -1,14 +1,18 @@
 import {abilityFields, defenseFields, Levels, savesFields, Setting, Statistics} from "./Keys";
 import {BaseActor,} from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs";
-import {
-    localize
-} from "./Utils";
+import {localize} from "./Utils";
 import {Adjustment, AdjustmentCategory} from "./Adjustments";
-import {mergeDescription, mergeIndexedAdjustment, mergeSimpleAdjustment, mergeStrikeDamage} from "./AdjustmentMerge";
+import {
+    mergeDescription,
+    mergeIndexedAdjustment,
+    mergeSimpleAdjustment,
+    mergeStrikeDamage
+} from "./AdjustmentMerge";
 import {
     getActorFieldAdjustment,
     getItemAdjustment,
     getResistWeakAdjustment,
+    getRuleAdjustments,
     getTextAdjustments
 } from "./AdjustmentCreation";
 
@@ -184,6 +188,9 @@ export class AdjustMonsterLevel extends FormApplication {
             }
             else if( item.type == 'action' && item.name != null ) {
                 let adjustments = getTextAdjustments( this.data.level, item, 'system.description.value' )
+                // todo: should we look for rule adjustments on all item types not just action?
+                adjustments = adjustments.concat( getRuleAdjustments( this.data.level, item ) )
+
                 if( adjustments.length > 0 ){
                     let category = new AdjustmentCategory( item.name )
                     category.adjustments = adjustments
