@@ -8,6 +8,7 @@ import {InlineRollMetadata} from "./Metadata/InlineRollMetadata";
 import {InlineRoll} from "./InlineData/InlineRoll";
 import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
 import {RuleMetadata} from "./Metadata/RuleMetadata";
+import {DamageDiceRuleMetadata} from "./Metadata/DamageDiceRuleMetadata";
 
 export function mergeSimpleAdjustment( newLevel: string, batch: any, adjustment: Adjustment ) {
     let values = statisticValues[adjustment.statistic][newLevel]
@@ -153,12 +154,12 @@ export function mergeDescription( newLevel: string, batch: any, adjustment: Adju
 }
 
 export function getNewRuleValue( newLevel: string, adjustment: Adjustment ) {
-    const metadata = adjustment.metadata as RuleMetadata
-    if( metadata.key == 'DamageDice' ) {
+    const ruleKey = (adjustment.metadata as RuleMetadata).key;
+    if( ruleKey == 'DamageDice' ) {
+        const metadata = adjustment.metadata as DamageDiceRuleMetadata;
         const values = statisticValues[metadata.statisticTable][newLevel]
         const newDamage = getNumericValue( adjustment.normalizedValue, values )
-        const newRoll = getClosestDieRoll( newDamage, 0, metadata.dieSize, AllowDice.sameOnly )
-        console.log(newDamage, newRoll)
+        const newRoll = getClosestDieRoll( newDamage, 0, metadata.dieSize, metadata.allowDice )
         return newRoll.numDice
     }
     return null

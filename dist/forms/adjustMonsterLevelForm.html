@@ -1,6 +1,12 @@
 <form>
     <h1>{{localize "PF2EADJUSTMONSTERLEVEL.title"}}</h1>
-    <p>{{localize "PF2EADJUSTMONSTERLEVEL.frontMatter"}}</p>
+    <a id="adjust-monster-level-help" class="adjust-monster-level-lilbutton" onclick="toggleFrontMatter()">ℹ️</a>
+
+    <div id="adjust-monster-level-frontMatter">
+        <a class="adjust-monster-level-lilbutton" onclick="toggleFrontMatter()">❎</a>
+        <p>{{localize "PF2EADJUSTMONSTERLEVEL.frontMatter"}}</p>
+        <p><a href="https://github.com/mmechtley/fvtt-module-pf2e-AdjustMonsterLevel" target="_blank" rel="noopener">{{localize "PF2EADJUSTMONSTERLEVEL.githubLinkLabel"}}</a></p>
+    </div>
     <h2>{{localize "PF2EADJUSTMONSTERLEVEL.nameLevel"}}</h2>
     <div class="form-group setting">
         <label for="adjustMonsterLevelName" class="adjustMonsterLevelFormText">
@@ -58,6 +64,20 @@
 <script>
     current = {{{json Current}}}
 
+    function toggleFrontMatter() {
+        let shown = !game.settings.get('pf2e-adjust-monster-level', 'showFrontmatter')
+        setFrontMatterShown(shown)
+        game.settings.set('pf2e-adjust-monster-level', 'showFrontmatter', shown)
+    }
+
+    function setFrontMatterShown( shown ) {
+        let infoButton = document.getElementById('adjust-monster-level-help')
+        let frontMatter = document.getElementById('adjust-monster-level-frontMatter')
+
+        infoButton.hidden = !shown;
+        frontMatter.hidden = shown;
+    }
+
     function expandCollapseAdjustments() {
         let expanded = !game.settings.get('pf2e-adjust-monster-level', 'expandFoldout')
         setAdjustmentsExpanded( expanded )
@@ -91,6 +111,8 @@
 
         let expanded = game.settings.get('pf2e-adjust-monster-level', 'expandFoldout')
         setAdjustmentsExpanded( expanded )
+        let showFrontmatter = game.settings.get('pf2e-adjust-monster-level', 'showFrontmatter')
+        setFrontMatterShown( showFrontmatter )
 
     }
     setDefaults();

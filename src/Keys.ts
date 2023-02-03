@@ -1,6 +1,7 @@
 export const Setting = {
     namespace: 'pf2e-adjust-monster-level', // must be the same as the module id
     expandFoldout: 'expandFoldout',
+    showFrontmatter: 'showFrontmatter',
     testMode: 'testMode'
 }
 

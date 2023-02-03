@@ -9,6 +9,13 @@ Hooks.on('init', async function () {
         type: Boolean,
         default: false
     });
+    await game["settings"].register( Setting.namespace, Setting.showFrontmatter, {
+        scope: 'client',
+        config: false,
+        requiresReload: false,
+        type: Boolean,
+        default: true
+    });
     await game["settings"].register( Setting.namespace, Setting.testMode, {
         name: 'PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeLabel',
         hint: 'PF2EADJUSTMONSTERLEVEL.SETTINGS.testModeHint',

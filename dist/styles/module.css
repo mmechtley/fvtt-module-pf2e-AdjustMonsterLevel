@@ -47,3 +47,8 @@
 #adjustments-toggle.adjustments-expanded::before {
     content: "⏷ ";
 }
+
+.adjust-monster-level-lilbutton {
+    position: absolute;
+    right: 20px;
+}

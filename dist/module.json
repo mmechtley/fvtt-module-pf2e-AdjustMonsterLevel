@@ -2,7 +2,7 @@
     "name": "pf2e-adjust-monster-level",
     "title": "PF2E Adjust Monster Level",
     "description": "A module that allows you to adjust an NPC/Monster's level using the Creature Building Rules from the Gamemastery Guide. Use the Adjust Level button underneath the level on NPC sheets.",
-    "version": "1.2.1",
+    "version": "1.3",
     "authors": [{"name": "mmechtley"}],
     "minimumCoreVersion": "10",
     "compatibleCoreVersion": "10",
@@ -26,7 +26,11 @@
         "systems": [{
             "id": "pf2e",
             "type": "system",
-            "manifest": "https://github.com/foundryvtt/pf2e/releases/latest/download/system.json"
+            "manifest": "https://github.com/foundryvtt/pf2e/releases/latest/download/system.json",
+            "compatibility": {
+                "minimum": "4.6.3",
+                "verified": "4.6.8"
+            }
         }]
     },
     "url": "https://github.com/mmechtley/fvtt-module-pf2e-AdjustMonsterLevel",

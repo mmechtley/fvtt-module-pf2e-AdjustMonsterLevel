@@ -27,3 +27,4 @@ Known Issues:
 - Related, certain spell-like strikes may have their die size changed where strictly speaking you'd want to keep it the same but adjust the number of dice instead. As above, always double check strike damage to make sure the numbers match what you want.
 - Certain strikes from items like alchemical bombs may be scaled where it would be better to replace them with a strike from the higher-level item.
 - Actions / passives where an inline roll in the text interacts with the DamageDice Rule Element may be scaled incorrectly, e.g. the Giant Flytrap's Focused Assault. You can always uncheck these and adjust them by hand.
+- A few bits of text do not use the localization system. However, english is only currently supported

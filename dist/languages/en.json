@@ -7,7 +7,8 @@
     "PF2EADJUSTMONSTERLEVEL.plusInline": "plus",
 
     "PF2EADJUSTMONSTERLEVEL.title": "Adjust Monster",
-    "PF2EADJUSTMONSTERLEVEL.frontMatter": "This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery Guide. Stats that fall between two tiers (e.g. between Moderate and High) will be interpolated. Stats below the minimum or above the maximum from the GMG table will be extrapolated. Ability modifiers 0 or below are ignored. You may preview items that will be adjusted and enable or disable individual adjustments via the foldout below.",
+    "PF2EADJUSTMONSTERLEVEL.frontMatter": "This form adjusts a monster's level, scaling its stats according to the tables in Chapter 2 of the Gamemastery Guide. Stats that fall between two tiers (e.g. between Moderate and High) will be interpolated. Stats below the minimum or above the maximum from the GMG table will be extrapolated. You may preview items that will be adjusted and enable or disable individual adjustments via the foldout below. For known issues etc. see the Github page.",
+    "PF2EADJUSTMONSTERLEVEL.githubLinkLabel": "Adjust Monster Level on Github",
     "PF2EADJUSTMONSTERLEVEL.nameLevel": "Name and Level",
     "PF2EADJUSTMONSTERLEVEL.buttonLabelAdjust": "Adjust",
     "PF2EADJUSTMONSTERLEVEL.statisticsToBeScaled": "Statistics to be Scaled",

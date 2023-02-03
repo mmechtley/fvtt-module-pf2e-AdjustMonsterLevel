@@ -9,7 +9,7 @@ import {BaseMetadata} from "./Metadata/BaseMetadata";
 import {DamageRollMetadata} from "./Metadata/DamageRollMetadata";
 import {InlineCheckMetadata} from "./Metadata/InlineCheckMetadata";
 import {InlineCheck} from "./InlineData/InlineCheck";
-import {RuleMetadata} from "./Metadata/RuleMetadata";
+import {DamageDiceRuleMetadata} from "./Metadata/DamageDiceRuleMetadata";
 
 export const areaTemplatePattern = /@Template/
 
@@ -253,9 +253,9 @@ export function getRuleAdjustments( currentLevel: string, item: any ) : Adjustme
             let damage = getDamageRollValues( roll )
             let normalized = getNormalizedValue( damage.total, damageValues, 1 )
             if( normalized.value > -9999 ) {
-                let metaData = new RuleMetadata({
-                    key: rule.key,
+                let metaData = new DamageDiceRuleMetadata({
                     dieSize: rule.dieSize as Dice,
+                    allowDice: AllowDice.sameOnly,
                     statisticTable: Statistics.additionalDamage,
                     damageTypeLabel: inlineDamageLabel[Statistics.additionalDamage]
                 })
