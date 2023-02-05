@@ -50,5 +50,9 @@
 
 .adjust-monster-level-lilbutton {
     position: absolute;
-    right: 20px;
+    right: 0px;
+}
+
+.adjust-monster-level-relative-container {
+    position: relative;
 }

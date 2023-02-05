@@ -1,8 +1,10 @@
 <form>
-    <h1>{{localize "PF2EADJUSTMONSTERLEVEL.title"}}</h1>
-    <a id="adjust-monster-level-help" class="adjust-monster-level-lilbutton" onclick="toggleFrontMatter()">ℹ️</a>
+    <div class="adjust-monster-level-relative-container">
+        <a id="adjust-monster-level-help" class="adjust-monster-level-lilbutton" onclick="toggleFrontMatter()">ℹ️</a>
+        <h1>{{localize "PF2EADJUSTMONSTERLEVEL.title"}}</h1>
+    </div>
 
-    <div id="adjust-monster-level-frontMatter">
+    <div id="adjust-monster-level-frontMatter" class="adjust-monster-level-relative-container">
         <a class="adjust-monster-level-lilbutton" onclick="toggleFrontMatter()">❎</a>
         <p>{{localize "PF2EADJUSTMONSTERLEVEL.frontMatter"}}</p>
         <p><a href="https://github.com/mmechtley/fvtt-module-pf2e-AdjustMonsterLevel" target="_blank" rel="noopener">{{localize "PF2EADJUSTMONSTERLEVEL.githubLinkLabel"}}</a></p>
